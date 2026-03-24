@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feel It · Name It · Tame It</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   RESET & BASE
+───────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --nav-h:70px;
+  --r-md:12px;
+  --r-lg:20px;
+  --r-xl:32px;
+  --shadow:0 4px 24px rgba(0,0,0,.10);
+  --shadow-sm:0 2px 10px rgba(0,0,0,.08);
+  --font-head:'Righteous',cursive;
+  --font-body:'Nunito',sans-serif;
+}
+body{
+  font-family:var(--font-body);
+  min-height:100vh;
+  overflow-x:hidden;
+  background:#fff;
+}
+
+/* ─────────────────────────────────────────────
+   NAVIGATION
+───────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;
+  height:var(--nav-h);
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border-bottom:2px solid rgba(0,0,0,.06);
+  display:flex;align-items:center;
+  padding:0 20px;gap:8px;
+  z-index:1000;
+  overflow-x:auto;
+}
+nav::-webkit-scrollbar{display:none}
+.nav-logo{
+  font-family:var(--font-head);
+  font-size:20px;color:#ff6b6b;
+  white-space:nowrap;margin-right:8px;
+  flex-shrink:0;
+}
+.nav-logo span{color:#ffd166}
+.nav-btn{
+  flex-shrink:0;
+  padding:8px 16px;
+  border-radius:40px;
+  border:2.5px solid transparent;
+  background:transparent;
+  font-family:var(--font-body);
+  font-size:13.5px;font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+  white-space:nowrap;
+  color:#444;
+}
+.nav-btn:hover{background:#f5f5f5;transform:translateY(-1px)}
+.nav-btn.active{
+  color:#fff;
+  transform:translateY(-1px);
+  box-shadow:var(--shadow-sm);
+}
+.nav-btn[data-page="home"].active{background:#ff6b6b;border-color:#ff6b6b}
+.nav-btn[data-page="tictactoe"].active{background:#6c63ff;border-color:#6c63ff}
+.nav-btn[data-page="dice"].active{background:#f9a825;border-color:#f9a825}
+.nav-btn[data-page="match"].active{background:#00bfa5;border-color:#00bfa5}
+.nav-btn[data-page="wheel"].active{background:#e91e8c;border-color:#e91e8c}
+.nav-btn[data-page="journal"].active{background:#43a047;border-color:#43a047}
+
+/* ─────────────────────────────────────────────
+   PAGE SHELL
+───────────────────────────────────────────── */
+.page{
+  display:none;
+  min-height:100vh;
+  padding-top:var(--nav-h);
+}
+.page.active{display:block}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 1 — HOME
+───────────────────────────────────────────── */
+#page-home{
+  background:#fff8f0;
+  position:relative;overflow:hidden;
+}
+.home-blob{
+  position:absolute;border-radius:50%;opacity:.18;pointer-events:none;
+}
+.hb1{width:500px;height:500px;background:#ff6b6b;top:-120px;left:-180px}
+.hb2{width:400px;height:400px;background:#ffd166;top:100px;right:-120px}
+.hb3{width:350px;height:350px;background:#06d6a0;bottom:-80px;left:30%}
+.hb4{width:280px;height:280px;background:#118ab2;bottom:60px;right:40px}
+.home-inner{
+  position:relative;z-index:1;
+  max-width:900px;margin:0 auto;
+  padding:60px 24px 80px;
+  text-align:center;
+}
+.home-title{
+  font-family:var(--font-head);
+  font-size:clamp(36px,7vw,76px);
+  color:#ff6b6b;
+  line-height:1.05;
+  margin-bottom:12px;
+}
+.home-title span{color:#ffd166}
+.home-subtitle{
+  font-size:clamp(15px,2.5vw,20px);
+  color:#666;font-weight:600;
+  margin-bottom:52px;
+}
+.home-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:20px;
+  text-align:left;
+}
+.home-card{
+  background:#fff;
+  border-radius:var(--r-xl);
+  padding:28px 24px;
+  box-shadow:var(--shadow);
+  cursor:pointer;
+  transition:transform .25s,box-shadow .25s;
+  border-top:5px solid transparent;
+  position:relative;overflow:hidden;
+}
+.home-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  opacity:0;transition:opacity .25s;
+}
+.home-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.14)}
+.home-card:hover::before{opacity:.04}
+.hc-tictactoe{border-top-color:#6c63ff}.hc-tictactoe::before{background:#6c63ff}
+.hc-dice{border-top-color:#f9a825}.hc-dice::before{background:#f9a825}
+.hc-match{border-top-color:#00bfa5}.hc-match::before{background:#00bfa5}
+.hc-wheel{border-top-color:#e91e8c}.hc-wheel::before{background:#e91e8c}
+.hc-journal{border-top-color:#43a047}.hc-journal::before{background:#43a047}
+.home-card-icon{font-size:42px;margin-bottom:14px;display:block}
+.home-card-title{
+  font-family:var(--font-head);
+  font-size:20px;color:#222;margin-bottom:6px;
+}
+.home-card-desc{font-size:13.5px;color:#888;font-weight:600;line-height:1.5}
+.home-card-tag{
+  display:inline-block;margin-top:12px;
+  font-size:11px;font-weight:800;letter-spacing:.06em;
+  padding:4px 12px;border-radius:20px;color:#fff;
+}
+.tag-tictactoe{background:#6c63ff}
+.tag-dice{background:#f9a825}
+.tag-match{background:#00bfa5}
+.tag-wheel{background:#e91e8c}
+.tag-journal{background:#43a047}
+.home-coming-soon{
+  margin-top:52px;
+  background:rgba(255,255,255,.7);
+  border-radius:var(--r-lg);
+  padding:24px 28px;
+  border:2px dashed #eee;
+  text-align:left;
+}
+.home-coming-label{
+  font-family:var(--font-head);
+  font-size:18px;color:#bbb;margin-bottom:16px;
+  text-align:center;
+}
+.coming-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:10px;
+}
+.coming-item{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;font-weight:700;color:#aaa;
+  background:#fafafa;border-radius:10px;padding:10px 14px;
+}
+.coming-item span{font-size:22px}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 2 — TIC TAC TOE
+───────────────────────────────────────────── */
+#page-tictactoe{
+  background:#1a0533;
+  background-image:
+    radial-gradient(ellipse at 20% 30%, #3b1f6e 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%, #1a3a6e 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, #2d1060 0%, transparent 70%);
+  min-height:100vh;
+}
+.ttt-stars{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;overflow:hidden;
+}
+.star{
+  position:absolute;
+  background:#fff;border-radius:50%;
+  animation:twinkle 2s infinite alternate;
+}
+@keyframes twinkle{from{opacity:.2}to{opacity:.9}}
+.ttt-inner{
+  position:relative;z-index:1;
+  max-width:640px;margin:0 auto;
+  padding:36px 20px 60px;
+}
+.page-title{
+  font-family:var(--font-head);
+  font-size:clamp(28px,5vw,44px);
+  text-align:center;margin-bottom:6px;
+}
+.page-subtitle{
+  text-align:center;font-size:14px;font-weight:700;
+  margin-bottom:28px;letter-spacing:.04em;
+}
+.ttt-title{color:#c084fc}
+.ttt-subtitle{color:#a855f7;opacity:.7}
+
+.team-setup{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  margin-bottom:20px;
+}
+.team-card{
+  border-radius:var(--r-lg);
+  padding:14px 16px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.team-a-card{background:rgba(124,58,237,.25);border:1.5px solid rgba(167,139,250,.4)}
+.team-b-card{background:rgba(239,68,68,.2);border:1.5px solid rgba(252,165,165,.4)}
+.team-label{font-size:11px;font-weight:800;letter-spacing:.08em}
+.ta-label{color:#c084fc}.tb-label{color:#fca5a5}
+.team-input{
+  width:100%;background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:8px;padding:8px 12px;
+  font-family:var(--font-body);font-size:15px;font-weight:700;
+  color:#fff;outline:none;
+}
+.team-input:focus{border-color:rgba(255,255,255,.4)}
+.team-input::placeholder{color:rgba(255,255,255,.3)}
+
+.scoreboard{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:12px;margin-bottom:20px;
+}
+.sc-card{
+  border-radius:var(--r-md);padding:12px 16px;
+  transition:all .3s;
+}
+.sc-a{background:rgba(124,58,237,.3);border:2px solid rgba(167,139,250,.3)}
+.sc-b{background:rgba(239,68,68,.2);border:2px solid rgba(252,165,165,.3)}
+.sc-a.sc-active{border-color:#a78bfa;background:rgba(124,58,237,.5)}
+.sc-b.sc-active{border-color:#fca5a5;background:rgba(239,68,68,.4)}
+.sc-name{font-size:12px;font-weight:800;letter-spacing:.05em}
+.sc-name-a{color:#c084fc}.sc-name-b{color:#fca5a5;text-align:right}
+.sc-pts{font-size:32px;font-weight:900;line-height:1}
+.sc-pts-a{color:#e9d5ff}.sc-pts-b{color:#fecaca;text-align:right}
+.sc-vs{text-align:center;font-family:var(--font-head);font-size:22px;color:rgba(255,255,255,.3)}
+.sc-turn{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);text-align:center}
+.sc-turn-name{font-size:14px;font-weight:800;color:#fff;text-align:center}
+
+.ttt-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+  margin-bottom:16px;
+}
+.ttt-cell{
+  aspect-ratio:1;
+  background:rgba(255,255,255,.06);
+  border:2px solid rgba(255,255,255,.1);
+  border-radius:var(--r-lg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:5px;cursor:pointer;
+  transition:all .2s;
+  padding:8px;
+}
+.ttt-cell:hover:not(.cell-taken){
+  background:rgba(255,255,255,.14);
+  border-color:rgba(255,255,255,.3);
+  transform:scale(1.03);
+}
+.ttt-cell.cell-pending{
+  background:rgba(255,255,255,.18);
+  border-color:rgba(255,255,255,.5);
+}
+.ttt-cell.cell-a{background:rgba(124,58,237,.4);border-color:#a78bfa;cursor:default}
+.ttt-cell.cell-b{background:rgba(239,68,68,.35);border-color:#fca5a5;cursor:default}
+.ttt-cell.cell-win-a{background:rgba(124,58,237,.7);border-color:#c084fc;
+  box-shadow:0 0 24px rgba(192,132,252,.5)}
+.ttt-cell.cell-win-b{background:rgba(239,68,68,.6);border-color:#fca5a5;
+  box-shadow:0 0 24px rgba(252,165,165,.5)}
+.cell-emo{font-size:clamp(26px,5vw,38px);line-height:1}
+.cell-name{font-size:10px;font-weight:800;letter-spacing:.05em;color:rgba(255,255,255,.5)}
+.cell-a .cell-name{color:#e9d5ff}.cell-b .cell-name{color:#fecaca}
+.cell-owner-badge{
+  font-size:9px;font-weight:800;letter-spacing:.04em;
+  padding:2px 7px;border-radius:20px;
+}
+.badge-a{background:#7c3aed;color:#e9d5ff}
+.badge-b{background:#dc2626;color:#fecaca}
+
+.ttt-action{
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.12);
+  border-radius:var(--r-lg);
+  padding:18px 20px;min-height:100px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:10px;margin-bottom:14px;
+}
+.action-idle-text{
+  color:rgba(255,255,255,.4);
+  font-size:14px;font-weight:700;text-align:center;
+}
+.action-emotion-row{
+  display:flex;align-items:center;gap:16px;width:100%;
+}
+.action-big-emo{font-size:52px;line-height:1;flex-shrink:0}
+.action-text-col{display:flex;flex-direction:column;gap:4px;flex:1}
+.action-emotion-label{
+  font-size:20px;font-weight:900;color:#fff;
+}
+.action-frame-text{
+  font-size:14px;color:rgba(255,255,255,.65);font-weight:600;
+}
+.action-example-text{
+  font-size:12px;color:rgba(255,255,255,.4);font-style:italic;
+}
+.ttt-verdict-btns{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;
+}
+.btn-reject{
+  padding:12px;border-radius:var(--r-md);
+  background:rgba(255,255,255,.08);
+  border:1.5px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.7);
+  font-family:var(--font-body);font-size:14px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.btn-reject:hover{background:rgba(255,255,255,.14)}
+.btn-accept{
+  padding:12px;border-radius:var(--r-md);
+  background:#7c3aed;border:none;
+  color:#fff;font-family:var(--font-body);
+  font-size:14px;font-weight:800;cursor:pointer;
+  transition:all .2s;
+}
+.btn-accept:hover{background:#6d28d9;transform:translateY(-1px)}
+
+.ttt-win-banner{
+  background:rgba(255,255,255,.1);
+  border:2px solid rgba(255,255,255,.2);
+  border-radius:var(--r-xl);
+  padding:28px;text-align:center;
+  display:none;margin-bottom:16px;
+}
+.ttt-win-banner.visible{display:block}
+.win-emo{font-size:56px;margin-bottom:8px}
+.win-title{font-family:var(--font-head);font-size:30px;color:#fff;margin-bottom:4px}
+.win-sub{font-size:14px;color:rgba(255,255,255,.5);font-weight:600;margin-bottom:18px}
+
+.btn-primary{
+  padding:12px 28px;border-radius:40px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);
+  border:none;color:#fff;
+  font-family:var(--font-body);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;display:inline-block;
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.4)}
+.btn-secondary{
+  padding:10px 20px;border-radius:40px;
+  background:rgba(255,255,255,.1);
+  border:1.5px solid rgba(255,255,255,.2);
+  color:rgba(255,255,255,.7);
+  font-family:var(--font-body);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.btn-secondary:hover{background:rgba(255,255,255,.18)}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 3 — DICE GAME
+───────────────────────────────────────────── */
+#page-dice{
+  background:#fff9e6;
+  background-image:
+    radial-gradient(circle at 15% 25%,#fff3b0 0%,transparent 40%),
+    radial-gradient(circle at 85% 75%,#ffd6a5 0%,transparent 40%),
+    radial-gradient(circle at 50% 10%,#caffbf 0%,transparent 30%);
+}
+.dice-dots-bg{
+  position:fixed;top:var(--nav-h);left:0;width:100%;height:100%;
+  pointer-events:none;z-index:0;overflow:hidden;
+}
+.dot{
+  position:absolute;border-radius:50%;
+  background:rgba(0,0,0,.04);
+}
+.dice-inner{
+  position:relative;z-index:1;
+  max-width:680px;margin:0 auto;
+  padding:36px 20px 60px;
+}
+.dice-title{color:#c05500;font-family:var(--font-head);font-size:clamp(26px,5vw,42px);text-align:center;margin-bottom:6px}
+.dice-subtitle{color:#a07020;font-size:14px;font-weight:700;text-align:center;margin-bottom:28px}
+
+.dice-step-bar{
+  display:flex;border-radius:40px;overflow:hidden;
+  border:2px solid #f0d080;margin-bottom:22px;
+}
+.dice-step{
+  flex:1;padding:10px 8px;text-align:center;
+  font-size:13px;font-weight:800;color:#c09040;
+  background:#fffef5;transition:all .3s;
+}
+.dice-step.step-active{
+  background:#f9a825;color:#fff;
+}
+.dice-step+.dice-step{border-left:2px solid #f0d080}
+
+.dice-sentence-card{
+  background:#fff;border-radius:var(--r-xl);
+  border:3px solid #ffd166;
+  padding:28px 24px;
+  text-align:center;margin-bottom:16px;
+  box-shadow:0 6px 24px rgba(249,168,37,.15);
+}
+.dice-sentence-num{font-size:11px;font-weight:800;letter-spacing:.08em;color:#e6a000;margin-bottom:8px}
+.dice-sentence-text{
+  font-family:var(--font-head);
+  font-size:clamp(22px,4vw,34px);
+  color:#333;line-height:1.2;margin-bottom:8px;
+}
+.dice-neutral-hint{font-size:13px;color:#aaa;font-weight:600}
+
+.dice-middle{
+  display:grid;grid-template-columns:130px 1fr;gap:14px;
+  margin-bottom:16px;
+}
+.dice-col{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+}
+.die-face{
+  width:100px;height:100px;
+  background:#fff;border-radius:20px;
+  border:3px solid #ffd166;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:52px;
+  color:#333;cursor:pointer;
+  transition:all .2s;
+  box-shadow:0 6px 20px rgba(249,168,37,.2);
+  user-select:none;
+}
+.die-face:hover{transform:scale(1.06);box-shadow:0 10px 28px rgba(249,168,37,.3)}
+.die-face:active{transform:scale(.96)}
+@keyframes rollAnim{
+  0%{transform:rotate(0) scale(1)}
+  25%{transform:rotate(-20deg) scale(1.1)}
+  50%{transform:rotate(22deg) scale(.9)}
+  75%{transform:rotate(-12deg) scale(1.05)}
+  100%{transform:rotate(0) scale(1)}
+}
+.die-face.rolling{animation:rollAnim .7s ease}
+.die-hint{font-size:12px;font-weight:700;color:#c09040}
+
+.emotion-reveal{
+  background:#fff;border-radius:var(--r-xl);
+  border:3px solid #eee;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:6px;padding:16px;
+  transition:border-color .4s,background .4s;
+  text-align:center;
+}
+.emotion-reveal-idle{font-size:14px;color:#bbb;font-weight:700;line-height:1.5}
+.emo-big{font-size:50px;line-height:1;display:none}
+.emo-name-big{font-size:22px;font-weight:900;display:none}
+.emo-body-hint{font-size:13px;font-weight:600;display:none}
+@keyframes popIn{
+  0%{transform:scale(.5);opacity:0}
+  70%{transform:scale(1.1)}
+  100%{transform:scale(1);opacity:1}
+}
+.emotion-reveal.revealed .emotion-reveal-idle{display:none}
+.emotion-reveal.revealed .emo-big,
+.emotion-reveal.revealed .emo-name-big,
+.emotion-reveal.revealed .emo-body-hint{display:block}
+.emo-big.pop{animation:popIn .45s cubic-bezier(.34,1.56,.64,1) both}
+
+.dice-say-card{
+  background:#fff;border-radius:var(--r-xl);
+  border:3px solid #eee;
+  padding:16px 20px;text-align:center;
+  min-height:80px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:6px;
+  transition:border-color .4s,background .4s;
+  margin-bottom:16px;
+}
+.say-idle{font-size:14px;color:#bbb;font-weight:600}
+.say-prompt{display:none;font-size:13px;font-weight:700;letter-spacing:.06em}
+.say-sentence{display:none;font-family:var(--font-head);font-size:clamp(18px,3.5vw,26px);color:#333}
+.dice-say-card.revealed .say-idle{display:none}
+.dice-say-card.revealed .say-prompt,.dice-say-card.revealed .say-sentence{display:block}
+
+.dice-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-roll{
+  padding:13px 30px;border-radius:40px;
+  background:#f9a825;border:none;
+  color:#fff;font-family:var(--font-body);
+  font-size:16px;font-weight:800;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(249,168,37,.35);
+}
+.btn-roll:hover{background:#e6981e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(249,168,37,.4)}
+.btn-roll:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-next{
+  padding:13px 24px;border-radius:40px;
+  background:#fff;border:2.5px solid #ffd166;
+  color:#c09040;font-family:var(--font-body);
+  font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.btn-next:hover{background:#fff9e6;transform:translateY(-1px)}
+.btn-ghost{
+  padding:11px 18px;border-radius:40px;
+  background:transparent;border:2px solid #e0d0b0;
+  color:#c0a870;font-family:var(--font-body);
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn-ghost:hover{background:rgba(0,0,0,.04)}
+
+.dice-legend{
+  display:grid;grid-template-columns:repeat(6,1fr);gap:6px;
+  margin-top:18px;
+}
+.legend-item{
+  border-radius:10px;border:2px solid transparent;
+  padding:8px 4px;text-align:center;
+  display:flex;flex-direction:column;gap:2px;align-items:center;
+}
+.legend-num{font-size:16px;font-weight:900}
+.legend-lbl{font-size:9px;font-weight:800;letter-spacing:.04em}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 4 — MATCH IT
+───────────────────────────────────────────── */
+#page-match{
+  background:#e0f7f4;
+  background-image:
+    radial-gradient(ellipse at 30% 20%,#b2ebf2 0%,transparent 45%),
+    radial-gradient(ellipse at 70% 80%,#c8e6c9 0%,transparent 45%),
+    radial-gradient(ellipse at 10% 80%,#e1f5fe 0%,transparent 40%);
+}
+.match-waves{
+  position:fixed;bottom:0;left:0;width:100%;pointer-events:none;z-index:0;
+}
+.match-inner{
+  position:relative;z-index:1;
+  max-width:760px;margin:0 auto;
+  padding:36px 20px 80px;
+}
+.match-title{color:#006064;font-family:var(--font-head);font-size:clamp(26px,5vw,42px);text-align:center;margin-bottom:6px}
+.match-subtitle{color:#00897b;font-size:14px;font-weight:700;text-align:center;margin-bottom:8px}
+.match-instruction{
+  background:rgba(255,255,255,.7);border-radius:var(--r-md);
+  padding:12px 20px;font-size:13px;font-weight:700;color:#00695c;
+  text-align:center;margin-bottom:28px;
+  border:1.5px solid rgba(0,150,136,.2);
+}
+.match-progress{
+  background:rgba(0,0,0,.06);border-radius:20px;height:8px;
+  margin-bottom:24px;overflow:hidden;
+}
+.match-progress-fill{
+  height:100%;background:#00bfa5;border-radius:20px;
+  transition:width .5s ease;width:0%;
+}
+.match-progress-label{
+  text-align:center;font-size:12px;font-weight:800;
+  color:#00897b;margin-bottom:24px;
+}
+
+.match-area{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  margin-bottom:20px;
+}
+.match-col-title{
+  font-size:12px;font-weight:800;letter-spacing:.08em;
+  color:#00897b;margin-bottom:10px;text-align:center;
+}
+.emotion-options{display:flex;flex-direction:column;gap:8px}
+.strategy-options{display:flex;flex-direction:column;gap:8px}
+.match-chip{
+  padding:14px 16px;border-radius:var(--r-md);
+  border:2.5px solid transparent;
+  cursor:pointer;transition:all .25s;
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;font-weight:700;
+  background:#fff;box-shadow:var(--shadow-sm);
+}
+.match-chip:hover:not(.matched):not(.wrong){
+  transform:translateY(-2px);box-shadow:var(--shadow);
+}
+.match-chip.selected-emo{
+  border-color:#00bfa5;background:#e0f7f4;
+}
+.match-chip.selected-strat{
+  border-color:#00bfa5;background:#e0f7f4;
+}
+.match-chip.matched{
+  background:#e8f5e9;border-color:#43a047;
+  cursor:default;opacity:.85;
+}
+.match-chip.wrong{
+  border-color:#ef5350;background:#ffebee;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+.match-chip.shake{animation:shake .35s ease}
+.chip-emo{font-size:26px;flex-shrink:0}
+.chip-text{font-size:13px;font-weight:700;color:#333;line-height:1.3}
+.chip-check{
+  margin-left:auto;font-size:18px;
+  display:none;color:#43a047;
+}
+.match-chip.matched .chip-check{display:block}
+
+.match-feedback{
+  min-height:60px;border-radius:var(--r-md);
+  padding:16px;display:flex;align-items:center;justify-content:center;
+  gap:12px;margin-bottom:16px;
+  background:rgba(255,255,255,.5);
+  border:2px dashed rgba(0,150,136,.2);
+  font-size:14px;font-weight:700;color:#00897b;
+  text-align:center;
+}
+
+.match-complete{
+  text-align:center;padding:40px 24px;
+  background:#fff;border-radius:var(--r-xl);
+  box-shadow:var(--shadow);display:none;
+}
+.match-complete.visible{display:block}
+.match-complete-emo{font-size:60px;margin-bottom:12px}
+.match-complete-title{font-family:var(--font-head);font-size:28px;color:#006064;margin-bottom:6px}
+.match-complete-sub{font-size:15px;color:#80cbc4;font-weight:700;margin-bottom:20px}
+.btn-match-reset{
+  padding:13px 28px;border-radius:40px;
+  background:#00bfa5;border:none;color:#fff;
+  font-family:var(--font-body);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;
+}
+.btn-match-reset:hover{background:#00a896;transform:translateY(-2px)}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 5 — EMOTION WHEEL
+───────────────────────────────────────────── */
+#page-wheel{
+  background:#1a1a2e;
+  background-image:
+    radial-gradient(ellipse at 50% 0%,#2d1b69 0%,transparent 60%),
+    radial-gradient(ellipse at 0% 100%,#1e3a5f 0%,transparent 50%);
+}
+.wheel-inner{
+  max-width:700px;margin:0 auto;
+  padding:36px 20px 60px;
+}
+.wheel-title{color:#f72585;font-family:var(--font-head);font-size:clamp(26px,5vw,42px);text-align:center;margin-bottom:6px}
+.wheel-subtitle{color:#b5838d;font-size:14px;font-weight:700;text-align:center;margin-bottom:28px}
+
+.wheel-container{
+  position:relative;width:100%;max-width:480px;
+  margin:0 auto 28px;aspect-ratio:1;
+}
+canvas#wheel-canvas{width:100%;height:100%}
+.wheel-pointer{
+  position:absolute;top:-18px;left:50%;
+  transform:translateX(-50%);
+  width:0;height:0;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-top:32px solid #f72585;
+  filter:drop-shadow(0 4px 8px rgba(247,37,133,.5));
+}
+.spin-btn{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:70px;height:70px;border-radius:50%;
+  background:#f72585;border:4px solid #fff;
+  font-family:var(--font-head);font-size:12px;
+  color:#fff;cursor:pointer;
+  box-shadow:0 4px 20px rgba(247,37,133,.5);
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+}
+.spin-btn:hover{transform:translate(-50%,-50%) scale(1.1)}
+.spin-btn:disabled{opacity:.6;cursor:not-allowed}
+
+.wheel-result{
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.12);
+  border-radius:var(--r-xl);padding:24px;
+  text-align:center;
+}
+.wheel-result-idle{color:rgba(255,255,255,.35);font-size:15px;font-weight:700}
+.wheel-result-emo{font-size:52px;display:none;margin-bottom:6px}
+.wheel-result-name{font-family:var(--font-head);font-size:26px;display:none;margin-bottom:6px;color:#fff}
+.wheel-result-task{font-size:15px;font-weight:700;display:none;color:rgba(255,255,255,.7);margin-bottom:16px;line-height:1.5}
+.wheel-result.has-result .wheel-result-idle{display:none}
+.wheel-result.has-result .wheel-result-emo,
+.wheel-result.has-result .wheel-result-name,
+.wheel-result.has-result .wheel-result-task{display:block}
+.wheel-result-emo.pop{animation:popIn .45s cubic-bezier(.34,1.56,.64,1) both}
+
+.btn-spin-again{
+  padding:12px 26px;border-radius:40px;
+  background:#f72585;border:none;color:#fff;
+  font-family:var(--font-body);font-size:14px;font-weight:800;
+  cursor:pointer;transition:all .2s;display:none;
+}
+.btn-spin-again.visible{display:inline-block}
+.btn-spin-again:hover{background:#e5177e;transform:translateY(-2px)}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 6 — JOURNAL
+───────────────────────────────────────────── */
+#page-journal{
+  background:#f1f8e9;
+  background-image:
+    radial-gradient(circle at 80% 10%,#dcedc8 0%,transparent 40%),
+    radial-gradient(circle at 20% 90%,#c8e6c9 0%,transparent 40%);
+}
+.journal-inner{
+  max-width:640px;margin:0 auto;
+  padding:36px 20px 80px;
+}
+.journal-title{color:#2e7d32;font-family:var(--font-head);font-size:clamp(26px,5vw,42px);text-align:center;margin-bottom:6px}
+.journal-subtitle{color:#66bb6a;font-size:14px;font-weight:700;text-align:center;margin-bottom:28px}
+
+.journal-date{
+  background:#fff;border-radius:var(--r-md);
+  padding:12px 16px;margin-bottom:18px;
+  font-size:14px;font-weight:700;color:#555;
+  border-left:4px solid #66bb6a;
+  display:flex;align-items:center;gap:8px;
+}
+.journal-date span{font-size:20px}
+
+.journal-question{
+  background:#fff;border-radius:var(--r-xl);
+  border:2px solid #c8e6c9;
+  padding:24px;margin-bottom:14px;
+  box-shadow:var(--shadow-sm);
+}
+.jq-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:#81c784;margin-bottom:10px}
+.jq-question{font-size:16px;font-weight:700;color:#2e7d32;margin-bottom:14px;line-height:1.4}
+.jq-emo-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:8px;
+  margin-bottom:14px;
+}
+.jq-emo-btn{
+  aspect-ratio:1;border-radius:var(--r-md);
+  border:2.5px solid transparent;
+  background:#f9fbe7;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:3px;
+  cursor:pointer;transition:all .2s;
+  font-size:24px;padding:6px;
+}
+.jq-emo-btn:hover{transform:scale(1.1);border-color:#aed581}
+.jq-emo-btn.selected{border-color:#66bb6a;background:#dcedc8}
+.jq-emo-label{font-size:8px;font-weight:800;letter-spacing:.04em;color:#7cb342}
+.jq-textarea{
+  width:100%;min-height:80px;
+  background:#f9fbe7;border:2px solid #dcedc8;
+  border-radius:var(--r-md);padding:12px 14px;
+  font-family:var(--font-body);font-size:14px;font-weight:600;
+  color:#333;resize:vertical;outline:none;
+  transition:border-color .2s;
+}
+.jq-textarea:focus{border-color:#66bb6a}
+.jq-textarea::placeholder{color:#c5e1a5;font-weight:600}
+
+.journal-save-row{
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  margin-top:4px;
+}
+.btn-save-journal{
+  padding:12px 28px;border-radius:40px;
+  background:#43a047;border:none;color:#fff;
+  font-family:var(--font-body);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 14px rgba(67,160,71,.3);
+}
+.btn-save-journal:hover{background:#388e3c;transform:translateY(-1px)}
+.save-confirm{
+  font-size:13px;font-weight:700;color:#43a047;
+  opacity:0;transition:opacity .3s;
+}
+.save-confirm.visible{opacity:1}
+
+.journal-entries{margin-top:28px}
+.journal-entries-title{
+  font-family:var(--font-head);font-size:18px;color:#388e3c;
+  margin-bottom:14px;
+}
+.entry-card{
+  background:#fff;border-radius:var(--r-lg);
+  border:2px solid #c8e6c9;padding:16px 20px;
+  margin-bottom:10px;box-shadow:var(--shadow-sm);
+}
+.entry-header{
+  display:flex;align-items:center;gap:10px;
+  margin-bottom:8px;
+}
+.entry-emo{font-size:28px}
+.entry-meta{font-size:12px;color:#a5d6a7;font-weight:700}
+.entry-text{font-size:14px;color:#444;font-weight:600;line-height:1.5}
+.no-entries{font-size:14px;color:#a5d6a7;font-weight:700;text-align:center;padding:20px}
+
+/* ─────────────────────────────────────────────
+   SHARED
+───────────────────────────────────────────── */
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVIGATION ════════════════════════════ -->
+<nav>
+  <div class="nav-logo">Feel It · <span>Name It</span></div>
+  <button class="nav-btn active" data-page="home" onclick="goTo('home')">🏠 Home</button>
+  <button class="nav-btn" data-page="tictactoe" onclick="goTo('tictactoe')">✖️ Tic-Tac-Toe</button>
+  <button class="nav-btn" data-page="dice" onclick="goTo('dice')">🎲 Sentence Dice</button>
+  <button class="nav-btn" data-page="match" onclick="goTo('match')">🔗 Match It!</button>
+  <button class="nav-btn" data-page="wheel" onclick="goTo('wheel')">🎡 Emotion Wheel</button>
+  <button class="nav-btn" data-page="journal" onclick="goTo('journal')">📔 My Journal</button>
+</nav>
+
+<!-- ═══ PAGE: HOME ════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="home-blob hb1"></div>
+  <div class="home-blob hb2"></div>
+  <div class="home-blob hb3"></div>
+  <div class="home-blob hb4"></div>
+  <div class="home-inner">
+    <div class="home-title">Feel It.<br><span>Name It. Tame It.</span></div>
+    <div class="home-subtitle">Your English emotions classroom — 6 activities to explore how you feel</div>
+    <div class="home-cards">
+      <div class="home-card hc-tictactoe" onclick="goTo('tictactoe')">
+        <span class="home-card-icon">✖️⭕</span>
+        <div class="home-card-title">Emotion Tic-Tac-Toe</div>
+        <div class="home-card-desc">Two teams compete. Say a sentence about your emotion to claim the square. Get three in a row to win!</div>
+        <span class="home-card-tag tag-tictactoe">2 teams · speaking</span>
+      </div>
+      <div class="home-card hc-dice" onclick="goTo('dice')">
+        <span class="home-card-icon">🎲</span>
+        <div class="home-card-title">Sentence Dice</div>
+        <div class="home-card-desc">Pick a sentence, say it neutrally — then roll the dice and say it again with a surprise emotion!</div>
+        <span class="home-card-tag tag-dice">whole class · drama</span>
+      </div>
+      <div class="home-card hc-match" onclick="goTo('match')">
+        <span class="home-card-icon">🔗</span>
+        <div class="home-card-title">Match It!</div>
+        <div class="home-card-desc">Connect each emotion to the right coping strategy. Learn how to take care of yourself.</div>
+        <span class="home-card-tag tag-match">individual · CBT</span>
+      </div>
+      <div class="home-card hc-wheel" onclick="goTo('wheel')">
+        <span class="home-card-icon">🎡</span>
+        <div class="home-card-title">Emotion Wheel</div>
+        <div class="home-card-desc">Spin the wheel, land on an emotion, and complete a speaking or writing challenge!</div>
+        <span class="home-card-tag tag-wheel">solo or pairs</span>
+      </div>
+      <div class="home-card hc-journal" onclick="goTo('journal')">
+        <span class="home-card-icon">📔</span>
+        <div class="home-card-title">My Journal</div>
+        <div class="home-card-desc">Write how you feel today. Answer guided questions and build your emotion vocabulary.</div>
+        <span class="home-card-tag tag-journal">individual · writing</span>
+      </div>
+    </div>
+    <div class="home-coming-soon">
+      <div class="home-coming-label">💡 More activities to add</div>
+      <div class="coming-list">
+        <div class="coming-item"><span>🗣️</span> Emotion Debate — argue for your emotion!</div>
+        <div class="coming-item"><span>🎭</span> Emotion Charades — act it out!</div>
+        <div class="coming-item"><span>🧩</span> Emotion Crossword puzzle</div>
+        <div class="coming-item"><span>📊</span> Class Mood Graph — daily tracker</div>
+        <div class="coming-item"><span>🪜</span> Calm-Down Staircase builder</div>
+        <div class="coming-item"><span>🎬</span> Emotion Cinema — describe film scenes</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: TIC TAC TOE ════════════════════ -->
+<div class="page" id="page-tictactoe">
+  <div class="ttt-stars" id="ttt-stars"></div>
+  <div class="ttt-inner">
+    <div class="page-title ttt-title">Emotion Tic-Tac-Toe</div>
+    <div class="page-subtitle ttt-subtitle">Say a sentence · Claim the square · Get three in a row!</div>
+    <div class="team-setup">
+      <div class="team-card team-a-card">
+        <div class="team-label ta-label">TEAM 1 NAME</div>
+        <input class="team-input" id="ttt-name-a" value="Stars ⭐" maxlength="14" oninput="tttUpdateNames()">
+      </div>
+      <div class="team-card team-b-card">
+        <div class="team-label tb-label">TEAM 2 NAME</div>
+        <input class="team-input" id="ttt-name-b" value="Rockets 🚀" maxlength="14" oninput="tttUpdateNames()">
+      </div>
+    </div>
+    <div class="scoreboard">
+      <div class="sc-card sc-a sc-active" id="ttt-sc-a">
+        <div class="sc-name sc-name-a" id="ttt-lbl-a">Stars ⭐</div>
+        <div class="sc-pts sc-pts-a" id="ttt-pts-a">0</div>
+      </div>
+      <div>
+        <div class="sc-vs">VS</div>
+        <div class="sc-turn">Turn</div>
+        <div class="sc-turn-name" id="ttt-turn-name">Stars ⭐</div>
+      </div>
+      <div class="sc-card sc-b" id="ttt-sc-b">
+        <div class="sc-name sc-name-b" id="ttt-lbl-b">Rockets 🚀</div>
+        <div class="sc-pts sc-pts-b" id="ttt-pts-b">0</div>
+      </div>
+    </div>
+    <div class="ttt-grid" id="ttt-grid"></div>
+    <div class="ttt-win-banner" id="ttt-win-banner">
+      <div class="win-emo" id="ttt-win-emo">🌟</div>
+      <div class="win-title" id="ttt-win-title">Stars wins!</div>
+      <div class="win-sub">Amazing sentences! Play again?</div>
+      <button class="btn-primary" onclick="tttNewGame()">New game</button>
+    </div>
+    <div class="ttt-action" id="ttt-action">
+      <div class="action-idle-text" id="ttt-idle-text">👆 Click a square to select an emotion!</div>
+      <div class="action-emotion-row hidden" id="ttt-active-row">
+        <div class="action-big-emo" id="ttt-act-emo"></div>
+        <div class="action-text-col">
+          <div class="action-emotion-label" id="ttt-act-name"></div>
+          <div class="action-frame-text" id="ttt-act-frame"></div>
+          <div class="action-example-text" id="ttt-act-example"></div>
+        </div>
+      </div>
+      <div class="ttt-verdict-btns hidden" id="ttt-verdict">
+        <button class="btn-reject" onclick="tttDecide(false)">✗ Reject — try again</button>
+        <button class="btn-accept" onclick="tttDecide(true)">✓ Accept — claim it!</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+      <button class="btn-secondary" onclick="tttNewGame()">Reset board</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: DICE GAME ═══════════════════════ -->
+<div class="page" id="page-dice">
+  <div class="dice-dots-bg" id="dice-dots"></div>
+  <div class="dice-inner">
+    <div class="dice-title">Sentence Dice</div>
+    <div class="dice-subtitle">Say the sentence neutral · Roll the dice · Say it with emotion! 🎭</div>
+    <div class="dice-step-bar">
+      <div class="dice-step step-active" id="ds1">① Say it neutrally</div>
+      <div class="dice-step" id="ds2">② Roll the dice</div>
+      <div class="dice-step" id="ds3">③ Say it with emotion!</div>
+    </div>
+    <div class="dice-sentence-card">
+      <div class="dice-sentence-num" id="dice-num">SENTENCE 1 / 12</div>
+      <div class="dice-sentence-text" id="dice-sent">"I like pizza."</div>
+      <div class="dice-neutral-hint">Read this out loud — completely neutral, like a robot 🤖</div>
+    </div>
+    <div class="dice-middle">
+      <div class="dice-col">
+        <div class="die-face" id="die-face" onclick="rollDice()">?</div>
+        <div class="die-hint">Click to roll!</div>
+      </div>
+      <div class="emotion-reveal" id="dice-emo-reveal">
+        <div class="emotion-reveal-idle">Roll the dice to discover your emotion!</div>
+        <div class="emo-big" id="dice-emo-big"></div>
+        <div class="emo-name-big" id="dice-emo-name"></div>
+        <div class="emo-body-hint" id="dice-emo-hint"></div>
+      </div>
+    </div>
+    <div class="dice-say-card" id="dice-say-card">
+      <div class="say-idle">Roll first, then say your sentence again!</div>
+      <div class="say-prompt" id="dice-say-prompt">NOW SAY IT WITH EMOTION:</div>
+      <div class="say-sentence" id="dice-say-sent"></div>
+    </div>
+    <div class="dice-controls">
+      <button class="btn-roll" id="btn-roll" onclick="rollDice()">🎲 Roll the dice</button>
+      <button class="btn-next" onclick="diceNext()">Next sentence →</button>
+      <button class="btn-ghost" onclick="diceReset()">Reset</button>
+    </div>
+    <div class="dice-legend" id="dice-legend"></div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: MATCH IT ════════════════════════ -->
+<div class="page" id="page-match">
+  <svg class="match-waves" viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,60 C360,120 720,0 1080,60 C1260,90 1380,30 1440,60 L1440,120 L0,120 Z" fill="rgba(0,150,136,.07)"/>
+    <path d="M0,80 C400,20 800,100 1200,40 C1320,20 1400,70 1440,80 L1440,120 L0,120 Z" fill="rgba(0,188,212,.05)"/>
+  </svg>
+  <div class="match-inner">
+    <div class="match-title">Match It!</div>
+    <div class="match-subtitle">Connect each emotion to its coping strategy</div>
+    <div class="match-instruction">Click an emotion → then click the matching strategy · Score 100% to win! 🏆</div>
+    <div class="match-progress-label" id="match-progress-label">0 / 7 matched</div>
+    <div class="match-progress"><div class="match-progress-fill" id="match-progress-fill"></div></div>
+    <div class="match-area">
+      <div>
+        <div class="match-col-title">EMOTIONS</div>
+        <div class="emotion-options" id="match-emotions"></div>
+      </div>
+      <div>
+        <div class="match-col-title">COPING STRATEGIES</div>
+        <div class="strategy-options" id="match-strats"></div>
+      </div>
+    </div>
+    <div class="match-feedback" id="match-feedback">Choose an emotion on the left to start!</div>
+    <div class="match-complete" id="match-complete">
+      <div class="match-complete-emo">🏆</div>
+      <div class="match-complete-title">Perfect match!</div>
+      <div class="match-complete-sub">You know your coping strategies — that's real emotional intelligence!</div>
+      <button class="btn-match-reset" onclick="matchReset()">Play again</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: EMOTION WHEEL ══════════════════ -->
+<div class="page" id="page-wheel">
+  <div class="wheel-inner">
+    <div class="wheel-title">Emotion Wheel</div>
+    <div class="wheel-subtitle">Spin the wheel · Get a challenge · Speak or write! 🎡</div>
+    <div class="wheel-container">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheel-canvas" width="480" height="480"></canvas>
+      <button class="spin-btn" id="spin-btn" onclick="spinWheel()">SPIN!</button>
+    </div>
+    <div class="wheel-result" id="wheel-result">
+      <div class="wheel-result-idle">Spin the wheel to get your emotion challenge!</div>
+      <div class="wheel-result-emo" id="wheel-res-emo"></div>
+      <div class="wheel-result-name" id="wheel-res-name"></div>
+      <div class="wheel-result-task" id="wheel-res-task"></div>
+      <button class="btn-spin-again" id="btn-spin-again" onclick="spinWheel()">Spin again!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PAGE: JOURNAL ═════════════════════════ -->
+<div class="page" id="page-journal">
+  <div class="journal-inner">
+    <div class="journal-title">My Emotion Journal</div>
+    <div class="journal-subtitle">Write how you feel · Build your vocabulary · Be honest with yourself 🌱</div>
+    <div class="journal-date">
+      <span>📅</span>
+      <div id="journal-date-text">Today is ...</div>
+    </div>
+    <div class="journal-question">
+      <div class="jq-label">QUESTION 1</div>
+      <div class="jq-question">How do you feel RIGHT NOW? Choose an emotion (or more than one!):</div>
+      <div class="jq-emo-grid" id="journal-emo-grid"></div>
+    </div>
+    <div class="journal-question">
+      <div class="jq-label">QUESTION 2</div>
+      <div class="jq-question">Why do you feel this way? Write a sentence in English:</div>
+      <textarea class="jq-textarea" id="journal-why" placeholder='I feel ... because ...'></textarea>
+    </div>
+    <div class="journal-question">
+      <div class="jq-label">QUESTION 3</div>
+      <div class="jq-question">What can you do to take care of yourself today?</div>
+      <textarea class="jq-textarea" id="journal-cope" placeholder='I can ...'></textarea>
+    </div>
+    <div class="journal-save-row">
+      <button class="btn-save-journal" onclick="saveJournal()">Save entry 💾</button>
+      <div class="save-confirm" id="save-confirm">✓ Saved!</div>
+    </div>
+    <div class="journal-entries" id="journal-entries-section">
+      <div class="journal-entries-title">My past entries</div>
+      <div id="journal-entries-list"><div class="no-entries">No entries yet. Write your first one! ✨</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────
+   ROUTER
+───────────────────────────────────────────── */
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelector('[data-page="'+page+'"]').classList.add('active');
+  window.scrollTo(0,0);
+  if(page==='tictactoe') tttInit();
+  if(page==='dice') diceInit();
+  if(page==='match') matchInit();
+  if(page==='wheel') wheelInit();
+  if(page==='journal') journalInit();
+}
+
+/* ─────────────────────────────────────────────
+   SHARED DATA
+───────────────────────────────────────────── */
+const EMOTIONS=[
+  {emoji:'😊',name:'HAPPY',   frame:'I feel happy when ...',   example:'e.g. "I feel happy when I listen to music."',  body:'warm chest, big smile',    color:'#f9a825',bg:'#fff9e6',text:'#7a5000'},
+  {emoji:'😢',name:'SAD',     frame:'I feel sad when ...',     example:'e.g. "I feel sad when I miss my friends."',    body:'heavy, tight throat',      color:'#1976d2',bg:'#e3f2fd',text:'#0d3c6e'},
+  {emoji:'😡',name:'ANGRY',   frame:'I feel angry when ...',   example:'e.g. "I feel angry when someone is unfair."', body:'hot, tense muscles',       color:'#e53935',bg:'#ffebee',text:'#7f1010'},
+  {emoji:'😱',name:'SCARED',  frame:'I feel scared when ...',  example:'e.g. "I feel scared when I watch horror."',   body:'cold hands, fast heart',   color:'#7b1fa2',bg:'#f3e5f5',text:'#4a0070'},
+  {emoji:'😲',name:'SURPRISED',frame:'I feel surprised when ...',example:'e.g. "I feel surprised when I get a gift."',body:'open mouth, fast breath',  color:'#00897b',bg:'#e0f7f4',text:'#004040'},
+  {emoji:'😑',name:'BORED',   frame:'I feel bored when ...',   example:'e.g. "I feel bored when I wait too long."',   body:'flat, slow, yawn',         color:'#616161',bg:'#f5f5f5',text:'#212121'},
+  {emoji:'🤩',name:'EXCITED', frame:'I feel excited when ...',  example:'e.g. "I feel excited when holidays start."',  body:'bouncy, big smile, fast',  color:'#ff6f00',bg:'#fff8e1',text:'#7a3000'},
+  {emoji:'🥹',name:'PROUD',   frame:'I feel proud when ...',   example:'e.g. "I feel proud when I help someone."',    body:'tall, strong, shine',      color:'#2e7d32',bg:'#e8f5e9',text:'#0a3d0a'},
+  {emoji:'🤢',name:'DISGUSTED',frame:'I feel disgusted when ...',example:'e.g. "I feel disgusted when food smells bad."',body:'wrinkled nose, sick feeling',color:'#ad1457',bg:'#fce4ec',text:'#6a0030'},
+];
+
+const SENTENCES=[
+  '"I like pizza."','"Today is Monday."','"My cat is at home."',
+  '"I have a red pencil case."','"School starts at eight."','"I don\'t like homework."',
+  '"My friend lives near me."','"It is raining outside."','"I want to go home."',
+  '"My bag is very heavy."','"I have a test today."','"The lesson is very long."',
+  '"My shoes are wet."','"I forgot my homework."','"We have a new student."',
+  '"I lost my pencil."','"The bell just rang."','"I saw a rainbow."',
+  '"My friend shared a snack."','"I finished my project."','"The teacher smiled at me."',
+  '"I woke up late."','"We are going on a trip."','"I helped my classmate."',
+  '"I made a mistake."','"I learned a new word."','"My favorite show is on TV."',
+  '"I played a fun game."','"I spilled my drink."','"I drew a picture."',
+  '"I heard a loud noise."','"I got a good grade."','"I forgot my lunch."',
+  '"My pet is sick."','"I saw a funny video."','"I read a good book."',
+  '"I have a birthday soon."','"I missed the bus."','"I got a new backpack."',
+  '"I visited my grandma."','"I cleaned my room."','"I sang a song."',
+  '"I went to the park."','"I found a coin."','"I lost my eraser."',
+  '"I made a new friend."','"I saw a spider."','"I ate ice cream."',
+  '"I finished my homework early."','"I forgot my umbrella."','"I saw a shooting star."',
+  '"I got a compliment."','"I tripped and fell."','"I watched a movie."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+  '"I saw a rainbow after English time."','"I got a new pencil for fun."','"I saw a rainbow after social studies time."',
+  '"I got a new eraser for fun."','"I saw a rainbow after computer time."','"I got a new ruler for fun."',
+  '"I saw a rainbow after library time."','"I got a new lunchbox for fun."','"I saw a rainbow after recess time."',
+  '"I got a new pair of shoes for fun."','"I saw a rainbow after music time."','"I got a new coloring book for fun."',
+  '"I saw a rainbow after science time."','"I got a new set of crayons for fun."','"I saw a rainbow after reading time."',
+  '"I got a new backpack for fun."','"I saw a rainbow after math time."','"I got a new pencil case for fun."',
+  '"I saw a rainbow after history time."','"I got a new lunch bag for fun."','"I saw a rainbow after art time."',
+  '"I got a new water bottle for fun."','"I saw a rainbow after PE time."','"I got a new notebook for fun."',
+];
+
+/* ─────────────────────────────────────────────
+   TIC-TAC-TOE
+───────────────────────────────────────────── */
+const WINS=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let tttBoard,tttTurn,tttSelected,tttPtsA,tttPtsB,tttOver;
+
+function tttInit(){
+  // Stars background
+  const c=document.getElementById('ttt-stars');
+  if(c.children.length===0){
+    for(let i=0;i<80;i++){
+      const s=document.createElement('div');
+      s.className='star';
+      const sz=Math.random()*3+1;
+      s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.5+Math.random()*2}s`;
+      c.appendChild(s);
+    }
+  }
+  if(!tttBoard) tttNewGame();
+}
+
+function tttNewGame(){
+  const shuffle=[...EMOTIONS].sort(()=>Math.random()-.5);
+  tttBoard=shuffle.map(e=>({...e,owner:null}));
+  tttTurn='A'; tttSelected=null; tttOver=false;
+  if(!tttPtsA) tttPtsA=0;
+  if(!tttPtsB) tttPtsB=0;
+  document.getElementById('ttt-win-banner').classList.remove('visible');
+  tttRenderGrid();
+  tttUpdateUI();
+  tttShowIdle();
+}
+
+function tttUpdateNames(){
+  const na=document.getElementById('ttt-name-a').value||'Team A';
+  const nb=document.getElementById('ttt-name-b').value||'Team B';
+  document.getElementById('ttt-lbl-a').textContent=na;
+  document.getElementById('ttt-lbl-b').textContent=nb;
+  document.getElementById('ttt-turn-name').textContent=tttTurn==='A'?na:nb;
+}
+
+function tttUpdateUI(){
+  const na=document.getElementById('ttt-name-a').value||'Stars';
+  const nb=document.getElementById('ttt-name-b').value||'Rockets';
+  document.getElementById('ttt-lbl-a').textContent=na;
+  document.getElementById('ttt-lbl-b').textContent=nb;
+  document.getElementById('ttt-pts-a').textContent=tttPtsA;
+  document.getElementById('ttt-pts-b').textContent=tttPtsB;
+  document.getElementById('ttt-turn-name').textContent=tttTurn==='A'?na:nb;
+  document.getElementById('ttt-sc-a').classList.toggle('sc-active',tttTurn==='A');
+  document.getElementById('ttt-sc-b').classList.toggle('sc-active',tttTurn==='B');
+}
+
+function tttRenderGrid(){
+  const grid=document.getElementById('ttt-grid');
+  grid.innerHTML='';
+  const winCells=tttGetWinCells();
+  tttBoard.forEach((cell,i)=>{
+    const div=document.createElement('div');
+    div.className='ttt-cell';
+    if(cell.owner==='A') div.classList.add(winCells.has(i)?'cell-win-a':'cell-a');
+    else if(cell.owner==='B') div.classList.add(winCells.has(i)?'cell-win-b':'cell-b');
+    if(tttSelected===i && !cell.owner) div.classList.add('cell-pending');
+    div.innerHTML=`<div class="cell-emo">${cell.emoji}</div><div class="cell-name">${cell.name}</div>`
+      +(cell.owner?`<div class="cell-owner-badge badge-${cell.owner.toLowerCase()}">${cell.owner==='A'?(document.getElementById('ttt-name-a').value||'A'):(document.getElementById('ttt-name-b').value||'B')}</div>`:'');
+    if(!cell.owner&&!tttOver) div.onclick=()=>tttSelect(i);
+    grid.appendChild(div);
+  });
+}
+
+function tttGetWinCells(){
+  const s=new Set();
+  for(const [a,b,c] of WINS){
+    if(tttBoard[a].owner&&tttBoard[a].owner===tttBoard[b].owner&&tttBoard[a].owner===tttBoard[c].owner){s.add(a);s.add(b);s.add(c);}
+  }
+  return s;
+}
+
+function tttSelect(i){
+  if(tttOver||tttBoard[i].owner) return;
+  tttSelected=i;
+  tttRenderGrid();
+  const cell=tttBoard[i];
+  document.getElementById('ttt-idle-text').classList.add('hidden');
+  document.getElementById('ttt-active-row').classList.remove('hidden');
+  document.getElementById('ttt-verdict').classList.remove('hidden');
+  document.getElementById('ttt-act-emo').textContent=cell.emoji;
+  document.getElementById('ttt-act-name').textContent=cell.name;
+  document.getElementById('ttt-act-frame').textContent=cell.frame;
+  document.getElementById('ttt-act-example').textContent=cell.example;
+}
+
+function tttShowIdle(){
+  document.getElementById('ttt-idle-text').classList.remove('hidden');
+  document.getElementById('ttt-active-row').classList.add('hidden');
+  document.getElementById('ttt-verdict').classList.add('hidden');
+}
+
+function tttDecide(accepted){
+  if(tttSelected===null) return;
+  if(accepted){
+    tttBoard[tttSelected].owner=tttTurn;
+    const winner=tttCheckWin();
+    if(winner){
+      tttOver=true;
+      if(winner==='A') tttPtsA++;
+      else tttPtsB++;
+      tttRenderGrid();
+      tttUpdateUI();
+      const wname=winner==='A'?(document.getElementById('ttt-name-a').value||'Team A'):(document.getElementById('ttt-name-b').value||'Team B');
+      document.getElementById('ttt-win-emo').textContent=winner==='A'?'⭐':'🚀';
+      document.getElementById('ttt-win-title').textContent=wname+' wins!';
+      document.getElementById('ttt-win-banner').classList.add('visible');
+      tttShowIdle();
+      return;
+    }
+    if(tttBoard.every(c=>c.owner)){
+      tttOver=true;
+      document.getElementById('ttt-win-emo').textContent='🤝';
+      document.getElementById('ttt-win-title').textContent="It's a draw!";
+      document.getElementById('ttt-win-banner').classList.add('visible');
+      tttShowIdle();
+      return;
+    }
+    tttTurn=tttTurn==='A'?'B':'A';
+    tttUpdateUI();
+  }
+  tttSelected=null;
+  tttRenderGrid();
+  tttShowIdle();
+}
+
+function tttCheckWin(){
+  for(const [a,b,c] of WINS){
+    if(tttBoard[a].owner&&tttBoard[a].owner===tttBoard[b].owner&&tttBoard[a].owner===tttBoard[c].owner)
+      return tttBoard[a].owner;
+  }
+  return null;
+}
+
+/* ─────────────────────────────────────────────
+   DICE GAME
+───────────────────────────────────────────── */
+const DICE_EMOTIONS=[
+  {emoji:'😊',name:'HAPPY',   hint:'Warm voice, big smile, stand tall',        bg:'#fff9e6',border:'#f9a825',txt:'#7a5000'},
+  {emoji:'😢',name:'SAD',     hint:'Slow quiet voice, slouch, look down',       bg:'#e3f2fd',border:'#1976d2',txt:'#0d3c6e'},
+  {emoji:'😡',name:'ANGRY',   hint:'Sharp loud voice, tense, frown',           bg:'#ffebee',border:'#e53935',txt:'#7f1010'},
+  {emoji:'😱',name:'SCARED',  hint:'Shaky soft voice, wide eyes, stiff body',  bg:'#f3e5f5',border:'#7b1fa2',txt:'#4a0070'},
+  {emoji:'😲',name:'SURPRISED',hint:'High voice, open mouth, raised eyebrows', bg:'#e0f7f4',border:'#00897b',txt:'#004040'},
+  {emoji:'😑',name:'BORED',   hint:'Flat slow voice, long sigh, slouch',       bg:'#f5f5f5',border:'#616161',txt:'#212121'},
+];
+let diceIdx=0,diceRolling=false;
+
+function diceInit(){
+  const dd=document.getElementById('dice-dots');
+  if(dd.children.length===0){
+    for(let i=0;i<40;i++){
+      const d=document.createElement('div');
+      d.className='dot';
+      const sz=8+Math.random()*30;
+      d.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;`;
+      dd.appendChild(d);
+    }
+  }
+  buildDiceLegend();
+  diceUpdateSentence();
+}
+
+function buildDiceLegend(){
+  const leg=document.getElementById('dice-legend');
+  if(leg.innerHTML!=='') return;
+  DICE_EMOTIONS.forEach((e,i)=>{
+    const d=document.createElement('div');
+    d.className='legend-item';
+    d.style.cssText=`background:${e.bg};border-color:${e.border}`;
+    d.innerHTML=`<div class="legend-num" style="color:${e.txt}">${i+1}</div><div class="legend-lbl" style="color:${e.txt}">${e.name}</div>`;
+    leg.appendChild(d);
+  });
+}
+
+function diceUpdateSentence(){
+  document.getElementById('dice-num').textContent=`SENTENCE ${diceIdx+1} / ${SENTENCES.length}`;
+  document.getElementById('dice-sent').textContent=SENTENCES[diceIdx];
+  diceResetEmotion();
+  diceSetStep(1);
+}
+
+function diceResetEmotion(){
+  const er=document.getElementById('dice-emo-reveal');
+  er.classList.remove('revealed');
+  er.style.background='';er.style.borderColor='';
+  document.getElementById('dice-emo-big').classList.remove('pop');
+  const sc=document.getElementById('dice-say-card');
+  sc.classList.remove('revealed');sc.style.background='';sc.style.borderColor='';
+  document.getElementById('die-face').textContent='?';
+}
+
+function diceSetStep(n){
+  [1,2,3].forEach(i=>document.getElementById('ds'+i).classList.remove('step-active'));
+  document.getElementById('ds'+n).classList.add('step-active');
+}
+
+function rollDice(){
+  if(diceRolling) return;
+  diceRolling=true;
+  diceSetStep(2);
+  document.getElementById('btn-roll').disabled=true;
+  const die=document.getElementById('die-face');
+  die.classList.remove('rolling');
+  void die.offsetWidth;
+  die.classList.add('rolling');
+  let count=0;
+  const iv=setInterval(()=>{die.textContent=Math.ceil(Math.random()*6);count++;if(count>=14)clearInterval(iv);},52);
+  setTimeout(()=>{
+    const result=Math.floor(Math.random()*6);
+    const e=DICE_EMOTIONS[result];
+    die.textContent=result+1;
+    die.classList.remove('rolling');
+    const er=document.getElementById('dice-emo-reveal');
+    er.style.background=e.bg;er.style.borderColor=e.border;
+    er.classList.add('revealed');
+    const eb=document.getElementById('dice-emo-big');
+    eb.textContent=e.emoji;
+    eb.classList.remove('pop');void eb.offsetWidth;eb.classList.add('pop');
+    document.getElementById('dice-emo-name').textContent=e.name;
+    document.getElementById('dice-emo-name').style.color=e.txt;
+    document.getElementById('dice-emo-hint').textContent=e.hint;
+    document.getElementById('dice-emo-hint').style.color=e.txt;
+    const sc=document.getElementById('dice-say-card');
+    sc.style.background=e.bg;sc.style.borderColor=e.border;
+    sc.classList.add('revealed');
+    document.getElementById('dice-say-prompt').style.color=e.txt;
+    document.getElementById('dice-say-sent').textContent=SENTENCES[diceIdx];
+    diceSetStep(3);
+    diceRolling=false;
+    document.getElementById('btn-roll').disabled=false;
+  },760);
+}
+
+function diceNext(){
+  diceIdx=(diceIdx+1)%SENTENCES.length;
+  diceUpdateSentence();
+}
+
+function diceReset(){
+  diceIdx=0;diceUpdateSentence();
+}
+
+/* ─────────────────────────────────────────────
+   MATCH IT
+───────────────────────────────────────────── */
+const MATCH_PAIRS=[
+  {emoji:'😊',name:'HAPPY',   strat:'Share your happiness with someone you love',    sid:0},
+  {emoji:'😢',name:'SAD',     strat:'Listen to music or write in your journal',       sid:1},
+  {emoji:'😡',name:'ANGRY',   strat:'Take a deep breath and count to 10',            sid:2},
+  {emoji:'😱',name:'SCARED',  strat:'Talk to a trusted adult or friend',             sid:3},
+  {emoji:'😲',name:'SURPRISED',strat:'Pause, breathe, and give yourself a moment',   sid:4},
+  {emoji:'😑',name:'BORED',   strat:'Move your body — dance, walk, stretch!',        sid:5},
+  {emoji:'🤩',name:'EXCITED', strat:'Channel your energy into something creative',   sid:6},
+];
+let matchSelectedEmo=null,matchMatched=0;
+
+function matchInit(){
+  matchSelectedEmo=null;matchMatched=0;
+  buildMatchBoard();
+  updateMatchProgress();
+  document.getElementById('match-feedback').textContent='Choose an emotion on the left to start!';
+  document.getElementById('match-complete').classList.remove('visible');
+}
+
+function buildMatchBoard(){
+  const emos=document.getElementById('match-emotions');
+  const strats=document.getElementById('match-strats');
+  emos.innerHTML='';strats.innerHTML='';
+  const shuffledStrats=[...MATCH_PAIRS].sort(()=>Math.random()-.5);
+  MATCH_PAIRS.forEach((p,i)=>{
+    const chip=document.createElement('div');
+    chip.className='match-chip';
+    chip.dataset.eid=i;
+    chip.innerHTML=`<div class="chip-emo">${p.emoji}</div><div class="chip-text">${p.name}</div><div class="chip-check">✓</div>`;
+    chip.onclick=()=>matchSelectEmo(i,chip);
+    emos.appendChild(chip);
+  });
+  shuffledStrats.forEach(p=>{
+    const chip=document.createElement('div');
+    chip.className='match-chip';
+    chip.dataset.sid=p.sid;
+    chip.innerHTML=`<div class="chip-text">${p.strat}</div><div class="chip-check">✓</div>`;
+    chip.onclick=()=>matchSelectStrat(p.sid,chip);
+    strats.appendChild(chip);
+  });
+}
+
+function matchSelectEmo(id,chip){
+  if(chip.classList.contains('matched')) return;
+  document.querySelectorAll('#match-emotions .match-chip').forEach(c=>c.classList.remove('selected-emo'));
+  chip.classList.add('selected-emo');
+  matchSelectedEmo=id;
+  document.getElementById('match-feedback').textContent='Great! Now click the matching strategy →';
+}
+
+function matchSelectStrat(sid,chip){
+  if(chip.classList.contains('matched')) return;
+  if(matchSelectedEmo===null){
+    document.getElementById('match-feedback').textContent='First select an emotion on the left!';
+    return;
+  }
+  const correct=MATCH_PAIRS[matchSelectedEmo].sid===sid;
+  if(correct){
+    chip.classList.add('matched');
+    const emoChip=document.querySelector(`#match-emotions .match-chip[data-eid="${matchSelectedEmo}"]`);
+    emoChip.classList.add('matched');emoChip.classList.remove('selected-emo');
+    matchMatched++;matchSelectedEmo=null;
+    updateMatchProgress();
+    const p=MATCH_PAIRS.find(x=>x.sid===sid);
+    document.getElementById('match-feedback').textContent=`✓ ${p.emoji} ${p.name} → "${p.strat}" — Great match!`;
+    if(matchMatched===MATCH_PAIRS.length) setTimeout(()=>document.getElementById('match-complete').classList.add('visible'),600);
+  } else {
+    chip.classList.add('wrong','shake');
+    const emoChip=document.querySelector(`#match-emotions .match-chip[data-eid="${matchSelectedEmo}"]`);
+    emoChip.classList.add('wrong','shake');
+    document.getElementById('match-feedback').textContent='Not quite! Try a different strategy.';
+    setTimeout(()=>{chip.classList.remove('wrong','shake');if(emoChip) emoChip.classList.remove('wrong','shake');},400);
+  }
+}
+
+function updateMatchProgress(){
+  const pct=Math.round((matchMatched/MATCH_PAIRS.length)*100);
+  document.getElementById('match-progress-fill').style.width=pct+'%';
+  document.getElementById('match-progress-label').textContent=`${matchMatched} / ${MATCH_PAIRS.length} matched`;
+}
+
+function matchReset(){ matchInit(); }
+
+/* ─────────────────────────────────────────────
+   EMOTION WHEEL
+───────────────────────────────────────────── */
+const WHEEL_SEGMENTS=[
+  {emoji:'😊',name:'HAPPY',   color:'#f9a825',dark:'#e65100'},
+  {emoji:'😢',name:'SAD',     color:'#42a5f5',dark:'#0d47a1'},
+  {emoji:'😡',name:'ANGRY',   color:'#ef5350',dark:'#b71c1c'},
+  {emoji:'😱',name:'SCARED',  color:'#ab47bc',dark:'#4a148c'},
+  {emoji:'😲',name:'SURPRISED',color:'#26a69a',dark:'#004d40'},
+  {emoji:'😑',name:'BORED',   color:'#90a4ae',dark:'#263238'},
+  {emoji:'🤩',name:'EXCITED', color:'#ffa726',dark:'#e65100'},
+  {emoji:'🥹',name:'PROUD',   color:'#66bb6a',dark:'#1b5e20'},
+];
+const WHEEL_TASKS=[
+  e=>`Say 3 things that make you feel ${e.name.toLowerCase()}!`,
+  e=>`Make a face and a body pose for ${e.name.toLowerCase()} — hold it for 5 seconds!`,
+  e=>`Finish this sentence in English: "I feel ${e.name.toLowerCase()} when ..."`,
+  e=>`What colour is ${e.name.toLowerCase()} for you? Draw or describe it!`,
+  e=>`Name one song that makes you feel ${e.name.toLowerCase()}.`,
+  e=>`Where do you feel ${e.name.toLowerCase()} in your body? Describe it!`,
+];
+let wheelSpinning=false,wheelAngle=0;
+
+function wheelInit(){
+  drawWheel(wheelAngle);
+}
+
+function drawWheel(angle){
+  const canvas=document.getElementById('wheel-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const cx=240,cy=240,r=225,n=WHEEL_SEGMENTS.length;
+  const arc=(2*Math.PI)/n;
+  ctx.clearRect(0,0,480,480);
+  WHEEL_SEGMENTS.forEach((seg,i)=>{
+    const start=angle+i*arc-Math.PI/2;
+    const end=start+arc;
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,r,start,end);
+    ctx.closePath();ctx.fillStyle=seg.color;ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.translate(cx,cy);
+    ctx.rotate(start+arc/2);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.font='28px serif';ctx.fillText(seg.emoji,r*.65,0);
+    ctx.font='bold 11px Nunito,sans-serif';ctx.fillStyle='rgba(255,255,255,.92)';
+    ctx.fillText(seg.name,r*.38,0);
+    ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(cx,cy,36,0,2*Math.PI);
+  ctx.fillStyle='#1a1a2e';ctx.fill();
+  ctx.strokeStyle='rgba(255,255,255,.3)';ctx.lineWidth=3;ctx.stroke();
+}
+
+function spinWheel(){
+  if(wheelSpinning) return;
+  wheelSpinning=true;
+  document.getElementById('spin-btn').disabled=true;
+  document.getElementById('btn-spin-again').classList.remove('visible');
+  const wr=document.getElementById('wheel-result');
+  wr.classList.remove('has-result');
+  const spins=5+Math.random()*5;
+  const targetAngle=wheelAngle+spins*2*Math.PI+(Math.random()*2*Math.PI);
+  const duration=3500;
+  const start=performance.now();
+  const fromAngle=wheelAngle;
+  function frame(now){
+    const t=Math.min((now-start)/duration,1);
+    const ease=1-Math.pow(1-t,4);
+    wheelAngle=fromAngle+(targetAngle-fromAngle)*ease;
+    drawWheel(wheelAngle);
+    if(t<1){requestAnimationFrame(frame);}
+    else{
+      wheelAngle=targetAngle;
+      drawWheel(wheelAngle);
+      wheelSpinning=false;
+      document.getElementById('spin-btn').disabled=false;
+      showWheelResult();
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function showWheelResult(){
+  const n=WHEEL_SEGMENTS.length;
+  const arc=(2*Math.PI)/n;
+  const normalised=(((-wheelAngle+Math.PI/2)%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
+  const idx=Math.floor(normalised/arc)%n;
+  const seg=WHEEL_SEGMENTS[idx];
+  const task=WHEEL_TASKS[Math.floor(Math.random()*WHEEL_TASKS.length)](seg);
+  const wr=document.getElementById('wheel-result');
+  const re=document.getElementById('wheel-res-emo');
+  re.textContent=seg.emoji;
+  re.classList.remove('pop');void re.offsetWidth;re.classList.add('pop');
+  document.getElementById('wheel-res-name').textContent=seg.name;
+  document.getElementById('wheel-res-name').style.color=seg.color;
+  document.getElementById('wheel-res-task').textContent=task;
+  wr.classList.add('has-result');
+  document.getElementById('btn-spin-again').classList.add('visible');
+}
+
+/* ─────────────────────────────────────────────
+   JOURNAL
+───────────────────────────────────────────── */
+const JOURNAL_EMOS=[
+  {emoji:'😊',name:'Happy'},{emoji:'😢',name:'Sad'},{emoji:'😡',name:'Angry'},
+  {emoji:'😱',name:'Scared'},{emoji:'😲',name:'Surprised'},{emoji:'😑',name:'Bored'},
+  {emoji:'🤩',name:'Excited'},{emoji:'🥹',name:'Proud'},{emoji:'🤢',name:'Disgusted'},
+  {emoji:'😴',name:'Tired'},
+];
+let journalSelectedEmos=new Set();
+let journalEntries=JSON.parse(localStorage.getItem('emotion_journal')||'[]');
+
+function journalInit(){
+  journalSelectedEmos=new Set();
+  document.getElementById('journal-why').value='';
+  document.getElementById('journal-cope').value='';
+  document.getElementById('save-confirm').classList.remove('visible');
+  const now=new Date();
+  document.getElementById('journal-date-text').textContent='Today is '+now.toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  buildJournalEmoGrid();
+  renderJournalEntries();
+}
+
+function buildJournalEmoGrid(){
+  const grid=document.getElementById('journal-emo-grid');
+  grid.innerHTML='';
+  JOURNAL_EMOS.forEach((e,i)=>{
+    const btn=document.createElement('div');
+    btn.className='jq-emo-btn';
+    btn.innerHTML=`<span style="font-size:22px">${e.emoji}</span><div class="jq-emo-label">${e.name}</div>`;
+    btn.onclick=()=>{
+      if(journalSelectedEmos.has(i)){journalSelectedEmos.delete(i);btn.classList.remove('selected');}
+      else{journalSelectedEmos.add(i);btn.classList.add('selected');}
+    };
+    grid.appendChild(btn);
+  });
+}
+
+function saveJournal(){
+  const eList=[...journalSelectedEmos].map(i=>JOURNAL_EMOS[i].emoji).join(' ')||'?';
+  const why=document.getElementById('journal-why').value.trim();
+  const cope=document.getElementById('journal-cope').value.trim();
+  if(!why&&!cope&&journalSelectedEmos.size===0){
+    document.getElementById('match-feedback');
+    alert('Please fill in at least one part of the journal!');return;
+  }
+  const entry={
+    date:new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'}),
+    emotions:eList,why,cope,ts:Date.now()
+  };
+  journalEntries.unshift(entry);
+  try{localStorage.setItem('emotion_journal',JSON.stringify(journalEntries.slice(0,30)));}catch(e){}
+  document.getElementById('save-confirm').classList.add('visible');
+  renderJournalEntries();
+  document.getElementById('journal-why').value='';
+  document.getElementById('journal-cope').value='';
+  journalSelectedEmos=new Set();
+  document.querySelectorAll('.jq-emo-btn').forEach(b=>b.classList.remove('selected'));
+  setTimeout(()=>document.getElementById('save-confirm').classList.remove('visible'),3000);
+}
+
+function renderJournalEntries(){
+  const list=document.getElementById('journal-entries-list');
+  if(journalEntries.length===0){list.innerHTML='<div class="no-entries">No entries yet. Write your first one! ✨</div>';return;}
+  list.innerHTML=journalEntries.slice(0,10).map(e=>`
+    <div class="entry-card">
+      <div class="entry-header">
+        <div class="entry-emo">${e.emotions}</div>
+        <div class="entry-meta">${e.date}</div>
+      </div>
+      ${e.why?`<div class="entry-text">🗣️ ${e.why}</div>`:''}
+      ${e.cope?`<div class="entry-text" style="margin-top:6px">💡 ${e.cope}</div>`:''}
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>
