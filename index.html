@@ -1124,7 +1124,7 @@ const EMOTIONS=[
   {emoji:'🤢',name:'DISGUSTED',frame:'I feel disgusted when ...',example:'e.g. "I feel disgusted when food smells bad."',body:'wrinkled nose, sick feeling',color:'#ad1457',bg:'#fce4ec',text:'#6a0030'},
 ];
 
-const SENTENCES=[
+let SENTENCES=[
   '"I like pizza."','"Today is Monday."','"My cat is at home."',
   '"I have a red pencil case."','"School starts at eight."','"I don\'t like homework."',
   '"My friend lives near me."','"It is raining outside."','"I want to go home."',
@@ -1145,7 +1145,17 @@ const SENTENCES=[
   '"I watched a movie."','"I played outside."','"I got a present."',
   '"I had a dream last night."','"I saw a butterfly."','"I lost my keys."',
   '"I helped my teacher."','"I drew on the board."','"I heard my favorite song."',
+
 ];
+// Shuffle sentences at runtime for random order
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+SENTENCES = shuffleArray(SENTENCES);
 
 /* ─────────────────────────────────────────────
    TIC-TAC-TOE
