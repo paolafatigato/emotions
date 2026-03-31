@@ -76,6 +76,7 @@ nav::-webkit-scrollbar{display:none}
 .nav-btn[data-page="match"].active{background:#00bfa5;border-color:#00bfa5}
 .nav-btn[data-page="wheel"].active{background:#e91e8c;border-color:#e91e8c}
 .nav-btn[data-page="journal"].active{background:#43a047;border-color:#43a047}
+.nav-btn[data-page="compare"].active{background:#ff4081;border-color:#ff4081}
 
 /* ─────────────────────────────────────────────
    PAGE SHELL
@@ -831,6 +832,212 @@ canvas#wheel-canvas{width:100%;height:100%}
 .no-entries{font-size:14px;color:#a5d6a7;font-weight:700;text-align:center;padding:20px}
 
 /* ─────────────────────────────────────────────
+   DICE MODE TOGGLE
+───────────────────────────────────────────── */
+.dice-mode-toggle{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin-bottom:18px;
+  border-radius:40px;overflow:hidden;
+  border:2.5px solid #ffd166;
+  width:fit-content;margin-left:auto;margin-right:auto;
+}
+.dice-mode-btn{
+  padding:9px 22px;
+  font-family:var(--font-body);font-size:13px;font-weight:800;
+  border:none;cursor:pointer;transition:all .2s;
+  background:#fffef5;color:#c09040;
+  white-space:nowrap;
+}
+.dice-mode-btn.dm-active{background:#f9a825;color:#fff;}
+.dice-synonym-badge{
+  display:inline-block;margin-left:6px;
+  background:#ff6b6b;color:#fff;
+  font-size:9px;font-weight:900;letter-spacing:.06em;
+  padding:2px 7px;border-radius:20px;vertical-align:middle;
+}
+.synonym-of-label{
+  font-size:11px;font-weight:700;margin-top:4px;display:none;
+  opacity:.7;
+}
+.emotion-reveal.revealed .synonym-of-label{display:block}
+
+/* ─────────────────────────────────────────────
+   ██ PAGE 7 — COMPARATIVES & SUPERLATIVES
+───────────────────────────────────────────── */
+#page-compare{
+  background:#fff0f5;
+  background-image:
+    radial-gradient(ellipse at 15% 20%,#ffe0ec 0%,transparent 45%),
+    radial-gradient(ellipse at 85% 75%,#e8f5e9 0%,transparent 45%),
+    radial-gradient(ellipse at 50% 50%,#fff8e1 0%,transparent 60%);
+}
+.compare-inner{
+  max-width:740px;margin:0 auto;
+  padding:36px 20px 80px;
+}
+.compare-title{
+  font-family:var(--font-head);
+  font-size:clamp(26px,5vw,44px);
+  color:#c2185b;text-align:center;margin-bottom:6px;
+}
+.compare-subtitle{
+  font-size:14px;font-weight:700;color:#e91e8c;
+  text-align:center;margin-bottom:20px;
+}
+.compare-mode-bar{
+  display:flex;align-items:center;justify-content:center;
+  gap:0;margin-bottom:22px;
+  border-radius:40px;overflow:hidden;
+  border:2.5px solid #f48fb1;
+  width:fit-content;margin-left:auto;margin-right:auto;
+}
+.cmp-mode-btn{
+  padding:10px 28px;
+  font-family:var(--font-body);font-size:14px;font-weight:800;
+  border:none;cursor:pointer;transition:all .2s;
+  background:#fff0f5;color:#e91e8c;
+}
+.cmp-mode-btn.cmp-active{background:#e91e8c;color:#fff;}
+
+.grammar-strip{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:22px;
+}
+.grammar-card{
+  background:#fff;border-radius:var(--r-lg);
+  border:2px solid #f8bbd9;padding:14px 18px;
+  box-shadow:var(--shadow-sm);
+}
+.grammar-card-title{
+  font-size:11px;font-weight:800;letter-spacing:.08em;
+  color:#e91e8c;margin-bottom:10px;
+}
+.grammar-rule{
+  font-size:13px;font-weight:700;color:#555;
+  line-height:1.7;
+}
+.grammar-ex{
+  font-size:12px;color:#aaa;font-style:italic;margin-top:4px;
+  line-height:1.5;
+}
+.grammar-rule span{color:#c2185b;font-weight:900;}
+
+.challenge-counter{
+  text-align:center;font-size:12px;font-weight:800;
+  letter-spacing:.06em;color:#f48fb1;margin-bottom:16px;
+}
+
+/* Comparative challenge */
+.comp-vs-wrap{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:12px;align-items:stretch;margin-bottom:16px;
+}
+.comp-situation{
+  background:#fff;border-radius:var(--r-xl);
+  border:3px solid #f8bbd9;
+  padding:24px 18px;text-align:center;
+  box-shadow:var(--shadow-sm);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;
+  cursor:pointer;transition:all .25s;
+}
+.comp-situation:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+.comp-situation.picked-a{border-color:#ff4081;background:#fff0f5;}
+.comp-situation.picked-b{border-color:#ff4081;background:#fff0f5;}
+.comp-sit-emoji{font-size:52px;line-height:1}
+.comp-sit-text{font-size:15px;font-weight:800;color:#333;line-height:1.35}
+.comp-sit-hint{font-size:11px;color:#e91e8c;font-weight:700;margin-top:2px}
+.comp-vs-badge{
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:20px;color:#f48fb1;
+  padding:0 4px;
+}
+
+.comp-frame-box{
+  background:#fff;border-radius:var(--r-lg);
+  border:3px solid #ffd166;padding:20px 24px;
+  margin-bottom:16px;box-shadow:var(--shadow-sm);
+}
+.comp-frame-label{
+  font-size:11px;font-weight:800;letter-spacing:.08em;
+  color:#e6a000;margin-bottom:12px;
+}
+.comp-frame-text{
+  font-size:clamp(14px,2.5vw,18px);
+  font-weight:800;color:#333;line-height:1.6;
+}
+.comp-frame-text .fill-emo{color:#c2185b}
+.comp-frame-text .fill-blank{
+  display:inline-block;
+  min-width:130px;border-bottom:3px dotted #ffd166;
+  color:#e6a000;font-style:italic;
+  padding:0 6px;
+}
+
+.vocab-strip{
+  display:flex;flex-wrap:wrap;gap:8px;
+  margin-bottom:20px;
+}
+.vocab-chip{
+  padding:7px 14px;border-radius:30px;
+  font-size:13px;font-weight:800;
+  border:2px solid transparent;
+  cursor:pointer;transition:all .2s;
+  background:#fff;box-shadow:var(--shadow-sm);
+}
+.vocab-chip:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.vocab-chip.vc-selected{color:#fff;transform:translateY(-2px)}
+
+.compare-controls{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.btn-next-challenge{
+  padding:13px 30px;border-radius:40px;
+  background:#e91e8c;border:none;color:#fff;
+  font-family:var(--font-body);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 16px rgba(233,30,140,.3);
+}
+.btn-next-challenge:hover{background:#c2185b;transform:translateY(-2px)}
+.btn-shuffle-vocab{
+  padding:13px 22px;border-radius:40px;
+  background:#fff;border:2.5px solid #f48fb1;
+  color:#e91e8c;font-family:var(--font-body);
+  font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.btn-shuffle-vocab:hover{background:#fff0f5;transform:translateY(-1px)}
+
+/* Superlative challenge */
+.super-card{
+  background:#fff;border-radius:var(--r-xl);
+  border:3px solid #f8bbd9;
+  padding:32px 28px;text-align:center;
+  box-shadow:var(--shadow);margin-bottom:16px;
+}
+.super-emoji{font-size:64px;line-height:1;margin-bottom:12px}
+.super-situation{
+  font-size:clamp(17px,3vw,24px);font-weight:800;
+  color:#333;line-height:1.4;margin-bottom:8px;
+}
+.super-tag{
+  display:inline-block;font-size:11px;font-weight:900;
+  letter-spacing:.07em;padding:4px 14px;border-radius:20px;
+  color:#fff;margin-bottom:16px;
+}
+.super-frame-box{
+  background:#fff0f5;border-radius:var(--r-md);
+  border:2px dashed #f48fb1;padding:16px 20px;
+  font-size:clamp(14px,2.5vw,17px);font-weight:800;
+  color:#555;line-height:1.7;text-align:left;
+}
+.super-frame-box .fill-blank{
+  display:inline-block;
+  min-width:120px;border-bottom:3px dotted #e91e8c;
+  color:#e91e8c;font-style:italic;padding:0 4px;
+}
+
+/* ─────────────────────────────────────────────
    SHARED
 ───────────────────────────────────────────── */
 .hidden{display:none!important}
@@ -847,6 +1054,7 @@ canvas#wheel-canvas{width:100%;height:100%}
   <button class="nav-btn" data-page="match" onclick="goTo('match')">🔗 Match It!</button>
   <button class="nav-btn" data-page="wheel" onclick="goTo('wheel')">🎡 Emotion Wheel</button>
   <button class="nav-btn" data-page="journal" onclick="goTo('journal')">📔 My Journal</button>
+  <button class="nav-btn" data-page="compare" onclick="goTo('compare')">🆚 Compare!</button>
 </nav>
 
 <!-- ═══ PAGE: HOME ════════════════════════════ -->
@@ -888,6 +1096,12 @@ canvas#wheel-canvas{width:100%;height:100%}
         <div class="home-card-title">My Journal</div>
         <div class="home-card-desc">Write how you feel today. Answer guided questions and build your emotion vocabulary.</div>
         <span class="home-card-tag tag-journal">individual · writing</span>
+      </div>
+      <div class="home-card" style="border-top-color:#ff4081" onclick="goTo('compare')">
+        <span class="home-card-icon">🆚</span>
+        <div class="home-card-title">Compare!</div>
+        <div class="home-card-desc">Two crazy situations — which makes you feel MORE scared? MORE excited? Use comparatives & superlatives to say it!</div>
+        <span class="home-card-tag" style="background:#ff4081">grammar · speaking</span>
       </div>
     </div>
     <div class="home-coming-soon">
@@ -969,6 +1183,10 @@ canvas#wheel-canvas{width:100%;height:100%}
   <div class="dice-inner">
     <div class="dice-title">Sentence Dice</div>
     <div class="dice-subtitle">Say the sentence neutral · Roll the dice · Say it with emotion! 🎭</div>
+    <div class="dice-mode-toggle">
+      <button class="dice-mode-btn dm-active" id="dm-basic" onclick="setDiceMode('basic')">😊 Basic emotions</button>
+      <button class="dice-mode-btn" id="dm-syn" onclick="setDiceMode('synonym')">✨ Synonyms <span class="dice-synonym-badge">NEW</span></button>
+    </div>
     <div class="dice-step-bar">
       <div class="dice-step step-active" id="ds1">① Say it neutrally</div>
       <div class="dice-step" id="ds2">② Roll the dice</div>
@@ -989,6 +1207,7 @@ canvas#wheel-canvas{width:100%;height:100%}
         <div class="emo-big" id="dice-emo-big"></div>
         <div class="emo-name-big" id="dice-emo-name"></div>
         <div class="emo-body-hint" id="dice-emo-hint"></div>
+        <div class="synonym-of-label" id="dice-synonym-of"></div>
       </div>
     </div>
     <div class="dice-say-card" id="dice-say-card">
@@ -1107,6 +1326,7 @@ function goTo(page){
   if(page==='match') matchInit();
   if(page==='wheel') wheelInit();
   if(page==='journal') journalInit();
+  if(page==='compare') cmpInit();
 }
 
 /* ─────────────────────────────────────────────
@@ -1124,38 +1344,12 @@ const EMOTIONS=[
   {emoji:'🤢',name:'DISGUSTED',frame:'I feel disgusted when ...',example:'e.g. "I feel disgusted when food smells bad."',body:'wrinkled nose, sick feeling',color:'#ad1457',bg:'#fce4ec',text:'#6a0030'},
 ];
 
-let SENTENCES=[
+const SENTENCES=[
   '"I like pizza."','"Today is Monday."','"My cat is at home."',
   '"I have a red pencil case."','"School starts at eight."','"I don\'t like homework."',
   '"My friend lives near me."','"It is raining outside."','"I want to go home."',
   '"My bag is very heavy."','"I have a test today."','"The lesson is very long."',
-  '"I forgot my homework."','"I saw a rainbow."','"I lost my pencil."',
-  '"The bell just rang."','"My friend shared a snack."','"I finished my project."',
-  '"The teacher smiled at me."','"I woke up late."','"We are going on a trip."',
-  '"I helped my classmate."','"I made a mistake."','"I learned a new word."',
-  '"My favorite show is on TV."','"I played a fun game."','"I spilled my drink."',
-  '"I drew a picture."','"I heard a loud noise."','"I got a good grade."',
-  '"I forgot my lunch."','"My pet is sick."','"I saw a funny video."',
-  '"I read a good book."','"I have a birthday soon."','"I missed the bus."',
-  '"I got a new backpack."','"I visited my grandma."','"I cleaned my room."',
-  '"I sang a song."','"I went to the park."','"I found a coin."',
-  '"I lost my eraser."','"I made a new friend."','"I saw a spider."',
-  '"I ate ice cream."','"I finished my homework early."','"I forgot my umbrella."',
-  '"I saw a shooting star."','"I got a compliment."','"I tripped and fell."',
-  '"I watched a movie."','"I played outside."','"I got a present."',
-  '"I had a dream last night."','"I saw a butterfly."','"I lost my keys."',
-  '"I helped my teacher."','"I drew on the board."','"I heard my favorite song."',
-
 ];
-// Shuffle sentences at runtime for random order
-function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
-SENTENCES = shuffleArray(SENTENCES);
 
 /* ─────────────────────────────────────────────
    TIC-TAC-TOE
@@ -1301,14 +1495,71 @@ function tttCheckWin(){
    DICE GAME
 ───────────────────────────────────────────── */
 const DICE_EMOTIONS=[
-  {emoji:'😊',name:'HAPPY',   hint:'Warm voice, big smile, stand tall',        bg:'#fff9e6',border:'#f9a825',txt:'#7a5000'},
-  {emoji:'😢',name:'SAD',     hint:'Slow quiet voice, slouch, look down',       bg:'#e3f2fd',border:'#1976d2',txt:'#0d3c6e'},
-  {emoji:'😡',name:'ANGRY',   hint:'Sharp loud voice, tense, frown',           bg:'#ffebee',border:'#e53935',txt:'#7f1010'},
-  {emoji:'😱',name:'SCARED',  hint:'Shaky soft voice, wide eyes, stiff body',  bg:'#f3e5f5',border:'#7b1fa2',txt:'#4a0070'},
-  {emoji:'😲',name:'SURPRISED',hint:'High voice, open mouth, raised eyebrows', bg:'#e0f7f4',border:'#00897b',txt:'#004040'},
-  {emoji:'😑',name:'BORED',   hint:'Flat slow voice, long sigh, slouch',       bg:'#f5f5f5',border:'#616161',txt:'#212121'},
+  {emoji:'😊',name:'HAPPY',   hint:'Warm voice, big smile, stand tall',        bg:'#fff9e6',border:'#f9a825',txt:'#7a5000',
+   synonyms:[
+     {word:'JOYFUL',     hint:'Light, bubbly voice — like floating on a cloud!'},
+     {word:'CHEERFUL',   hint:'Bright and breezy — smile even wider!'},
+     {word:'DELIGHTED',  hint:'Pleasantly surprised and happy — eyebrows up!'},
+     {word:'ENTHUSIASTIC',hint:'Super energetic — speak fast and loud!'},
+     {word:'THRILLED',   hint:'Almost too happy to stand still!'},
+     {word:'CONTENT',    hint:'Calm and satisfied — a soft, warm smile'},
+   ]},
+  {emoji:'😢',name:'SAD',     hint:'Slow quiet voice, slouch, look down',       bg:'#e3f2fd',border:'#1976d2',txt:'#0d3c6e',
+   synonyms:[
+     {word:'MELANCHOLIC', hint:'Deep, slow sadness — stare into the distance'},
+     {word:'DESPERATE',   hint:'Sad AND hopeless — voice cracks, head down'},
+     {word:'GLOOMY',      hint:'Like a dark raincloud — heavy, grey, slow'},
+     {word:'HEARTBROKEN', hint:'Real pain in the chest — clutch your heart!'},
+     {word:'MISERABLE',   hint:'Totally unhappy — everything hurts a little'},
+     {word:'DISAPPOINTED',hint:'Expected something good — didn\'t get it. Sigh.'},
+   ]},
+  {emoji:'😡',name:'ANGRY',   hint:'Sharp loud voice, tense, frown',            bg:'#ffebee',border:'#e53935',txt:'#7f1010',
+   synonyms:[
+     {word:'FURIOUS',     hint:'Maximum anger — clench your fists, stomp!'},
+     {word:'IRRITATED',   hint:'Small anger — tap your fingers, small frown'},
+     {word:'FRUSTRATED',  hint:'Trying but failing — sigh heavily, drop shoulders'},
+     {word:'OUTRAGED',    hint:'Shocked AND angry — open mouth, eyes wide'},
+     {word:'ANNOYED',     hint:'Someone is being very irritating — roll your eyes'},
+     {word:'LIVID',       hint:'Almost shaking with anger — red face!'},
+   ]},
+  {emoji:'😱',name:'SCARED',  hint:'Shaky soft voice, wide eyes, stiff body',   bg:'#f3e5f5',border:'#7b1fa2',txt:'#4a0070',
+   synonyms:[
+     {word:'TERRIFIED',   hint:'Maximum fear — shake, wide eyes, frozen!'},
+     {word:'ANXIOUS',     hint:'Worried about the future — fidget, breathe fast'},
+     {word:'HORRIFIED',   hint:'Something disgusting AND scary — gasp!'},
+     {word:'PANICKED',    hint:'Emergency mode — speak fast, move chaotically'},
+     {word:'PETRIFIED',   hint:'Turned to stone with fear — completely frozen'},
+     {word:'NERVOUS',     hint:'Butterflies in your stomach — swallow hard'},
+   ]},
+  {emoji:'😲',name:'SURPRISED',hint:'High voice, open mouth, raised eyebrows',  bg:'#e0f7f4',border:'#00897b',txt:'#004040',
+   synonyms:[
+     {word:'ASTONISHED',  hint:'Jaw drops — completely speechless for 2 seconds'},
+     {word:'AMAZED',      hint:'Impressed AND surprised — shake your head slowly'},
+     {word:'STUNNED',     hint:'Like a brick hit you — stand very still, blink'},
+     {word:'BEWILDERED',  hint:'Confused AND surprised — scratch your head!'},
+     {word:'SHOCKED',     hint:'Sudden, strong surprise — gasp and step back'},
+     {word:'SPEECHLESS',  hint:'Open mouth, no words come out — point silently'},
+   ]},
+  {emoji:'😑',name:'BORED',   hint:'Flat slow voice, long sigh, slouch',        bg:'#f5f5f5',border:'#616161',txt:'#212121',
+   synonyms:[
+     {word:'INDIFFERENT',  hint:'Zero interest — flat voice, limp shrug'},
+     {word:'LISTLESS',     hint:'No energy at all — drag your feet, heavy'},
+     {word:'UNINTERESTED', hint:'Could not care less — stare blankly ahead'},
+     {word:'FED UP',       hint:'Done. Finished. Over it. — arms crossed'},
+     {word:'APATHETIC',    hint:'Nothing matters — robot voice, no expression'},
+     {word:'WEARY',        hint:'Tired of everything — droopy eyes, slow blink'},
+   ]},
 ];
-let diceIdx=0,diceRolling=false;
+let diceIdx=0,diceRolling=false,diceMode='basic';
+
+function setDiceMode(mode){
+  diceMode=mode;
+  document.getElementById('dm-basic').classList.toggle('dm-active',mode==='basic');
+  document.getElementById('dm-syn').classList.toggle('dm-active',mode==='synonym');
+  document.getElementById('dice-legend').innerHTML='';
+  buildDiceLegend();
+  diceResetEmotion();
+}
 
 function diceInit(){
   const dd=document.getElementById('dice-dots');
@@ -1332,7 +1583,12 @@ function buildDiceLegend(){
     const d=document.createElement('div');
     d.className='legend-item';
     d.style.cssText=`background:${e.bg};border-color:${e.border}`;
-    d.innerHTML=`<div class="legend-num" style="color:${e.txt}">${i+1}</div><div class="legend-lbl" style="color:${e.txt}">${e.name}</div>`;
+    if(diceMode==='basic'){
+      d.innerHTML=`<div class="legend-num" style="color:${e.txt}">${i+1}</div><div class="legend-lbl" style="color:${e.txt}">${e.name}</div>`;
+    } else {
+      const syns=e.synonyms.map(s=>`<div class="legend-lbl" style="color:${e.txt};font-size:8px">${s.word}</div>`).join('');
+      d.innerHTML=`<div class="legend-num" style="color:${e.txt}">${i+1}</div><div class="legend-lbl" style="color:${e.txt}">${e.name}</div>${syns}`;
+    }
     leg.appendChild(d);
   });
 }
@@ -1372,23 +1628,34 @@ function rollDice(){
   const iv=setInterval(()=>{die.textContent=Math.ceil(Math.random()*6);count++;if(count>=14)clearInterval(iv);},52);
   setTimeout(()=>{
     const result=Math.floor(Math.random()*6);
-    const e=DICE_EMOTIONS[result];
+    const base=DICE_EMOTIONS[result];
     die.textContent=result+1;
     die.classList.remove('rolling');
+    // pick synonym or base
+    let displayName,displayHint,isSynonym=false;
+    if(diceMode==='synonym'){
+      const syn=base.synonyms[Math.floor(Math.random()*base.synonyms.length)];
+      displayName=syn.word; displayHint=syn.hint; isSynonym=true;
+    } else {
+      displayName=base.name; displayHint=base.hint;
+    }
     const er=document.getElementById('dice-emo-reveal');
-    er.style.background=e.bg;er.style.borderColor=e.border;
+    er.style.background=base.bg;er.style.borderColor=base.border;
     er.classList.add('revealed');
     const eb=document.getElementById('dice-emo-big');
-    eb.textContent=e.emoji;
+    eb.textContent=base.emoji;
     eb.classList.remove('pop');void eb.offsetWidth;eb.classList.add('pop');
-    document.getElementById('dice-emo-name').textContent=e.name;
-    document.getElementById('dice-emo-name').style.color=e.txt;
-    document.getElementById('dice-emo-hint').textContent=e.hint;
-    document.getElementById('dice-emo-hint').style.color=e.txt;
+    const nn=document.getElementById('dice-emo-name');
+    nn.textContent=displayName; nn.style.color=base.txt;
+    const hh=document.getElementById('dice-emo-hint');
+    hh.textContent=displayHint; hh.style.color=base.txt;
+    const synOf=document.getElementById('dice-synonym-of');
+    synOf.textContent=isSynonym?`synonym of ${base.name}`:'';
+    synOf.style.color=base.txt;
     const sc=document.getElementById('dice-say-card');
-    sc.style.background=e.bg;sc.style.borderColor=e.border;
+    sc.style.background=base.bg;sc.style.borderColor=base.border;
     sc.classList.add('revealed');
-    document.getElementById('dice-say-prompt').style.color=e.txt;
+    document.getElementById('dice-say-prompt').style.color=base.txt;
     document.getElementById('dice-say-sent').textContent=SENTENCES[diceIdx];
     diceSetStep(3);
     diceRolling=false;
@@ -1667,6 +1934,243 @@ function renderJournalEntries(){
     </div>
   `).join('');
 }
+
+/* ─────────────────────────────────────────────
+   COMPARATIVES & SUPERLATIVES
+───────────────────────────────────────────── */
+const COMP_CHALLENGES=[
+  {a:{e:'🍦',t:'eat unlimited ice cream at the beach'},  b:{e:'🎉',t:'go to an amazing party with friends'},        tag:'happy vs happier'},
+  {a:{e:'🐍',t:'find a snake in your school bag'},        b:{e:'🕷️',t:'find a giant spider on your pillow'},         tag:'scared'},
+  {a:{e:'🧦',t:'wear socks with sandals to school'},      b:{e:'💇',t:'get a terrible haircut the day of a party'},   tag:'embarrassed'},
+  {a:{e:'🎤',t:'sing a solo in front of the whole school'},b:{e:'💌',t:'read your diary in front of your class'},     tag:'nervous'},
+  {a:{e:'🎮',t:'win a video game after 50 tries'},        b:{e:'🏆',t:'score a goal in the final match'},            tag:'proud'},
+  {a:{e:'🎂',t:'have a surprise birthday party'},         b:{e:'🎁',t:'get the gift you always wanted'},             tag:'excited'},
+  {a:{e:'🥦',t:'eat cold broccoli for dinner'},           b:{e:'🍄',t:'eat a sandwich with mouldy bread'},           tag:'disgusted'},
+  {a:{e:'📺',t:'watch your favourite series'},            b:{e:'🌧️',t:'sit in a waiting room for 2 hours'},          tag:'bored'},
+  {a:{e:'🐶',t:'adopt a new puppy'},                      b:{e:'☀️',t:'wake up on a sunny summer morning'},          tag:'cheerful'},
+  {a:{e:'👻',t:'hear a strange noise at night'},          b:{e:'🎢',t:'go on the scariest rollercoaster'},           tag:'terrified'},
+  {a:{e:'💔',t:'your best friend moves to another city'}, b:{e:'📱',t:'lose your phone with all your photos'},       tag:'sad'},
+  {a:{e:'🤡',t:'sit next to a clown on the bus'},         b:{e:'🪲',t:'find a bug in your food at a restaurant'},    tag:'uncomfortable'},
+  {a:{e:'⏰',t:'wake up 2 hours before your alarm'},      b:{e:'💤',t:'sleep through your whole Sunday'},            tag:'rested vs exhausted'},
+  {a:{e:'🎉',t:'your team wins the championship'},        b:{e:'🎓',t:'pass a super difficult exam'},                tag:'proud & excited'},
+];
+
+const SUPER_CHALLENGES=[
+  {e:'🕷️', sit:'A tarantula lands on your shoulder during lunch.',         tag:{txt:'TERRIFIED',bg:'#7b1fa2'},
+   frames:['This is the most ___ moment of my life!','I have never felt so ___ in my life!','This is the ___ situation I can imagine.']},
+  {e:'🎤', sit:'You are performing a song live on national television.',    tag:{txt:'NERVOUS & EXCITED',bg:'#e91e8c'},
+   frames:['I feel the most ___ when I am in front of a big audience.','This is probably the ___ experience I could have.']},
+  {e:'🍕', sit:'Your teacher says: "No homework for the whole month!"',     tag:{txt:'DELIGHTED',bg:'#f9a825'},
+   frames:['This is the ___ news I have ever heard!','I would feel the most ___ if this happened.']},
+  {e:'🌊', sit:'You are swimming and you suddenly can\'t see the bottom.',  tag:{txt:'PANICKED',bg:'#1976d2'},
+   frames:['This is the most ___ thing I can imagine in the sea.','I would feel the ___ I have ever felt!']},
+  {e:'😂', sit:'You trip and fall in front of your crush.',                 tag:{txt:'EMBARRASSED',bg:'#c2185b'},
+   frames:['That would be the most ___ moment of my school life.','I would feel the ___ I have ever felt in public!']},
+  {e:'🎁', sit:'You open your birthday present and it\'s exactly what you wanted!', tag:{txt:'THRILLED',bg:'#43a047'},
+   frames:['This is the ___ I could ever feel on my birthday!','I have never felt so ___ as when I get the perfect gift.']},
+  {e:'🧊', sit:'You discover your best friend lied to you.',                tag:{txt:'HEARTBROKEN',bg:'#0d47a1'},
+   frames:['That would be the most ___ feeling of all.','I would feel the ___ when trust is broken.']},
+  {e:'🌈', sit:'You wake up and it\'s the first day of summer holidays.',   tag:{txt:'JOYFUL',bg:'#ff6f00'},
+   frames:['This is the most ___ morning of the whole year!','I feel the ___ at the start of summer.']},
+];
+
+const COMP_VOCAB=[
+  {w:'happier',        comp:true,  bg:'#fff9e6',bord:'#f9a825',txt:'#7a5000'},
+  {w:'sadder',         comp:true,  bg:'#e3f2fd',bord:'#1976d2',txt:'#0d3c6e'},
+  {w:'more nervous',   comp:true,  bg:'#f3e5f5',bord:'#7b1fa2',txt:'#4a0070'},
+  {w:'angrier',        comp:true,  bg:'#ffebee',bord:'#e53935',txt:'#7f1010'},
+  {w:'more excited',   comp:true,  bg:'#fff8e1',bord:'#ff6f00',txt:'#6d3a00'},
+  {w:'more scared',    comp:true,  bg:'#f3e5f5',bord:'#7b1fa2',txt:'#4a0070'},
+  {w:'more disgusted', comp:true,  bg:'#fce4ec',bord:'#c2185b',txt:'#7a0030'},
+  {w:'more bored',     comp:true,  bg:'#f5f5f5',bord:'#616161',txt:'#212121'},
+  {w:'more relaxed',   comp:true,  bg:'#e8f5e9',bord:'#43a047',txt:'#1b5e20'},
+  {w:'more embarrassed',comp:true, bg:'#fce4ec',bord:'#e91e8c',txt:'#880e4f'},
+  {w:'more proud',     comp:true,  bg:'#e8f5e9',bord:'#2e7d32',txt:'#0a3d0a'},
+  {w:'more cheerful',  comp:true,  bg:'#fff9e6',bord:'#fdd835',txt:'#5d4037'},
+  {w:'the happiest',       comp:false, bg:'#fff9e6',bord:'#f9a825',txt:'#7a5000'},
+  {w:'the most terrified', comp:false, bg:'#f3e5f5',bord:'#7b1fa2',txt:'#4a0070'},
+  {w:'the most excited',   comp:false, bg:'#fff8e1',bord:'#ff6f00',txt:'#6d3a00'},
+  {w:'the saddest',        comp:false, bg:'#e3f2fd',bord:'#1976d2',txt:'#0d3c6e'},
+  {w:'the most disgusted', comp:false, bg:'#fce4ec',bord:'#c2185b',txt:'#7a0030'},
+  {w:'the most nervous',   comp:false, bg:'#f3e5f5',bord:'#7b1fa2',txt:'#4a0070'},
+  {w:'the most proud',     comp:false, bg:'#e8f5e9',bord:'#2e7d32',txt:'#0a3d0a'},
+  {w:'the most embarrassed',comp:false,bg:'#fce4ec',bord:'#e91e8c',txt:'#880e4f'},
+  {w:'the most joyful',    comp:false, bg:'#fff9e6',bord:'#f9a825',txt:'#7a5000'},
+  {w:'the most panicked',  comp:false, bg:'#f3e5f5',bord:'#7b1fa2',txt:'#4a0070'},
+];
+
+let cmpMode='comp',cmpIdx=0,superIdx=0;
+let currentVocabSubset=[];
+
+function cmpInit(){
+  if(cmpIdx>=COMP_CHALLENGES.length) cmpIdx=0;
+  if(superIdx>=SUPER_CHALLENGES.length) superIdx=0;
+  renderCurrentChallenge();
+}
+
+function setCmpMode(mode){
+  cmpMode=mode;
+  document.getElementById('cmp-btn-comp').classList.toggle('cmp-active',mode==='comp');
+  document.getElementById('cmp-btn-super').classList.toggle('cmp-active',mode==='super');
+  document.getElementById('grammar-strip-comp').classList.toggle('hidden',mode!=='comp');
+  document.getElementById('grammar-strip-super').classList.toggle('hidden',mode!=='super');
+  document.getElementById('view-comp').classList.toggle('hidden',mode!=='comp');
+  document.getElementById('view-super').classList.toggle('hidden',mode!=='super');
+  renderCurrentChallenge();
+}
+
+function renderCurrentChallenge(){
+  if(cmpMode==='comp') renderComp(); else renderSuper();
+}
+
+function renderComp(){
+  const ch=COMP_CHALLENGES[cmpIdx];
+  document.getElementById('cmp-counter').textContent=`Challenge ${cmpIdx+1} / ${COMP_CHALLENGES.length}`;
+  document.getElementById('sit-a-emo').textContent=ch.a.e;
+  document.getElementById('sit-a-txt').textContent=ch.a.t;
+  document.getElementById('sit-b-emo').textContent=ch.b.e;
+  document.getElementById('sit-b-txt').textContent=ch.b.t;
+  document.getElementById('frame-a-ref').textContent=ch.a.t;
+  document.getElementById('frame-b-ref').textContent=ch.b.t;
+  document.getElementById('frame-blank').textContent='happier / more ___';
+  buildVocab(true);
+}
+
+function renderSuper(){
+  const ch=SUPER_CHALLENGES[superIdx];
+  document.getElementById('cmp-counter').textContent=`Challenge ${superIdx+1} / ${SUPER_CHALLENGES.length}`;
+  document.getElementById('super-emoji').textContent=ch.e;
+  document.getElementById('super-situation').textContent=ch.sit;
+  const tag=document.getElementById('super-tag');
+  tag.textContent=ch.tag.txt; tag.style.background=ch.tag.bg;
+  const frame=ch.frames[Math.floor(Math.random()*ch.frames.length)];
+  document.getElementById('super-frame').innerHTML=
+    frame.replace(/___/g,'<span class="fill-blank">___</span>');
+  buildVocab(false);
+}
+
+function buildVocab(isComp){
+  const pool=COMP_VOCAB.filter(v=>v.comp===isComp);
+  const shuffled=pool.sort(()=>Math.random()-.5).slice(0,8);
+  currentVocabSubset=shuffled;
+  const containerId=isComp?'comp-vocab':'super-vocab';
+  const c=document.getElementById(containerId);
+  c.innerHTML='';
+  shuffled.forEach(v=>{
+    const chip=document.createElement('div');
+    chip.className='vocab-chip';
+    chip.style.cssText=`background:${v.bg};border-color:${v.bord};color:${v.txt}`;
+    chip.textContent=v.w;
+    chip.onclick=()=>{
+      document.querySelectorAll(`#${containerId} .vocab-chip`).forEach(c=>c.classList.remove('vc-selected'));
+      chip.classList.add('vc-selected');
+      chip.style.background=v.bord;chip.style.color='#fff';
+      if(isComp) document.getElementById('frame-blank').textContent=v.w;
+    };
+    c.appendChild(chip);
+  });
+}
+
+function shuffleVocab(){
+  buildVocab(cmpMode==='comp');
+}
+
+function nextChallenge(){
+  if(cmpMode==='comp'){
+    cmpIdx=(cmpIdx+1)%COMP_CHALLENGES.length;
+    renderComp();
+  } else {
+    superIdx=(superIdx+1)%SUPER_CHALLENGES.length;
+    renderSuper();
+  }
+  // deselect vocab
+  document.querySelectorAll('.vocab-chip').forEach(c=>c.classList.remove('vc-selected'));
+}
+
 </script>
+<!-- ═══ PAGE: COMPARATIVES & SUPERLATIVES ════ -->
+<div class="page" id="page-compare">
+  <div class="compare-inner">
+    <div class="compare-title">Compare!</div>
+    <div class="compare-subtitle">Use comparatives & superlatives to talk about your emotions 🆚🏆</div>
+
+    <div class="compare-mode-bar">
+      <button class="cmp-mode-btn cmp-active" id="cmp-btn-comp" onclick="setCmpMode('comp')">🆚 Comparatives</button>
+      <button class="cmp-mode-btn" id="cmp-btn-super" onclick="setCmpMode('super')">🏆 Superlatives</button>
+    </div>
+
+    <div class="grammar-strip" id="grammar-strip-comp">
+      <div class="grammar-card">
+        <div class="grammar-card-title">SHORT ADJECTIVES (-er)</div>
+        <div class="grammar-rule">happy → <span>happier</span><br>sad → <span>sadder</span><br>scared → <span>more scared</span></div>
+        <div class="grammar-ex">"I feel happier when I eat pizza than when I eat salad."</div>
+      </div>
+      <div class="grammar-card">
+        <div class="grammar-card-title">LONG ADJECTIVES (more...)</div>
+        <div class="grammar-rule">excited → <span>more excited</span><br>nervous → <span>more nervous</span><br>disgusted → <span>more disgusted</span></div>
+        <div class="grammar-ex">"I feel more nervous before a test than before lunch."</div>
+      </div>
+    </div>
+    <div class="grammar-strip hidden" id="grammar-strip-super">
+      <div class="grammar-card">
+        <div class="grammar-card-title">SHORT ADJECTIVES (the -est)</div>
+        <div class="grammar-rule">happy → <span>the happiest</span><br>sad → <span>the saddest</span><br>funny → <span>the funniest</span></div>
+        <div class="grammar-ex">"This is the happiest I have ever felt!"</div>
+      </div>
+      <div class="grammar-card">
+        <div class="grammar-card-title">LONG ADJECTIVES (the most...)</div>
+        <div class="grammar-rule">excited → <span>the most excited</span><br>disgusted → <span>the most disgusted</span></div>
+        <div class="grammar-ex">"This is the most terrifying thing I can imagine."</div>
+      </div>
+    </div>
+
+    <div class="challenge-counter" id="cmp-counter">Challenge 1 / 14</div>
+
+    <!-- COMPARATIVES VIEW -->
+    <div id="view-comp">
+      <div class="comp-vs-wrap">
+        <div class="comp-situation" id="sit-a">
+          <div class="comp-sit-emoji" id="sit-a-emo"></div>
+          <div class="comp-sit-text" id="sit-a-txt"></div>
+          <div class="comp-sit-hint">Option A</div>
+        </div>
+        <div class="comp-vs-badge">VS</div>
+        <div class="comp-situation" id="sit-b">
+          <div class="comp-sit-emoji" id="sit-b-emo"></div>
+          <div class="comp-sit-text" id="sit-b-txt"></div>
+          <div class="comp-sit-hint">Option B</div>
+        </div>
+      </div>
+      <div class="comp-frame-box">
+        <div class="comp-frame-label">YOUR SENTENCE FRAME</div>
+        <div class="comp-frame-text" id="comp-frame">
+          I feel <span class="fill-blank" id="frame-blank">happier / more excited</span>
+          when <span class="fill-emo" id="frame-a-ref">…Option A…</span>
+          than when <span class="fill-emo" id="frame-b-ref">…Option B…</span>.
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#f48fb1;margin-bottom:8px;text-align:center;">Click a word to use it in your sentence:</div>
+      <div class="vocab-strip" id="comp-vocab"></div>
+    </div>
+
+    <!-- SUPERLATIVES VIEW -->
+    <div id="view-super" class="hidden">
+      <div class="super-card">
+        <div class="super-emoji" id="super-emoji"></div>
+        <div class="super-situation" id="super-situation"></div>
+        <span class="super-tag" id="super-tag"></span>
+        <div class="super-frame-box" id="super-frame"></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#f48fb1;margin-bottom:8px;text-align:center;">Pick your adjective:</div>
+      <div class="vocab-strip" id="super-vocab"></div>
+    </div>
+
+    <div class="compare-controls">
+      <button class="btn-next-challenge" onclick="nextChallenge()">Next challenge →</button>
+      <button class="btn-shuffle-vocab" onclick="shuffleVocab()">Shuffle words 🔀</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
