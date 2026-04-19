@@ -1041,6 +1041,69 @@ canvas#wheel-canvas{width:100%;height:100%}
    SHARED
 ───────────────────────────────────────────── */
 .hidden{display:none!important}
+
+/* ─────────────────────────────────────────────
+   PRINT BUTTON
+───────────────────────────────────────────── */
+.btn-print{
+  padding:10px 20px;border-radius:40px;
+  background:rgba(108,99,255,.12);
+  border:1.5px solid rgba(108,99,255,.5);
+  color:#c084fc;
+  font-family:var(--font-body);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.btn-print:hover{background:rgba(108,99,255,.25);transform:translateY(-1px)}
+
+/* ─────────────────────────────────────────────
+   PRINT LAYOUT — A4
+───────────────────────────────────────────── */
+#ttt-print-board{display:none}
+@media print{
+  @page{size:A4 portrait;margin:18mm 22mm}
+  nav,.page,.ttt-stars{display:none!important}
+  #ttt-print-board{
+    display:block!important;
+    text-align:center;
+    padding-top:16mm;
+    font-family:'Nunito',sans-serif;
+  }
+  .print-header{margin-bottom:12mm}
+  .print-title{
+    display:block;
+    font-size:22pt;font-weight:900;
+    color:#6c63ff;letter-spacing:.05em;
+    margin-bottom:3mm;
+  }
+  .print-subtitle{
+    display:block;
+    font-size:10pt;color:#888;font-weight:600;
+  }
+  .print-grid{
+    display:inline-grid;
+    grid-template-columns:repeat(3,55mm);
+    grid-template-rows:repeat(3,55mm);
+    border:2.5pt solid #bbb;
+    border-radius:8pt;
+    overflow:hidden;
+  }
+  .print-cell{
+    border:.75pt solid #ddd;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:3mm;
+  }
+  .print-cell-emo{font-size:46pt;line-height:1}
+  .print-cell-name{
+    font-size:10pt;font-weight:900;
+    letter-spacing:.08em;color:#444;
+  }
+  .print-footer{
+    display:block;
+    margin-top:8mm;font-size:9pt;
+    color:#ccc;letter-spacing:.05em;
+  }
+}
 </style>
 </head>
 <body>
@@ -1171,8 +1234,10 @@ canvas#wheel-canvas{width:100%;height:100%}
         <button class="btn-accept" onclick="tttDecide(true)">✓ Accept — claim it!</button>
       </div>
     </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;flex-wrap:wrap">
       <button class="btn-secondary" onclick="tttNewGame()">Reset board</button>
+      <button class="btn-secondary" onclick="tttChangeBoard()" style="border-color:rgba(168,85,247,.55);color:#c084fc">🔀 Change emotions</button>
+      <button class="btn-print" onclick="tttPrintBoards()">🖨️ Print boards</button>
     </div>
   </div>
 </div>
@@ -1344,6 +1409,28 @@ const EMOTIONS=[
   {emoji:'🤢',name:'DISGUSTED',frame:'I feel disgusted when ...',example:'e.g. "I feel disgusted when food smells bad."',body:'wrinkled nose, sick feeling',color:'#ad1457',bg:'#fce4ec',text:'#6a0030'},
 ];
 
+/* Pool of 18 emotions for the TTT board — pick 9 each game */
+const TTT_POOL=[
+  {emoji:'😊',name:'HAPPY',      frame:'I feel happy when ...',        example:'e.g. "I feel happy when I listen to music."'},
+  {emoji:'😢',name:'SAD',        frame:'I feel sad when ...',          example:'e.g. "I feel sad when I miss my friends."'},
+  {emoji:'😡',name:'ANGRY',      frame:'I feel angry when ...',        example:'e.g. "I feel angry when someone is unfair."'},
+  {emoji:'😱',name:'SCARED',     frame:'I feel scared when ...',       example:'e.g. "I feel scared when I watch horror."'},
+  {emoji:'😲',name:'SURPRISED',  frame:'I feel surprised when ...',    example:'e.g. "I feel surprised when I get a gift."'},
+  {emoji:'😑',name:'BORED',      frame:'I feel bored when ...',        example:'e.g. "I feel bored when I wait too long."'},
+  {emoji:'🤩',name:'EXCITED',    frame:'I feel excited when ...',      example:'e.g. "I feel excited when holidays start."'},
+  {emoji:'🥹',name:'PROUD',      frame:'I feel proud when ...',        example:'e.g. "I feel proud when I help someone."'},
+  {emoji:'🤢',name:'DISGUSTED',  frame:'I feel disgusted when ...',    example:'e.g. "I feel disgusted when food smells bad."'},
+  {emoji:'😳',name:'EMBARRASSED',frame:'I feel embarrassed when ...',  example:'e.g. "I feel embarrassed when I make a mistake."'},
+  {emoji:'😴',name:'TIRED',      frame:'I feel tired when ...',        example:'e.g. "I feel tired when I study too much."'},
+  {emoji:'😤',name:'UPSET',      frame:'I feel upset when ...',        example:'e.g. "I feel upset when someone ignores me."'},
+  {emoji:'😌',name:'CALM',       frame:'I feel calm when ...',         example:'e.g. "I feel calm when I read or take a walk."'},
+  {emoji:'😟',name:'WORRIED',    frame:'I feel worried when ...',      example:'e.g. "I feel worried when I have a test."'},
+  {emoji:'😄',name:'JOYFUL',     frame:'I feel joyful when ...',       example:'e.g. "I feel joyful when I see my friends."'},
+  {emoji:'😔',name:'LONELY',     frame:'I feel lonely when ...',       example:'e.g. "I feel lonely when no one talks to me."'},
+  {emoji:'😰',name:'NERVOUS',    frame:'I feel nervous when ...',      example:'e.g. "I feel nervous when I speak in public."'},
+  {emoji:'🤗',name:'GRATEFUL',   frame:'I feel grateful when ...',     example:'e.g. "I feel grateful when someone helps me."'},
+];
+
 const SENTENCES=[
   '"I like pizza."','"Today is Monday."','"My cat is at home."',
   '"I have a red pencil case."','"School starts at eight."','"I don\'t like homework."',
@@ -1373,7 +1460,7 @@ function tttInit(){
 }
 
 function tttNewGame(){
-  const shuffle=[...EMOTIONS].sort(()=>Math.random()-.5);
+  const shuffle=[...TTT_POOL].sort(()=>Math.random()-.5).slice(0,9);
   tttBoard=shuffle.map(e=>({...e,owner:null}));
   tttTurn='A'; tttSelected=null; tttOver=false;
   if(!tttPtsA) tttPtsA=0;
@@ -1419,6 +1506,7 @@ function tttRenderGrid(){
     if(!cell.owner&&!tttOver) div.onclick=()=>tttSelect(i);
     grid.appendChild(div);
   });
+  tttUpdatePrintBoard();
 }
 
 function tttGetWinCells(){
@@ -1489,6 +1577,88 @@ function tttCheckWin(){
       return tttBoard[a].owner;
   }
   return null;
+}
+
+function tttChangeBoard(){
+  const shuffle=[...TTT_POOL].sort(()=>Math.random()-.5).slice(0,9);
+  tttBoard=shuffle.map(e=>({...e,owner:null}));
+  tttTurn='A'; tttSelected=null; tttOver=false;
+  document.getElementById('ttt-win-banner').classList.remove('visible');
+  tttRenderGrid();
+  tttUpdateUI();
+  tttShowIdle();
+}
+
+function tttPrintBoards(){
+  var boards=[];
+  for(var i=0;i<10;i++){
+    boards.push([...TTT_POOL].sort(function(){return Math.random()-.5}).slice(0,9));
+  }
+  // helpers: wrap content in open+close tags without writing </ literally
+  function el(tag,attrs,inner){
+    if(inner===undefined){inner=attrs;attrs='';}
+    var open=attrs?'<'+tag+' '+attrs+'>':'<'+tag+'>';
+    var close='<'+'/'+tag+'>';
+    return open+inner+close;
+  }
+  var css=[
+    '@page{size:A4 portrait;margin:12mm 14mm}',
+    '*{box-sizing:border-box;margin:0;padding:0}',
+    'body{font-family:Arial,sans-serif;background:#fff}',
+    '.pair{display:flex;flex-direction:column;height:273mm;page-break-after:always;page-break-inside:avoid}',
+    '.pair.last{page-break-after:auto}',
+    '.bwrap{flex:0 0 50%;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}',
+    '.bwrap + .bwrap{border-top:1pt dashed #c4b5fd}',
+    '.bnum{font-size:7pt;letter-spacing:.1em;color:#a78bfa;margin-bottom:1.5mm;font-weight:700}',
+    '.btitle{font-size:14pt;font-weight:900;color:#6c63ff;margin-bottom:1mm}',
+    '.bsub{font-size:6.5pt;color:#999;font-weight:700;letter-spacing:.04em;margin-bottom:4mm}',
+    '.grid{display:inline-grid;grid-template-columns:repeat(3,35mm);grid-template-rows:repeat(3,35mm);border:2pt solid #c4b5fd;border-radius:6pt;overflow:hidden}',
+    '.cell{border:.5pt solid #ede9fe;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5mm}',
+    '.cell:nth-child(odd){background:#faf8ff}',
+    '.emo{font-size:24pt;line-height:1}',
+    '.lbl{font-size:6.5pt;font-weight:900;letter-spacing:.07em;color:#444}'
+  ].join('');
+  var pairs=[];
+  for(var p=0;p<boards.length;p+=2){
+    var cls='pair'+(p+2>=boards.length?' last':'');
+    var bwraps=[];
+    for(var b=p;b<Math.min(p+2,boards.length);b++){
+      var cells=[];
+      for(var c=0;c<boards[b].length;c++){
+        cells.push(el('div','class="cell"',
+          el('div','class="emo"',boards[b][c].emoji)+
+          el('div','class="lbl"',boards[b][c].name)
+        ));
+      }
+      bwraps.push(el('div','class="bwrap"',
+        el('div','class="bnum"','BOARD '+(b+1)+' / 10')+
+        el('div','class="btitle"','Emotion Tic-Tac-Toe')+
+        el('div','class="bsub"','Say a sentence - Claim the square - Three in a row wins!')+
+        el('div','class="grid"',cells.join(''))
+      ));
+    }
+    pairs.push(el('div','class="'+cls+'"',bwraps.join('')));
+  }
+  var head=el('head',el('meta charset="UTF-8"','')+el('title','Boards')+el('style',css));
+  var body=el('body',pairs.join(''));
+  var doc='<!DOCTYPE html>'+el('html',head+body);
+  var blob=new Blob([doc],{type:'text/html'});
+  var url=URL.createObjectURL(blob);
+  var w=window.open(url,'_blank');
+  if(!w){alert('Allow pop-ups to print boards.');return;}
+  w.focus();
+}
+
+function tttUpdatePrintBoard(){
+  const g=document.getElementById('ttt-print-grid');
+  if(!g||!tttBoard) return;
+  g.innerHTML='';
+  tttBoard.forEach(cell=>{
+    const d=document.createElement('div');
+    d.className='print-cell';
+    d.innerHTML=`<div class="print-cell-emo">${cell.emoji}</div><div class="print-cell-name">${cell.name}</div>`;
+    g.appendChild(d);
+  });
 }
 
 /* ─────────────────────────────────────────────
@@ -1939,7 +2109,7 @@ function renderJournalEntries(){
    COMPARATIVES & SUPERLATIVES
 ───────────────────────────────────────────── */
 const COMP_CHALLENGES=[
-  {a:{e:'🍦',t:'eat unlimited ice cream at the beach'},  b:{e:'🎉',t:'go to an amazing party with friends'},        tag:'happy vs happier'},
+  {a:{e:'🍦',t:'eat unlimited ice cream for a week'},  b:{e:'🎉',t:'not have homework for a week'},        tag:'happy vs happier'},
   {a:{e:'🐍',t:'find a snake in your school bag'},        b:{e:'🕷️',t:'find a giant spider on your pillow'},         tag:'scared'},
   {a:{e:'🧦',t:'wear socks with sandals to school'},      b:{e:'💇',t:'get a terrible haircut the day of a party'},   tag:'embarrassed'},
   {a:{e:'🎤',t:'sing a solo in front of the whole school'},b:{e:'💌',t:'read your diary in front of your class'},     tag:'nervous'},
@@ -2170,6 +2340,16 @@ function nextChallenge(){
       <button class="btn-shuffle-vocab" onclick="shuffleVocab()">Shuffle words 🔀</button>
     </div>
   </div>
+</div>
+
+<!-- ═══ PRINT BOARD (hidden on screen, shown when printing) ═══ -->
+<div id="ttt-print-board">
+  <div class="print-header">
+    <span class="print-title">Emotion Tic-Tac-Toe</span>
+    <span class="print-subtitle">Say a sentence about your emotion · Claim the square · Get three in a row!</span>
+  </div>
+  <div class="print-grid" id="ttt-print-grid"></div>
+  <div class="print-footer">Feel It · Name It · Tame It</div>
 </div>
 
 </body>
