@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coping Crew 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Boogaloo&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0c29;
+  --card:#1e1b3a;
+  --card2:#252248;
+  --accent:#7c3aed;
+  --accent2:#06d6a0;
+  --accent3:#f9a825;
+  --accent4:#ff6b6b;
+  --accent5:#e91e8c;
+  --text:#f0eeff;
+  --muted:#9d93cc;
+  --r:16px;
+  --r2:24px;
+  --font-h:'Boogaloo',cursive;
+  --font-b:'Nunito',sans-serif;
+  --sh:0 8px 32px rgba(0,0,0,.4);
+}
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── STARS BG ── */
+.stars-bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw 2s infinite alternate}
+@keyframes tw{from{opacity:.1}to{opacity:.7}}
+
+/* ── SCREENS ── */
+.screen{display:none;position:relative;z-index:1;min-height:100vh}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 16px}
+
+/* ─────────────────────────────────────────────
+   WELCOME SCREEN
+───────────────────────────────────────────── */
+#s-welcome{gap:24px;text-align:center}
+.logo{font-family:var(--font-h);font-size:clamp(44px,8vw,80px);line-height:1;
+  background:linear-gradient(135deg,#a78bfa,#06d6a0,#f9a825);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 8px rgba(167,139,250,.4));}
+.logo-sub{font-size:clamp(14px,2.5vw,18px);color:var(--muted);font-weight:700;letter-spacing:.04em;max-width:460px}
+.welcome-card{background:var(--card);border-radius:var(--r2);padding:32px 36px;
+  border:1.5px solid rgba(124,58,237,.3);box-shadow:var(--sh);max-width:480px;width:100%}
+.wc-label{font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.team-input{width:100%;background:rgba(255,255,255,.06);border:2px solid rgba(124,58,237,.35);
+  border-radius:var(--r);padding:14px 18px;font-family:var(--font-b);font-size:18px;font-weight:800;
+  color:var(--text);outline:none;transition:border-color .2s;text-align:center}
+.team-input:focus{border-color:var(--accent)}
+.team-input::placeholder{color:rgba(255,255,255,.2)}
+.rounds-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px}
+.rounds-label{font-size:14px;font-weight:700;color:var(--muted)}
+.rounds-btn{width:36px;height:36px;border-radius:50%;border:2px solid rgba(124,58,237,.4);
+  background:rgba(124,58,237,.15);color:var(--text);font-size:18px;font-weight:900;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.rounds-btn:hover{background:rgba(124,58,237,.4)}
+.rounds-val{font-family:var(--font-h);font-size:32px;color:var(--accent3);min-width:40px;text-align:center}
+.btn-start{margin-top:24px;width:100%;padding:16px;border-radius:40px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:#fff;
+  font-family:var(--font-b);font-size:18px;font-weight:900;cursor:pointer;
+  box-shadow:0 6px 24px rgba(124,58,237,.4);transition:all .2s;letter-spacing:.02em}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(124,58,237,.5)}
+.how-it-works{max-width:480px;width:100%;background:rgba(6,214,160,.06);
+  border:1.5px solid rgba(6,214,160,.2);border-radius:var(--r2);padding:20px 24px}
+.hiw-title{font-family:var(--font-h);font-size:18px;color:var(--accent2);margin-bottom:12px}
+.hiw-step{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px;font-size:14px;font-weight:600;color:var(--muted)}
+.hiw-num{width:26px;height:26px;border-radius:50%;background:var(--accent2);color:#0f1b17;
+  font-weight:900;font-size:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+
+/* ─────────────────────────────────────────────
+   GAME SCREEN
+───────────────────────────────────────────── */
+#s-game{padding:0;display:none;flex-direction:column;min-height:100vh;align-items:stretch;justify-content:flex-start}
+#s-game.active{display:flex}
+
+.game-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;background:rgba(0,0,0,.3);
+  border-bottom:1.5px solid rgba(255,255,255,.06);flex-shrink:0;
+}
+.gh-team{font-family:var(--font-h);font-size:20px;color:var(--accent3)}
+.gh-score{font-family:var(--font-h);font-size:32px;color:var(--accent2)}
+.gh-score-label{font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-align:right}
+.gh-round{font-size:13px;font-weight:700;color:var(--muted);text-align:center}
+.gh-round-val{font-family:var(--font-h);font-size:20px;color:var(--text);text-align:center}
+
+.game-body{flex:1;overflow-y:auto;padding:20px 16px 32px;max-width:720px;width:100%;margin:0 auto}
+
+/* PHASE labels */
+.phase-tag{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.1em;
+  padding:4px 14px;border-radius:20px;margin-bottom:16px}
+.pt-strategy{background:rgba(124,58,237,.25);color:#c084fc;border:1px solid rgba(192,132,252,.3)}
+.pt-minigame{background:rgba(6,214,160,.2);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+
+/* FRIEND CARD */
+.friend-card{background:var(--card);border-radius:var(--r2);padding:22px;margin-bottom:18px;
+  border:1.5px solid rgba(255,255,255,.08);box-shadow:var(--sh);
+  display:flex;gap:16px;align-items:flex-start}
+.friend-avatar{width:64px;height:64px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  border:3px solid rgba(255,255,255,.15)}
+.friend-right{flex:1}
+.friend-name{font-size:12px;font-weight:800;letter-spacing:.08em;margin-bottom:6px}
+.friend-bubble{background:var(--card2);border-radius:0 var(--r) var(--r) var(--r);
+  padding:14px 18px;font-size:15px;font-weight:600;line-height:1.6;color:var(--text)}
+.friend-emotion-badge{display:inline-flex;align-items:center;gap:6px;
+  margin-top:10px;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:800}
+
+/* STRATEGY CHOICE */
+.strategy-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.strategy-opt{background:var(--card);border:2px solid rgba(255,255,255,.1);
+  border-radius:var(--r);padding:14px 18px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;transition:all .22s;
+  font-size:14px;font-weight:700;color:var(--text)}
+.strategy-opt:hover{border-color:var(--accent);background:rgba(124,58,237,.15);transform:translateX(4px)}
+.strategy-opt.correct{border-color:var(--accent2);background:rgba(6,214,160,.15);cursor:default}
+.strategy-opt.wrong{border-color:var(--accent4);background:rgba(255,107,107,.1);cursor:default;opacity:.7}
+.strategy-opt.locked{cursor:default;pointer-events:none;opacity:.5}
+.strat-icon{font-size:28px;flex-shrink:0}
+.strat-text{flex:1}
+.strat-label{font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:2px}
+.strat-desc{font-size:13px;font-weight:600;color:var(--muted)}
+.strat-badge{margin-left:auto;font-size:11px;font-weight:900;padding:4px 10px;border-radius:20px}
+.strat-badge-good{background:rgba(6,214,160,.2);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+.strat-badge-ok{background:rgba(249,168,37,.15);color:var(--accent3);border:1px solid rgba(249,168,37,.3)}
+.strat-badge-bad{background:rgba(255,107,107,.15);color:var(--accent4);border:1px solid rgba(255,107,107,.3)}
+
+/* CBT FEEDBACK */
+.cbt-feedback{background:rgba(6,214,160,.08);border:1.5px solid rgba(6,214,160,.25);
+  border-radius:var(--r);padding:16px 20px;margin-bottom:18px;display:none}
+.cbt-feedback.visible{display:block}
+.cbt-feedback-title{font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--accent2);margin-bottom:6px}
+.cbt-feedback-text{font-size:14px;font-weight:600;line-height:1.6;color:rgba(255,255,255,.85)}
+
+/* MINI-GAME WRAPPER */
+.minigame-wrap{background:var(--card);border-radius:var(--r2);
+  border:1.5px solid rgba(6,214,160,.2);box-shadow:var(--sh);
+  padding:22px;margin-bottom:18px;display:none}
+.minigame-wrap.visible{display:block}
+.mg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.mg-title{font-family:var(--font-h);font-size:22px;color:var(--accent3)}
+.mg-timer{font-family:var(--font-h);font-size:28px;color:var(--accent4);min-width:48px;text-align:right}
+.mg-points-label{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-align:right}
+.mg-instruction{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:16px;
+  padding:10px 14px;background:rgba(255,255,255,.04);border-radius:var(--r)}
+.mg-score-pop{text-align:center;padding:20px;display:none}
+.mg-score-pop.visible{display:block}
+.mg-score-big{font-family:var(--font-h);font-size:52px;color:var(--accent3)}
+.mg-score-label{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px}
+
+/* ── MINI-GAME: ANAGRAM ── */
+.anagram-word{font-family:var(--font-h);font-size:clamp(28px,6vw,48px);letter-spacing:8px;
+  text-align:center;color:var(--accent3);background:rgba(249,168,37,.1);
+  border-radius:var(--r);padding:16px;margin-bottom:16px;border:2px dashed rgba(249,168,37,.3)}
+.anagram-input{width:100%;background:rgba(255,255,255,.06);border:2.5px solid rgba(255,255,255,.15);
+  border-radius:var(--r);padding:14px 18px;font-family:var(--font-h);font-size:28px;
+  color:var(--text);letter-spacing:4px;text-align:center;outline:none;text-transform:uppercase;
+  transition:border-color .2s}
+.anagram-input:focus{border-color:var(--accent)}
+.anagram-input.correct-anim{border-color:var(--accent2);background:rgba(6,214,160,.1)}
+.anagram-input.wrong-anim{border-color:var(--accent4);background:rgba(255,107,107,.08)}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .3s ease}
+.anagram-hint{font-size:13px;color:var(--muted);text-align:center;margin-top:10px;font-weight:600}
+.anagram-attempts{display:flex;justify-content:center;gap:6px;margin-top:12px}
+.attempt-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .3s}
+.attempt-dot.used{background:var(--accent4)}
+.attempt-dot.correct{background:var(--accent2)}
+
+/* ── MINI-GAME: FILL THE GAP ── */
+.gap-sentence{font-size:clamp(16px,3vw,22px);font-weight:700;line-height:1.8;
+  text-align:center;margin-bottom:20px;color:var(--text)}
+.gap-blank{display:inline-block;min-width:120px;border-bottom:3px solid var(--accent3);
+  color:var(--accent3);font-style:italic;padding:0 8px;transition:all .3s}
+.gap-blank.correct{border-color:var(--accent2);color:var(--accent2)}
+.gap-blank.wrong{border-color:var(--accent4);color:var(--accent4)}
+.gap-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gap-opt{padding:12px 16px;border-radius:var(--r);border:2px solid rgba(255,255,255,.12);
+  background:var(--card2);cursor:pointer;transition:all .2s;
+  font-size:15px;font-weight:700;text-align:center;color:var(--text)}
+.gap-opt:hover:not(.go-lock){border-color:var(--accent);background:rgba(124,58,237,.15)}
+.gap-opt.go-correct{border-color:var(--accent2);background:rgba(6,214,160,.15);cursor:default}
+.gap-opt.go-wrong{border-color:var(--accent4);background:rgba(255,107,107,.1);cursor:default;opacity:.5}
+.gap-opt.go-lock{cursor:default;opacity:.4}
+
+/* ── MINI-GAME: SPEED CLICK ── */
+.speed-instruction{font-size:14px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:14px}
+.speed-target{text-align:center;padding:14px;background:rgba(249,168,37,.1);
+  border-radius:var(--r);border:2px dashed rgba(249,168,37,.3);margin-bottom:16px}
+.speed-target-word{font-family:var(--font-h);font-size:28px;color:var(--accent3)}
+.speed-target-def{font-size:12px;color:var(--muted);margin-top:4px;font-weight:700}
+.speed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.speed-word{padding:12px 8px;border-radius:var(--r);border:2px solid rgba(255,255,255,.1);
+  background:var(--card2);cursor:pointer;text-align:center;
+  font-size:14px;font-weight:800;color:var(--text);transition:all .18s}
+.speed-word:hover{border-color:var(--accent);transform:scale(1.04)}
+.speed-word.sw-correct{background:rgba(6,214,160,.2);border-color:var(--accent2);
+  animation:flash .3s ease;cursor:default}
+.speed-word.sw-wrong{background:rgba(255,107,107,.15);border-color:var(--accent4);cursor:default}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.4}}
+.speed-score{text-align:center;font-family:var(--font-h);font-size:22px;color:var(--accent2);margin-top:10px}
+
+/* ── MINI-GAME: TRUE/FALSE ── */
+.tf-statement{background:var(--card2);border-radius:var(--r2);padding:24px;
+  font-size:clamp(16px,3vw,20px);font-weight:700;text-align:center;
+  line-height:1.5;margin-bottom:20px;min-height:100px;
+  display:flex;align-items:center;justify-content:center;border:1.5px solid rgba(255,255,255,.08)}
+.tf-btns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tf-btn{padding:20px;border-radius:var(--r2);border:2.5px solid transparent;
+  font-family:var(--font-h);font-size:32px;cursor:pointer;transition:all .22s;
+  display:flex;flex-direction:column;align-items:center;gap:6px}
+.tf-true{background:rgba(6,214,160,.12);border-color:rgba(6,214,160,.3);color:var(--accent2)}
+.tf-true:hover{background:rgba(6,214,160,.25);transform:scale(1.03)}
+.tf-false{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25);color:var(--accent4)}
+.tf-false:hover{background:rgba(255,107,107,.2);transform:scale(1.03)}
+.tf-btn.tf-correct{background:rgba(6,214,160,.3);border-color:var(--accent2);cursor:default}
+.tf-btn.tf-wrong{background:rgba(255,107,107,.2);border-color:var(--accent4);cursor:default;opacity:.6}
+.tf-btn.tf-locked{cursor:default;pointer-events:none}
+.tf-label{font-size:12px;font-weight:800;letter-spacing:.06em}
+.tf-progress{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.tf-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);transition:background .3s}
+.tf-dot.correct{background:var(--accent2)}.tf-dot.wrong{background:var(--accent4)}
+
+/* ── MINI-GAME: CROSSWORD ── */
+.cw-grid{display:inline-grid;gap:2px;margin:0 auto 16px;display:grid}
+.cw-cell{width:38px;height:38px;background:rgba(255,255,255,.08);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-h);font-size:18px;color:var(--text);position:relative;
+  border:1.5px solid rgba(255,255,255,.1);transition:all .2s}
+.cw-cell.black{background:rgba(0,0,0,.5);border-color:transparent}
+.cw-cell.active{border-color:var(--accent);background:rgba(124,58,237,.2)}
+.cw-cell.correct{background:rgba(6,214,160,.2);border-color:var(--accent2)}
+.cw-cell.wrong{background:rgba(255,107,107,.12);border-color:var(--accent4)}
+.cw-num{position:absolute;top:2px;left:3px;font-size:8px;font-weight:900;color:var(--muted)}
+.cw-input-area{display:flex;flex-direction:column;gap:10px}
+.cw-clue{display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--card2);border-radius:var(--r);cursor:pointer;transition:all .2s;
+  border:1.5px solid transparent}
+.cw-clue.active-clue{border-color:var(--accent);background:rgba(124,58,237,.1)}
+.cw-clue.solved{border-color:var(--accent2);background:rgba(6,214,160,.08);cursor:default}
+.cw-clue-num{font-family:var(--font-h);font-size:18px;color:var(--accent3);min-width:24px}
+.cw-clue-text{font-size:13px;font-weight:600;color:var(--muted);flex:1}
+.cw-answer-input{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.15);
+  border-radius:var(--r);padding:10px 14px;font-family:var(--font-h);font-size:18px;
+  letter-spacing:3px;color:var(--text);text-transform:uppercase;outline:none;
+  width:100%;transition:border-color .2s}
+.cw-answer-input:focus{border-color:var(--accent)}
+.btn-cw-check{padding:10px 20px;border-radius:40px;background:var(--accent);border:none;
+  color:#fff;font-family:var(--font-b);font-size:14px;font-weight:800;
+  cursor:pointer;transition:all .2s}
+.btn-cw-check:hover{background:#6d28d9}
+.cw-wrap{display:flex;flex-direction:column;align-items:center}
+
+/* NEXT ROUND BUTTON */
+.btn-next-round{width:100%;padding:16px;border-radius:40px;
+  background:linear-gradient(135deg,#06d6a0,#0891b2);border:none;color:#fff;
+  font-family:var(--font-b);font-size:17px;font-weight:900;cursor:pointer;
+  box-shadow:0 6px 20px rgba(6,214,160,.3);transition:all .2s;display:none;letter-spacing:.02em}
+.btn-next-round.visible{display:block}
+.btn-next-round:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(6,214,160,.4)}
+
+/* POINTS POP */
+@keyframes ptsPop{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(1.3);opacity:0}}
+.pts-pop{position:fixed;font-family:var(--font-h);font-size:32px;color:var(--accent3);
+  pointer-events:none;z-index:999;animation:ptsPop .9s ease forwards}
+
+/* ─────────────────────────────────────────────
+   END SCREEN
+───────────────────────────────────────────── */
+#s-end{gap:20px;text-align:center}
+.end-emoji{font-size:80px;animation:bounce 1s ease infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+.end-title{font-family:var(--font-h);font-size:clamp(36px,7vw,64px);color:var(--accent3)}
+.end-team{font-size:20px;font-weight:700;color:var(--muted)}
+.end-score-card{background:var(--card);border-radius:var(--r2);padding:32px 48px;
+  border:2px solid rgba(249,168,37,.3);box-shadow:0 8px 40px rgba(249,168,37,.15)}
+.end-score-big{font-family:var(--font-h);font-size:72px;color:var(--accent3);line-height:1}
+.end-score-label{font-size:14px;font-weight:700;color:var(--muted);margin-top:4px}
+.round-breakdown{width:100%;max-width:400px;display:flex;flex-direction:column;gap:8px}
+.rb-row{display:flex;justify-content:space-between;align-items:center;
+  padding:10px 16px;background:var(--card);border-radius:var(--r);
+  font-size:14px;font-weight:700;}
+.rb-round{color:var(--muted)}.rb-pts{color:var(--accent2)}
+.btn-play-again{padding:14px 36px;border-radius:40px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:#fff;
+  font-family:var(--font-b);font-size:16px;font-weight:900;cursor:pointer;
+  box-shadow:0 6px 20px rgba(124,58,237,.4);transition:all .2s}
+.btn-play-again:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<!-- Stars background -->
+<div class="stars-bg" id="stars-bg"></div>
+
+<!-- ════════════════════════════════════════════
+     WELCOME SCREEN
+════════════════════════════════════════════ -->
+<div class="screen active" id="s-welcome">
+  <div class="logo">Coping Crew 🧠</div>
+  <div class="logo-sub">Your friend needs help! Choose the right strategy, win the mini-game, and earn points for your team!</div>
+
+  <div class="welcome-card">
+    <div class="wc-label">YOUR TEAM NAME</div>
+    <input class="team-input" id="team-name-input" placeholder="e.g. The Brain Squad" maxlength="20">
+    <div class="rounds-row">
+      <span class="rounds-label">Rounds:</span>
+      <button class="rounds-btn" onclick="changeRounds(-1)">−</button>
+      <span class="rounds-val" id="rounds-display">6</span>
+      <button class="rounds-btn" onclick="changeRounds(1)">+</button>
+    </div>
+    <button class="btn-start" onclick="startGame()">Let's Play! 🚀</button>
+  </div>
+
+  <div class="how-it-works">
+    <div class="hiw-title">How to play</div>
+    <div class="hiw-step"><div class="hiw-num">1</div><span>Your friend appears and tells you about an emotion they're feeling.</span></div>
+    <div class="hiw-step"><div class="hiw-num">2</div><span>Choose the best CBT coping strategy to help them!</span></div>
+    <div class="hiw-step"><div class="hiw-num">3</div><span>Win the mini-game to earn bonus points.</span></div>
+    <div class="hiw-step"><div class="hiw-num">4</div><span>Most points at the end = your team is the Coping Crew Champion! 🏆</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     GAME SCREEN
+════════════════════════════════════════════ -->
+<div class="screen" id="s-game">
+
+  <div class="game-header">
+    <div>
+      <div class="gh-team" id="gh-team-name">Team</div>
+    </div>
+    <div style="text-align:center">
+      <div class="gh-round-val" id="gh-round-val">Round 1/6</div>
+      <div class="gh-round" id="gh-phase-label">Choose a strategy</div>
+    </div>
+    <div>
+      <div class="gh-score" id="gh-score">0</div>
+      <div class="gh-score-label">POINTS</div>
+    </div>
+  </div>
+
+  <div class="game-body" id="game-body">
+    <!-- dynamically rendered -->
+  </div>
+
+</div>
+
+<!-- ════════════════════════════════════════════
+     END SCREEN
+════════════════════════════════════════════ -->
+<div class="screen" id="s-end">
+  <div class="end-emoji" id="end-emoji">🏆</div>
+  <div class="end-title" id="end-title">Amazing!</div>
+  <div class="end-team" id="end-team">Team Name</div>
+  <div class="end-score-card">
+    <div class="end-score-big" id="end-score">0</div>
+    <div class="end-score-label">TOTAL POINTS</div>
+  </div>
+  <div class="round-breakdown" id="round-breakdown"></div>
+  <button class="btn-play-again" onclick="restartGame()">Play Again! 🔄</button>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   DATA
+════════════════════════════════════════════ */
+
+// Each scenario: friend + emotion + correct strategy + distractor strategies + cbt_note + minigame
+const SCENARIOS = [
+  {
+    friend: { name:'Alex', emoji:'😟', color:'#6c63ff', bg:'rgba(108,99,255,.15)' },
+    situation: "I got a really bad grade on my test. I studied hard but I still failed. I think I'm just stupid and I'll never be good at this. 😞",
+    emotion: { emoji:'😢', label:'SAD & hopeless', bg:'rgba(29,100,180,.2)', color:'#60a5fa' },
+    strategies: [
+      { icon:'🔄', label:'REFRAME IT', desc:'Challenge the thought "I am stupid" — is it really true? What is a kinder, more realistic thought?', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🚶', label:'TAKE A WALK', desc:'Go outside for 10 minutes to clear your head.', type:'ok', badge:'OK', pts:15 },
+      { icon:'🎮', label:'PLAY VIDEO GAMES ALL DAY', desc:'Ignore the problem completely until it goes away.', type:'bad', badge:'Avoidance ✗', pts:0 },
+      { icon:'📝', label:'MAKE A STUDY PLAN', desc:'Talk to the teacher and make a concrete plan to improve step by step.', type:'best', badge:'CBT ✓', pts:30 },
+    ],
+    cbt_note: '🧠 CBT says: negative automatic thoughts like "I\'m stupid" are often distorted. We can replace them with balanced thoughts: "I found this difficult, but I can learn and improve."',
+    minigame: {
+      type: 'anagram',
+      word: 'REFRAME',
+      hint: 'Change how you think about a situation',
+      points_max: 40
+    }
+  },
+  {
+    friend: { name:'Mia', emoji:'😡', color:'#ef4444', bg:'rgba(239,68,68,.15)' },
+    situation: "My best friend told everyone my secret at school. I am so ANGRY I want to scream. My heart is beating so fast and I feel hot all over! 🔥",
+    emotion: { emoji:'😡', label:'FURIOUS', bg:'rgba(239,68,68,.2)', color:'#fca5a5' },
+    strategies: [
+      { icon:'😤', label:'SHOUT AT YOUR FRIEND', desc:'Tell them exactly how angry you are in front of everyone.', type:'bad', badge:'Not helpful ✗', pts:0 },
+      { icon:'🌬️', label:'BOX BREATHING', desc:'Breathe in 4 counts, hold 4, out 4, hold 4. Repeat until calm.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🏃', label:'PHYSICAL ACTIVITY', desc:'Run, jump, dance — move your body to release the anger energy safely!', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🙈', label:'PRETEND YOU\'RE NOT ANGRY', desc:'Smile and act like nothing happened. Suppress everything.', type:'bad', badge:'Suppression ✗', pts:0 },
+    ],
+    cbt_note: '🧠 When angry, your amygdala fires up and your thinking brain goes offline. Box breathing activates your vagus nerve and brings your prefrontal cortex back online. Physical movement burns off the stress hormones (adrenaline, cortisol).',
+    minigame: {
+      type: 'trueFalse',
+      questions: [
+        { q:'Deep breathing can help you feel calmer when you are angry.', answer: true, fact:'TRUE! Slow breathing activates the parasympathetic nervous system — your body\'s "calm down" system.' },
+        { q:'When you are angry, the best thing is to keep it all inside and say nothing.', answer: false, fact:'FALSE. Suppressing emotions makes them stronger. Find a safe way to express them!' },
+        { q:'Physical exercise can help reduce feelings of anger.', answer: true, fact:'TRUE! Movement burns off adrenaline and cortisol — the stress chemicals that fuel anger.' },
+        { q:'"I am so angry" and "I feel angry" mean exactly the same thing.', answer: false, fact:'FALSE! "I AM angry" = I identify as anger. "I FEEL angry" = the emotion is temporary and separate from you.' },
+        { q:'Counting to 10 before reacting gives your brain time to think.', answer: true, fact:'TRUE! This is called a "cognitive pause" — it gives your prefrontal cortex time to activate.' },
+      ],
+      points_max: 50
+    }
+  },
+  {
+    friend: { name:'Sam', emoji:'😰', color:'#7c3aed', bg:'rgba(124,58,237,.15)' },
+    situation: "I have to speak in front of the whole class tomorrow and I can't sleep. My stomach hurts and I keep thinking: what if I forget everything? What if everyone laughs? I'm terrified! 😱",
+    emotion: { emoji:'😰', label:'ANXIOUS & scared', bg:'rgba(124,58,237,.2)', color:'#c084fc' },
+    strategies: [
+      { icon:'🗣️', label:'TALK TO SOMEONE', desc:'Tell a friend or a trusted adult how you feel. You don\'t have to face it alone.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🌟', label:'POSITIVE SELF-TALK', desc:'Replace "I will fail" with "I prepared well and I can do this." Practice in the mirror!', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🚫', label:'SKIP SCHOOL', desc:'Just don\'t go tomorrow. Problem solved!', type:'bad', badge:'Avoidance ✗', pts:0 },
+      { icon:'☕', label:'DRINK 5 COFFEES', desc:'Stay awake all night and drink lots of caffeine.', type:'bad', badge:'Makes it worse ✗', pts:0 },
+    ],
+    cbt_note: '🧠 Anxiety often comes from "what if" thoughts — we imagine the worst outcome. CBT teaches us to ask: "What is the REALISTIC outcome? What evidence do I have?" Positive self-talk (positive affirmations) rewires the neural pathways connected to self-belief.',
+    minigame: {
+      type: 'fillGap',
+      sentences: [
+        { q:'When I feel anxious, I can replace negative _____ with positive ones.', options:['thoughts','pizza','colours','shoes'], answer:'thoughts', qid:0 },
+        { q:'Talking to a trusted _____ can make a problem feel smaller.', options:['stranger','adult','enemy','wall'], answer:'adult', qid:1 },
+        { q:'Box breathing helps because it _____ your nervous system.', options:['breaks','freezes','calms','destroys'], answer:'calms', qid:2 },
+        { q:'"I can do this" is an example of positive _____-talk.', options:['back','self','team','group'], answer:'self', qid:3 },
+      ],
+      points_max: 40
+    }
+  },
+  {
+    friend: { name:'Leo', emoji:'😔', color:'#0891b2', bg:'rgba(8,145,178,.15)' },
+    situation: "My parents argued a lot last night and I couldn't sleep. I feel really sad and worried. I don't know what to do with this feeling — it's too big. 💙",
+    emotion: { emoji:'😔', label:'SAD & overwhelmed', bg:'rgba(8,145,178,.2)', color:'#67e8f9' },
+    strategies: [
+      { icon:'📓', label:'WRITE IT DOWN', desc:'Write your feelings in a journal. Name the emotions you feel and what triggered them.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🎵', label:'LISTEN TO MUSIC', desc:'Choose music that matches how you feel, then slowly shift to more uplifting songs.', type:'ok', badge:'Good!', pts:15 },
+      { icon:'🧘', label:'GROUNDING (5-4-3-2-1)', desc:'Name 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste. It anchors you to the present.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🍟', label:'EAT JUNK FOOD UNTIL YOU FEEL BETTER', desc:'Emotional eating makes you feel worse in the long run.', type:'bad', badge:'Not helpful ✗', pts:0 },
+    ],
+    cbt_note: '🧠 The 5-4-3-2-1 grounding technique interrupts the cycle of anxious or sad thoughts by bringing attention back to the present moment through your five senses. Journaling helps "name it to tame it" — labelling emotions reduces their intensity (this is called affect labelling).',
+    minigame: {
+      type: 'speedClick',
+      target: { word:'GROUNDING', def:'A technique to bring you back to the present moment' },
+      wordPool: [
+        {w:'grounding',ok:true},{w:'avoiding',ok:false},{w:'breathing',ok:true},{w:'suppressing',ok:false},
+        {w:'journaling',ok:true},{w:'isolating',ok:false},{w:'naming emotions',ok:true},{w:'overthinking',ok:false},
+        {w:'talking',ok:true},{w:'scrolling',ok:false},{w:'moving',ok:true},{w:'ignoring',ok:false},
+        {w:'resting',ok:true},{w:'catastrophising',ok:false},{w:'asking for help',ok:true},{w:'pretending',ok:false},
+        {w:'stretching',ok:true},{w:'yelling',ok:false},
+      ],
+      instructions: '⚡ Click all the HEALTHY coping strategies before time runs out! Avoid the unhealthy ones!',
+      points_max: 54,
+      time: 25
+    }
+  },
+  {
+    friend: { name:'Zoe', emoji:'😤', color:'#f59e0b', bg:'rgba(245,158,11,.15)' },
+    situation: "My little brother broke my favourite toy on purpose. I'm SO frustrated. I know I shouldn't yell but the feeling is just exploding inside me. What do I do RIGHT NOW?! 💥",
+    emotion: { emoji:'😤', label:'FRUSTRATED & angry', bg:'rgba(245,158,11,.2)', color:'#fcd34d' },
+    strategies: [
+      { icon:'✋', label:'TAKE A PAUSE', desc:'"I need a moment." Walk away from the situation for 5 minutes before responding.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'💬', label:'USE "I" STATEMENTS', desc:'Say "I feel hurt when my things are broken" instead of "You are so annoying!"', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🗑️', label:'THROW THINGS', desc:'Break something to release the energy.', type:'bad', badge:'Destructive ✗', pts:0 },
+      { icon:'📱', label:'POST ABOUT IT ONLINE', desc:'Write an angry post about your brother on social media immediately.', type:'bad', badge:'Not helpful ✗', pts:0 },
+    ],
+    cbt_note: '🧠 "I" statements are a key CBT communication skill. They communicate feelings without blaming, which reduces the other person\'s defensiveness and opens real dialogue. Taking a "cognitive pause" gives the prefrontal cortex time to override the amygdala\'s emotional hijack.',
+    minigame: {
+      type: 'anagram',
+      word: 'PATIENCE',
+      hint: 'Staying calm when things are difficult',
+      points_max: 40
+    }
+  },
+  {
+    friend: { name:'Kai', emoji:'😐', color:'#10b981', bg:'rgba(16,185,129,.15)' },
+    situation: "I've been feeling nothing for a few days. I'm not sad, not happy, just... empty. I don't feel like doing anything I used to like. It's like grey fog everywhere. 🌫️",
+    emotion: { emoji:'😐', label:'NUMB & disconnected', bg:'rgba(16,185,129,.2)', color:'#6ee7b7' },
+    strategies: [
+      { icon:'🌞', label:'BEHAVIOURAL ACTIVATION', desc:'Do ONE small thing you used to enjoy, even if you don\'t feel like it. Start with just 5 minutes.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🤝', label:'CONNECT WITH SOMEONE', desc:'Text a friend. You don\'t need to explain everything — just be with someone.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🛌', label:'STAY IN BED ALL DAY', desc:'Rest and sleep until the feeling passes.', type:'bad', badge:'Avoidance ✗', pts:0 },
+      { icon:'📺', label:'BINGE WATCH FOR 10 HOURS', desc:'Distract yourself completely with screens.', type:'bad', badge:'Not helpful ✗', pts:0 },
+    ],
+    cbt_note: '🧠 Behavioural Activation is a core CBT technique for low mood. The idea: when we feel flat, we stop doing things → we feel worse. Doing small pleasant activities (even without motivation) gradually rebuilds positive emotion. "Action before motivation" — not the other way around!',
+    minigame: {
+      type: 'crossword',
+      size: 7,
+      words: [
+        { word:'CONNECT', row:0, col:0, dir:'h', clue:'What you do when you reach out to a friend (to ___)' },
+        { word:'CALM',    row:2, col:2, dir:'h', clue:'The opposite of panic (feeling ___)' },
+        { word:'MOOD',    row:0, col:4, dir:'v', clue:'Your emotional state right now' },
+        { word:'COPE',    row:4, col:0, dir:'h', clue:'To ___ means to deal with something difficult' },
+        { word:'NAME',    row:2, col:5, dir:'v', clue:'To ___ an emotion means to put a word to it' },
+      ],
+      points_max: 50
+    }
+  },
+  {
+    friend: { name:'Ruby', emoji:'😳', color:'#ec4899', bg:'rgba(236,72,153,.15)' },
+    situation: "I said something embarrassing in class and everyone laughed. I wanted to disappear. Now I'm scared to speak in any lesson and I keep replaying the moment in my head over and over. 😳",
+    emotion: { emoji:'😳', label:'EMBARRASSED & ashamed', bg:'rgba(236,72,153,.2)', color:'#f9a8d4' },
+    strategies: [
+      { icon:'🔁', label:'STOP THE REPLAY', desc:'When the memory comes back, say STOP (even aloud!). Then deliberately think about something else.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'😊', label:'SELF-COMPASSION', desc:'"Everyone makes mistakes. I am human. I would be kind to a friend in this situation — I can be kind to myself too."', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🏠', label:'NEVER SPEAK AGAIN IN CLASS', desc:'Decide to permanently stop participating to avoid all risk.', type:'bad', badge:'Avoidance ✗', pts:0 },
+      { icon:'😂', label:'MAKE FUN OF YOURSELF FIRST', desc:'Constantly joke about it so others think you don\'t care.', type:'bad', badge:'Unhealthy ✗', pts:0 },
+    ],
+    cbt_note: '🧠 Rumination (replaying events) is a strong predictor of anxiety and depression. CBT "thought stopping" and cognitive defusion techniques interrupt the loop. Self-compassion (treating yourself as you would treat a good friend) reduces shame and increases resilience.',
+    minigame: {
+      type: 'fillGap',
+      sentences: [
+        { q:'Everyone makes _____. It is part of being human.', options:['dinner','mistakes','money','chairs'], answer:'mistakes', qid:0 },
+        { q:'Replaying a bad memory again and again is called _____.', options:['dreaming','rumination','studying','resting'], answer:'rumination', qid:1 },
+        { q:'Treating yourself with kindness is called self-_____.', options:['destruction','confidence','compassion','control'], answer:'compassion', qid:2 },
+        { q:'CBT helps us change negative _____ patterns.', options:['food','weather','thought','music'], answer:'thought', qid:3 },
+      ],
+      points_max: 40
+    }
+  },
+  {
+    friend: { name:'Max', emoji:'😮‍💨', color:'#8b5cf6', bg:'rgba(139,92,246,.15)' },
+    situation: "There's SO much going on — homework, football practice, problems with my friend group, and my parents keep fighting. I feel like my brain is going to explode. I don't know where to start! 😩",
+    emotion: { emoji:'😩', label:'OVERWHELMED & stressed', bg:'rgba(139,92,246,.2)', color:'#c4b5fd' },
+    strategies: [
+      { icon:'📋', label:'BREAK IT DOWN', desc:'Write down everything that is stressing you. Then pick just ONE thing to do today. Just one.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'🙏', label:'ASK FOR HELP', desc:'You don\'t have to solve everything alone. Identify ONE person who can help with ONE of these things.', type:'best', badge:'CBT ✓', pts:30 },
+      { icon:'😭', label:'CRY IN YOUR ROOM FOR HOURS', desc:'Give up on everything and feel hopeless.', type:'bad', badge:'Not helpful ✗', pts:0 },
+      { icon:'📱', label:'SCROLL SOCIAL MEDIA COMPARING YOURSELF', desc:'Look at how perfect everyone else\'s life seems.', type:'bad', badge:'Makes it worse ✗', pts:0 },
+    ],
+    cbt_note: '🧠 Overwhelm is often caused by seeing ALL problems as ONE giant unsolvable block. CBT\'s problem-solving approach: (1) List all the problems. (2) Prioritize. (3) Brainstorm solutions. (4) Pick one small action. This shifts from "catastrophising" to "action mode."',
+    minigame: {
+      type: 'trueFalse',
+      questions: [
+        { q:'When you feel overwhelmed, trying to solve everything at once is the best strategy.', answer:false, fact:'FALSE. Breaking problems into small steps makes them manageable. One thing at a time!' },
+        { q:'Writing a to-do list can reduce feelings of stress and overwhelm.', answer:true, fact:'TRUE! Externalising worries onto paper "offloads" the mental weight and makes problems feel more concrete.' },
+        { q:'Asking for help is a sign of weakness.', answer:false, fact:'FALSE! Asking for help is a sign of self-awareness and courage. No one solves everything alone.' },
+        { q:'Comparing yourself to others on social media usually makes you feel better.', answer:false, fact:'FALSE. Social media shows edited highlight reels, not real life. Comparison is "the thief of joy" (Theodore Roosevelt).' },
+        { q:'Stress can feel physical — like a tight chest or a stomachache.', answer:true, fact:'TRUE! The brain-body connection is real. Emotions are processed in the body as much as the mind.' },
+      ],
+      points_max: 50
+    }
+  },
+];
+
+/* ════════════════════════════════════════════
+   GAME STATE
+════════════════════════════════════════════ */
+let teamName = 'The Crew';
+let totalRounds = 6;
+let currentRound = 0;
+let totalScore = 0;
+let roundScores = [];
+let roundOrder = [];
+let strategyChosen = false;
+let mgTimer = null;
+let mgScore = 0;
+let tfIndex = 0;
+let tfCorrect = 0;
+let speedCorrect = 0;
+let gapAnswered = 0;
+let gapCorrect = 0;
+let cwSolved = 0;
+let cwTotal = 0;
+let cwActiveWord = null;
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+function initStars(){
+  const bg = document.getElementById('stars-bg');
+  for(let i=0;i<70;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    const sz = Math.random()*3+1;
+    s.style.cssText=`width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${1.2+Math.random()*2}s`;
+    bg.appendChild(s);
+  }
+}
+initStars();
+
+let roundsDisplay = 6;
+function changeRounds(d){
+  roundsDisplay = Math.min(8, Math.max(3, roundsDisplay+d));
+  document.getElementById('rounds-display').textContent = roundsDisplay;
+}
+
+function startGame(){
+  teamName = document.getElementById('team-name-input').value.trim() || 'The Crew';
+  totalRounds = roundsDisplay;
+  totalScore = 0;
+  roundScores = [];
+  currentRound = 0;
+  // shuffle scenarios
+  roundOrder = [...SCENARIOS].sort(()=>Math.random()-.5).slice(0,totalRounds).map((_,i)=>i);
+  // actually just pick random indices
+  const idx = Array.from({length:SCENARIOS.length},(_,i)=>i).sort(()=>Math.random()-.5).slice(0,totalRounds);
+  roundOrder = idx;
+  showScreen('s-game');
+  document.getElementById('gh-team-name').textContent = teamName;
+  loadRound();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active')});
+  document.getElementById(id).classList.add('active');
+}
+
+/* ════════════════════════════════════════════
+   ROUND RENDERING
+════════════════════════════════════════════ */
+function loadRound(){
+  strategyChosen = false;
+  mgScore = 0;
+  const sc = SCENARIOS[roundOrder[currentRound]];
+  updateHeader();
+  const body = document.getElementById('game-body');
+  body.innerHTML = '';
+
+  // Phase tag
+  const pt = div('phase-tag pt-strategy','🎯 PHASE 1 — Choose the right strategy');
+  body.appendChild(pt);
+
+  // Friend card
+  const fc = document.createElement('div');
+  fc.className = 'friend-card';
+  fc.innerHTML = `
+    <div class="friend-avatar" style="background:${sc.friend.bg};border-color:${sc.friend.color}">
+      ${sc.friend.emoji}
+    </div>
+    <div class="friend-right">
+      <div class="friend-name" style="color:${sc.friend.color}">${sc.friend.name.toUpperCase()}</div>
+      <div class="friend-bubble">${sc.situation}</div>
+      <div class="friend-emotion-badge" style="background:${sc.emotion.bg};color:${sc.emotion.color}">
+        ${sc.emotion.emoji} Feeling: ${sc.emotion.label}
+      </div>
+    </div>`;
+  body.appendChild(fc);
+
+  // Strategy options (shuffled)
+  const grid = div('strategy-grid');
+  const shuffledStrats = [...sc.strategies].sort(()=>Math.random()-.5);
+  shuffledStrats.forEach(st => {
+    const opt = document.createElement('div');
+    opt.className = 'strategy-opt';
+    const badgeClass = st.type==='best'?'strat-badge-good':st.type==='ok'?'strat-badge-ok':'strat-badge-bad';
+    opt.innerHTML = `
+      <div class="strat-icon">${st.icon}</div>
+      <div class="strat-text">
+        <div class="strat-label" style="color:${st.type==='best'?'#34d399':st.type==='ok'?'#fcd34d':'#fca5a5'}">${st.type==='best'?'CBT STRATEGY':st.type==='ok'?'COULD HELP':'AVOID THIS'}</div>
+        <div class="strat-desc">${st.desc}</div>
+      </div>
+      <div class="strat-badge ${badgeClass}">${st.badge}</div>`;
+    opt.onclick = () => chooseStrategy(st, opt, grid, sc);
+    grid.appendChild(opt);
+  });
+  body.appendChild(grid);
+
+  // CBT feedback (hidden)
+  const fb = div('cbt-feedback');
+  fb.id = 'cbt-feedback-box';
+  fb.innerHTML = `<div class="cbt-feedback-title">🧠 WHY THIS WORKS — CBT INSIGHT</div><div class="cbt-feedback-text">${sc.cbt_note}</div>`;
+  body.appendChild(fb);
+
+  // Mini-game wrapper (hidden)
+  const mgw = div('minigame-wrap');
+  mgw.id = 'mg-wrap';
+  body.appendChild(mgw);
+
+  // Next round button (hidden)
+  const nb = document.createElement('button');
+  nb.className = 'btn-next-round';
+  nb.id = 'btn-next-round';
+  nb.textContent = currentRound < totalRounds-1 ? 'Next Round →' : 'See Final Score! 🏆';
+  nb.onclick = advanceRound;
+  body.appendChild(nb);
+}
+
+function chooseStrategy(st, clickedOpt, grid, sc){
+  if(strategyChosen) return;
+  strategyChosen = true;
+
+  // lock all options, style them
+  Array.from(grid.children).forEach(opt=>{
+    opt.classList.add('locked');
+    // find which strategy this opt is by its content
+  });
+
+  if(st.type==='best'){
+    clickedOpt.classList.remove('locked');
+    clickedOpt.classList.add('correct');
+    showPointsPop(st.pts, clickedOpt);
+    totalScore += st.pts;
+    mgScore = 0;
+  } else if(st.type==='ok'){
+    clickedOpt.classList.remove('locked');
+    clickedOpt.classList.add('correct');
+    showPointsPop(st.pts, clickedOpt);
+    totalScore += st.pts;
+  } else {
+    clickedOpt.classList.remove('locked');
+    clickedOpt.classList.add('wrong');
+  }
+
+  updateHeader();
+  // show CBT feedback
+  const fb = document.getElementById('cbt-feedback-box');
+  fb.classList.add('visible');
+
+  // show mini-game
+  setTimeout(() => {
+    const mgw = document.getElementById('mg-wrap');
+    mgw.classList.add('visible');
+    renderMiniGame(sc.minigame, mgw);
+  }, 600);
+
+  document.getElementById('game-body').scrollTop = 999;
+}
+
+function updateHeader(){
+  document.getElementById('gh-round-val').textContent = `Round ${currentRound+1} / ${totalRounds}`;
+  document.getElementById('gh-score').textContent = totalScore;
+}
+
+function advanceRound(){
+  roundScores.push(mgScore + (strategyChosen ? 0 : 0));
+  currentRound++;
+  if(currentRound >= totalRounds){
+    showEndScreen();
+  } else {
+    document.getElementById('game-body').scrollTop = 0;
+    loadRound();
+  }
+}
+
+/* ════════════════════════════════════════════
+   MINI-GAMES
+════════════════════════════════════════════ */
+function renderMiniGame(mg, container){
+  container.innerHTML = '';
+  const hdr = div('mg-header');
+  const title = div('mg-title');
+  const timerEl = div('mg-timer','—');
+  timerEl.id='mg-timer-el';
+  const ptsLabel = div('mg-points-label');
+  hdr.appendChild(title);
+  hdr.appendChild(div('','')); // spacer
+  const timerCol = document.createElement('div');
+  timerCol.appendChild(timerEl);
+  timerCol.appendChild(ptsLabel);
+  hdr.appendChild(timerCol);
+  container.appendChild(hdr);
+
+  // Phase tag
+  const pt = div('phase-tag pt-minigame','⚡ PHASE 2 — Mini-Game for bonus points!');
+  container.insertBefore(pt, hdr);
+
+  if(mg.type === 'anagram'){
+    title.textContent = '🔤 Anagram!';
+    ptsLabel.textContent = `Up to +${mg.points_max} pts`;
+    renderAnagram(mg, container);
+  } else if(mg.type === 'trueFalse'){
+    title.textContent = '✅ True or False?';
+    ptsLabel.textContent = `Up to +${mg.points_max} pts`;
+    renderTrueFalse(mg, container);
+  } else if(mg.type === 'fillGap'){
+    title.textContent = '📝 Fill the Gap!';
+    ptsLabel.textContent = `Up to +${mg.points_max} pts`;
+    renderFillGap(mg, container);
+  } else if(mg.type === 'speedClick'){
+    title.textContent = '⚡ Speed Click!';
+    ptsLabel.textContent = `Up to +${mg.points_max} pts`;
+    renderSpeedClick(mg, container);
+  } else if(mg.type === 'crossword'){
+    title.textContent = '📦 Mini Crossword!';
+    ptsLabel.textContent = `Up to +${mg.points_max} pts`;
+    renderCrossword(mg, container);
+  }
+}
+
+/* ── ANAGRAM ── */
+function renderAnagram(mg, container){
+  const scrambled = mg.word.split('').sort(()=>Math.random()-.5).join('');
+  let attempts = 0;
+  const maxAttempts = 3;
+
+  const inst = div('mg-instruction',`🔀 Unscramble the word! Hint: ${mg.hint}`);
+  const wordEl = div('anagram-word', scrambled);
+  const input = document.createElement('input');
+  input.className='anagram-input';
+  input.maxLength = mg.word.length;
+  input.placeholder = '?'.repeat(mg.word.length);
+  input.autocomplete='off';
+
+  const hintEl = div('anagram-hint', `${mg.word.length} letters`);
+  const attRow = div('anagram-attempts');
+  for(let i=0;i<maxAttempts;i++){
+    const d = div('attempt-dot'); attRow.appendChild(d);
+  }
+
+  container.appendChild(inst);
+  container.appendChild(wordEl);
+  container.appendChild(input);
+  container.appendChild(hintEl);
+  container.appendChild(attRow);
+
+  input.addEventListener('keydown', e => {
+    if(e.key === 'Enter') checkAnagram();
+  });
+
+  // also add a check button
+  const checkBtn = document.createElement('button');
+  checkBtn.className='btn-cw-check';
+  checkBtn.style.cssText='margin-top:12px;display:block;margin-left:auto;margin-right:auto';
+  checkBtn.textContent='Check ✓';
+  checkBtn.onclick = checkAnagram;
+  container.appendChild(checkBtn);
+
+  function checkAnagram(){
+    const val = input.value.toUpperCase().trim();
+    attRow.children[attempts].classList.add('used');
+    attempts++;
+    if(val === mg.word){
+      input.classList.add('correct-anim');
+      attRow.children[attempts-1].classList.remove('used');
+      attRow.children[attempts-1].classList.add('correct');
+      hintEl.textContent = `✓ Correct! The word is ${mg.word}!`;
+      hintEl.style.color='#34d399';
+      const pts = Math.round(mg.points_max * (1 - (attempts-1) * 0.3));
+      const finalPts = Math.max(10, pts);
+      mgScore += finalPts;
+      totalScore += finalPts;
+      updateHeader();
+      showPointsPop(finalPts, container);
+      input.disabled=true;
+      checkBtn.disabled=true;
+      finishMiniGame(finalPts, mg.points_max, container);
+    } else {
+      input.classList.add('wrong-anim','shake');
+      setTimeout(()=>input.classList.remove('wrong-anim','shake'),350);
+      if(attempts >= maxAttempts){
+        hintEl.textContent = `The word was: ${mg.word}`;
+        hintEl.style.color='#fca5a5';
+        input.disabled=true;
+        checkBtn.disabled=true;
+        finishMiniGame(0, mg.points_max, container);
+      } else {
+        hintEl.textContent = `Not quite! ${maxAttempts - attempts} attempt(s) left`;
+      }
+      input.value='';
+    }
+  }
+
+  setTimeout(()=>input.focus(),200);
+}
+
+/* ── TRUE / FALSE ── */
+function renderTrueFalse(mg, container){
+  const qs = [...mg.questions].sort(()=>Math.random()-.5).slice(0,4);
+  tfIndex=0; tfCorrect=0;
+  const ptsEach = Math.round(mg.points_max / qs.length);
+
+  const progressRow = div('tf-progress');
+  qs.forEach(()=>progressRow.appendChild(div('tf-dot')));
+  container.appendChild(div('mg-instruction','Is each statement TRUE ✅ or FALSE ❌?'));
+  container.appendChild(progressRow);
+
+  const stmtEl = div('tf-statement', qs[0].q);
+  container.appendChild(stmtEl);
+
+  const factEl = div('cbt-feedback');
+  factEl.style.cssText='display:none;margin-bottom:12px';
+  container.appendChild(factEl);
+
+  const btns = div('tf-btns');
+  const tBtn = document.createElement('div');
+  tBtn.className='tf-btn tf-true';
+  tBtn.innerHTML='<span style="font-size:36px">✅</span><span class="tf-label">TRUE</span>';
+  const fBtn = document.createElement('div');
+  fBtn.className='tf-btn tf-false';
+  fBtn.innerHTML='<span style="font-size:36px">❌</span><span class="tf-label">FALSE</span>';
+
+  tBtn.onclick=()=>answerTF(true);
+  fBtn.onclick=()=>answerTF(false);
+  btns.appendChild(tBtn); btns.appendChild(fBtn);
+  container.appendChild(btns);
+
+  function answerTF(answer){
+    const q = qs[tfIndex];
+    const correct = answer === q.answer;
+    const chosenBtn = answer?tBtn:fBtn;
+    const otherBtn = answer?fBtn:tBtn;
+    tBtn.classList.add('tf-locked'); fBtn.classList.add('tf-locked');
+    if(correct){
+      chosenBtn.classList.add('tf-correct');
+      progressRow.children[tfIndex].classList.add('correct');
+      tfCorrect++;
+      const pts = ptsEach;
+      mgScore += pts; totalScore += pts;
+      updateHeader();
+      showPointsPop(pts, container);
+    } else {
+      chosenBtn.classList.add('tf-wrong');
+      const correctBtn = q.answer?tBtn:fBtn;
+      correctBtn.classList.add('tf-correct');
+      progressRow.children[tfIndex].classList.add('wrong');
+    }
+    factEl.innerHTML=`<div class="cbt-feedback-title">💡 DID YOU KNOW?</div><div class="cbt-feedback-text">${q.fact}</div>`;
+    factEl.style.display='block';
+
+    tfIndex++;
+    if(tfIndex < qs.length){
+      setTimeout(()=>{
+        stmtEl.textContent = qs[tfIndex].q;
+        tBtn.className='tf-btn tf-true'; fBtn.className='tf-btn tf-false';
+        factEl.style.display='none';
+      }, 1800);
+    } else {
+      setTimeout(()=>{
+        finishMiniGame(tfCorrect*ptsEach, mg.points_max, container);
+      }, 1800);
+    }
+  }
+}
+
+/* ── FILL THE GAP ── */
+function renderFillGap(mg, container){
+  const qs = [...mg.sentences];
+  let qIdx = 0;
+  gapCorrect=0; gapAnswered=0;
+  const ptsEach = Math.round(mg.points_max / qs.length);
+
+  container.appendChild(div('mg-instruction','Complete the sentence — choose the correct word!'));
+
+  const progress = div('tf-progress');
+  qs.forEach(()=>progress.appendChild(div('tf-dot')));
+  container.appendChild(progress);
+
+  const sentEl = div('gap-sentence');
+  container.appendChild(sentEl);
+
+  const optsGrid = div('gap-options');
+  container.appendChild(optsGrid);
+
+  function renderQ(i){
+    const q = qs[i];
+    const parts = q.q.split('_____');
+    sentEl.innerHTML = parts[0] + '<span class="gap-blank" id="gap-blank-el">_____</span>' + (parts[1]||'');
+    optsGrid.innerHTML='';
+    const shuffled = [...q.options].sort(()=>Math.random()-.5);
+    shuffled.forEach(opt=>{
+      const btn = div('gap-opt', opt);
+      btn.onclick=()=>{
+        if(btn.classList.contains('go-lock')) return;
+        Array.from(optsGrid.children).forEach(b=>b.classList.add('go-lock'));
+        const blankEl = document.getElementById('gap-blank-el');
+        if(opt === q.answer){
+          btn.classList.add('go-correct');
+          blankEl.textContent = opt;
+          blankEl.classList.add('correct');
+          gapCorrect++; mgScore+=ptsEach; totalScore+=ptsEach;
+          updateHeader();
+          showPointsPop(ptsEach, btn);
+          progress.children[i].classList.add('correct');
+        } else {
+          btn.classList.add('go-wrong');
+          const correctBtn = Array.from(optsGrid.children).find(b=>b.textContent===q.answer);
+          if(correctBtn) correctBtn.classList.add('go-correct');
+          blankEl.textContent = q.answer;
+          blankEl.classList.add('wrong');
+          progress.children[i].classList.add('wrong');
+        }
+        qIdx++;
+        if(qIdx < qs.length){
+          setTimeout(()=>renderQ(qIdx), 1400);
+        } else {
+          setTimeout(()=>finishMiniGame(gapCorrect*ptsEach, mg.points_max, container), 1400);
+        }
+      };
+      optsGrid.appendChild(btn);
+    });
+  }
+  renderQ(0);
+}
+
+/* ── SPEED CLICK ── */
+function renderSpeedClick(mg, container){
+  clearInterval(mgTimer);
+  speedCorrect=0;
+  let timeLeft = mg.time || 25;
+  const ptsEach = Math.round(mg.points_max / mg.wordPool.filter(w=>w.ok).length);
+
+  container.appendChild(div('mg-instruction', mg.instructions));
+
+  const targetBox = div('speed-target');
+  targetBox.innerHTML=`<div class="speed-target-word">${mg.target.word}</div><div class="speed-target-def">${mg.target.def}</div>`;
+  container.appendChild(targetBox);
+
+  const scoreEl = div('speed-score','Correct: 0');
+  container.appendChild(scoreEl);
+
+  const timerEl = document.getElementById('mg-timer-el');
+  timerEl.textContent = timeLeft;
+
+  const words = [...mg.wordPool].sort(()=>Math.random()-.5);
+  const grid = div('speed-grid');
+  words.forEach(w=>{
+    const chip = div('speed-word', w.w);
+    chip.onclick = ()=>{
+      if(chip.classList.contains('sw-correct')||chip.classList.contains('sw-wrong')) return;
+      if(w.ok){
+        chip.classList.add('sw-correct');
+        speedCorrect++;
+        mgScore+=ptsEach; totalScore+=ptsEach;
+        updateHeader();
+        scoreEl.textContent = `Correct: ${speedCorrect}`;
+      } else {
+        chip.classList.add('sw-wrong');
+        // small penalty
+        mgScore = Math.max(0, mgScore-5);
+        totalScore = Math.max(0, totalScore-5);
+        updateHeader();
+      }
+    };
+    grid.appendChild(chip);
+  });
+  container.appendChild(grid);
+
+  mgTimer = setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent = timeLeft;
+    if(timeLeft <= 0){
+      clearInterval(mgTimer);
+      timerEl.textContent='⏰';
+      Array.from(grid.children).forEach(c=>c.style.pointerEvents='none');
+      finishMiniGame(speedCorrect*ptsEach, mg.points_max, container);
+    }
+  }, 1000);
+}
+
+/* ── CROSSWORD ── */
+function renderCrossword(mg, container){
+  cwSolved=0; cwTotal=mg.words.length; cwActiveWord=null;
+  const size = mg.size || 7;
+  const grid = Array.from({length:size},()=>Array(size).fill(null));
+
+  // Place letters in grid
+  mg.words.forEach(w=>{
+    for(let i=0;i<w.word.length;i++){
+      const r = w.dir==='h'?w.row:w.row+i;
+      const c = w.dir==='h'?w.col+i:w.col;
+      if(r<size && c<size) grid[r][c]={letter:w.word[i],wordIdx:-1,letterIdx:i};
+    }
+  });
+
+  const cwWrap = div('cw-wrap');
+  const cwGridEl = div('cw-grid');
+  cwGridEl.style.gridTemplateColumns=`repeat(${size},38px)`;
+
+  // Build cells
+  const cellEls = [];
+  for(let r=0;r<size;r++){
+    cellEls[r]=[];
+    for(let c=0;c<size;c++){
+      const cell = div('cw-cell');
+      if(!grid[r][c]) cell.classList.add('black');
+      // number clue starts
+      mg.words.forEach((w,wi)=>{
+        if(w.row===r && w.col===c){
+          const numEl = div('cw-num',(wi+1).toString());
+          cell.appendChild(numEl);
+        }
+      });
+      cwGridEl.appendChild(cell);
+      cellEls[r][c]=cell;
+    }
+  }
+  cwWrap.appendChild(cwGridEl);
+  container.appendChild(div('mg-instruction','Click a clue, then type the answer and press Check!'));
+  container.appendChild(cwWrap);
+
+  // Clues + input area
+  const clueArea = div('cw-input-area');
+  let activeClueIdx = -1;
+  const inputEl = document.createElement('input');
+  inputEl.className='cw-answer-input';
+  inputEl.maxLength=10;
+  inputEl.placeholder='TYPE YOUR ANSWER';
+  inputEl.autocomplete='off';
+
+  const checkBtnCW = document.createElement('button');
+  checkBtnCW.className='btn-cw-check';
+  checkBtnCW.textContent='Check ✓';
+
+  mg.words.forEach((w,wi)=>{
+    const clueEl = div('cw-clue');
+    clueEl.innerHTML=`<span class="cw-clue-num">${wi+1}</span><span class="cw-clue-text">${w.dir.toUpperCase()} — ${w.clue}</span>`;
+    clueEl.id=`cw-clue-${wi}`;
+    clueEl.onclick=()=>{
+      if(clueEl.classList.contains('solved')) return;
+      document.querySelectorAll('.cw-clue').forEach(c=>c.classList.remove('active-clue'));
+      clueEl.classList.add('active-clue');
+      activeClueIdx=wi;
+      inputEl.value='';
+      inputEl.focus();
+      // highlight cells
+      document.querySelectorAll('.cw-cell').forEach(c=>c.classList.remove('active'));
+      for(let i=0;i<w.word.length;i++){
+        const r2=w.dir==='h'?w.row:w.row+i;
+        const c2=w.dir==='h'?w.col+i:w.col;
+        if(r2<size&&c2<size) cellEls[r2][c2].classList.add('active');
+      }
+    };
+    clueArea.appendChild(clueEl);
+  });
+
+  clueArea.appendChild(inputEl);
+  clueArea.appendChild(checkBtnCW);
+  container.appendChild(clueArea);
+
+  checkBtnCW.onclick=()=>{
+    if(activeClueIdx<0) return;
+    const w = mg.words[activeClueIdx];
+    const val = inputEl.value.toUpperCase().trim();
+    const correct = val === w.word;
+    const ptsEach = Math.round(mg.points_max/mg.words.length);
+    if(correct){
+      // fill cells
+      for(let i=0;i<w.word.length;i++){
+        const r2=w.dir==='h'?w.row:w.row+i;
+        const c2=w.dir==='h'?w.col+i:w.col;
+        if(r2<size&&c2<size){
+          const cel=cellEls[r2][c2];
+          cel.classList.remove('active');cel.classList.add('correct');
+          // show letter (preserve number)
+          const num=cel.querySelector('.cw-num');
+          cel.innerHTML='';
+          if(num)cel.appendChild(num);
+          cel.appendChild(document.createTextNode(w.word[i]));
+        }
+      }
+      const clueEl=document.getElementById(`cw-clue-${activeClueIdx}`);
+      clueEl.classList.remove('active-clue');clueEl.classList.add('solved');
+      mgScore+=ptsEach; totalScore+=ptsEach; cwSolved++;
+      updateHeader();
+      showPointsPop(ptsEach, container);
+      inputEl.value='';
+      activeClueIdx=-1;
+      if(cwSolved===cwTotal) finishMiniGame(cwSolved*ptsEach, mg.points_max, container);
+    } else {
+      for(let i=0;i<w.word.length;i++){
+        const r2=w.dir==='h'?w.row:w.row+i;
+        const c2=w.dir==='h'?w.col+i:w.col;
+        if(r2<size&&c2<size){
+          const cel=cellEls[r2][c2];
+          cel.classList.add('wrong');
+          setTimeout(()=>cel.classList.remove('wrong'),600);
+        }
+      }
+      inputEl.classList.add('wrong-anim','shake');
+      setTimeout(()=>inputEl.classList.remove('wrong-anim','shake'),350);
+    }
+  };
+
+  inputEl.addEventListener('keydown',e=>{if(e.key==='Enter')checkBtnCW.click()});
+}
+
+/* ── FINISH MINI-GAME ── */
+function finishMiniGame(pts, maxPts, container){
+  clearInterval(mgTimer);
+  const timerEl = document.getElementById('mg-timer-el');
+  if(timerEl) timerEl.textContent = '✓';
+
+  const scorePop = div('mg-score-pop');
+  scorePop.innerHTML = `<div class="mg-score-big">+${pts}</div><div class="mg-score-label">bonus points earned!</div>`;
+  scorePop.classList.add('visible');
+  container.appendChild(scorePop);
+
+  const nextBtn = document.getElementById('btn-next-round');
+  if(nextBtn) nextBtn.classList.add('visible');
+  document.getElementById('game-body').scrollTop = 9999;
+}
+
+/* ════════════════════════════════════════════
+   POINTS POP ANIMATION
+════════════════════════════════════════════ */
+function showPointsPop(pts, el){
+  const pop = document.createElement('div');
+  pop.className='pts-pop';
+  pop.textContent='+'+pts;
+  const rect = (el.getBoundingClientRect?el.getBoundingClientRect():{top:200,left:200});
+  pop.style.cssText=`left:${rect.left+rect.width/2-30}px;top:${rect.top+20}px;`;
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),1000);
+}
+
+/* ════════════════════════════════════════════
+   END SCREEN
+════════════════════════════════════════════ */
+function showEndScreen(){
+  showScreen('s-end');
+  document.getElementById('end-score').textContent = totalScore;
+  document.getElementById('end-team').textContent = teamName;
+
+  let emoji = '⭐';
+  let title = 'Well done!';
+  const pct = totalScore / (totalRounds * 130);
+  if(pct >= .85){ emoji='🏆'; title='CHAMPION!'; }
+  else if(pct >= .65){ emoji='🌟'; title='Amazing!'; }
+  else if(pct >= .45){ emoji='👍'; title='Good job!'; }
+  else { emoji='💪'; title='Keep practising!'; }
+
+  document.getElementById('end-emoji').textContent = emoji;
+  document.getElementById('end-title').textContent = title;
+
+  const bd = document.getElementById('round-breakdown');
+  bd.innerHTML = '<div style="font-size:13px;font-weight:800;color:var(--muted);margin-bottom:8px;letter-spacing:.06em">ROUND BY ROUND</div>';
+  roundScores.forEach((pts,i)=>{
+    const row=div('rb-row');
+    row.innerHTML=`<span class="rb-round">Round ${i+1}</span><span class="rb-pts">+${pts} pts</span>`;
+    bd.appendChild(row);
+  });
+}
+
+function restartGame(){
+  showScreen('s-welcome');
+}
+
+/* ════════════════════════════════════════════
+   UTILS
+════════════════════════════════════════════ */
+function div(cls, txt){
+  const d = document.createElement('div');
+  if(cls) d.className=cls;
+  if(txt!==undefined) d.textContent=txt;
+  return d;
+}
+</script>
+</body>
+</html>
