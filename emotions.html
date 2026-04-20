@@ -64,6 +64,11 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height
   font-family:var(--font-b);font-size:18px;font-weight:900;cursor:pointer;
   box-shadow:0 6px 24px rgba(124,58,237,.4);transition:all .2s;letter-spacing:.02em}
 .btn-start:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(124,58,237,.5)}
+.btn-random{margin-top:10px;width:100%;padding:13px;border-radius:40px;
+  background:rgba(255,255,255,.04);border:2px solid rgba(124,58,237,.25);color:var(--muted);
+  font-family:var(--font-b);font-size:15px;font-weight:800;cursor:pointer;
+  transition:all .2s;letter-spacing:.02em}
+.btn-random:hover{background:rgba(124,58,237,.1);color:var(--text);border-color:var(--accent)}
 .how-it-works{max-width:480px;width:100%;background:rgba(6,214,160,.06);
   border:1.5px solid rgba(6,214,160,.2);border-radius:var(--r2);padding:20px 24px}
 .hiw-title{font-family:var(--font-h);font-size:18px;color:var(--accent2);margin-bottom:12px}
@@ -124,10 +129,13 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height
 .strat-text{flex:1}
 .strat-label{font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:2px}
 .strat-desc{font-size:13px;font-weight:600;color:var(--muted)}
-.strat-badge{margin-left:auto;font-size:11px;font-weight:900;padding:4px 10px;border-radius:20px}
+.strat-badge{margin-left:auto;font-size:11px;font-weight:900;padding:4px 10px;border-radius:20px;flex-shrink:0}
 .strat-badge-good{background:rgba(6,214,160,.2);color:#34d399;border:1px solid rgba(52,211,153,.3)}
 .strat-badge-ok{background:rgba(249,168,37,.15);color:var(--accent3);border:1px solid rgba(249,168,37,.3)}
 .strat-badge-bad{background:rgba(255,107,107,.15);color:var(--accent4);border:1px solid rgba(255,107,107,.3)}
+.strat-badge-hidden{background:rgba(255,255,255,.06);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.1)}
+@keyframes revealLabel{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.strat-label{animation:revealLabel .35s ease both}
 
 /* CBT FEEDBACK */
 .cbt-feedback{background:rgba(6,214,160,.08);border:1.5px solid rgba(6,214,160,.25);
@@ -314,6 +322,7 @@ body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height
       <button class="rounds-btn" onclick="changeRounds(1)">+</button>
     </div>
     <button class="btn-start" onclick="startGame()">Let's Play! 🚀</button>
+    <button class="btn-random" onclick="startGame('random')">🎲 Random Order (for experienced players)</button>
   </div>
 
   <div class="how-it-works">
@@ -492,13 +501,15 @@ const SCENARIOS = [
     cbt_note: '🧠 Behavioural Activation is a core CBT technique for low mood. The idea: when we feel flat, we stop doing things → we feel worse. Doing small pleasant activities (even without motivation) gradually rebuilds positive emotion. "Action before motivation" — not the other way around!',
     minigame: {
       type: 'crossword',
-      size: 7,
+      size: 11,
       words: [
-        { word:'CONNECT', row:0, col:0, dir:'h', clue:'What you do when you reach out to a friend (to ___)' },
-        { word:'CALM',    row:2, col:2, dir:'h', clue:'The opposite of panic (feeling ___)' },
-        { word:'MOOD',    row:0, col:4, dir:'v', clue:'Your emotional state right now' },
-        { word:'COPE',    row:4, col:0, dir:'h', clue:'To ___ means to deal with something difficult' },
-        { word:'NAME',    row:2, col:5, dir:'v', clue:'To ___ an emotion means to put a word to it' },
+        { word:'PAUSE', row:1, col:8, dir:'v', clue:'to stop for a short time' },
+        { word:'BREATHE',    row:2, col:5, dir:'v', clue:'to take air in and out slowly' },
+        { word:'SHARE',    row:4, col:1, dir:'h', clue:'to talk about your feelings with someone' },
+        { word:'COPE',    row:1, col:6, dir:'h', clue:'To ___ means to deal with something difficult' },
+        { word:'SUPPORT',    row:4, col:1, dir:'v', clue:'The help from other people when you feel bad' },        
+        { word:'ACCEPT',    row:5, col:5, dir:'h', clue:'To think your feelings are okay' },
+        { word:'NOTICE',    row:8, col:0, dir:'h', clue:'To see or feel something inside you' },
       ],
       points_max: 50
     }
@@ -556,6 +567,7 @@ const SCENARIOS = [
 let teamName = 'The Crew';
 let totalRounds = 6;
 let currentRound = 0;
+let useRandomOrder = false;
 let totalScore = 0;
 let roundScores = [];
 let roundOrder = [];
@@ -570,6 +582,50 @@ let gapCorrect = 0;
 let cwSolved = 0;
 let cwTotal = 0;
 let cwActiveWord = null;
+
+/* ════════════════════════════════════════════
+   ANAGRAM WORD POOL
+   All words drawn from vocabulary that appears
+   in the game scenarios, strategies & CBT notes
+════════════════════════════════════════════ */
+const ANAGRAM_POOL = [
+  {word:'REFRAME',    hint:'Change how you see a negative situation'},
+  {word:'PATIENCE',  hint:'Staying calm when things are difficult requires ___________'},
+  {word:'BREATHE',   hint:'What you do to activate your calm system'},
+  {word:'JOURNAL',   hint:'Writing your thoughts and feelings in a notebook'},
+  {word:'ANXIETY',   hint:'A feeling of worry about what might happen'},
+  {word:'SUPPORT',   hint:'Help and care from other people'},
+  {word:'EMOTION',   hint:'A feeling that comes from the brain — e.g. anger, joy'},
+  {word:'THOUGHT',   hint:'What happens in your mind — can be positive or negative'},
+  {word:'CONNECT',   hint:'Reach out to someone you trust when you feel down'},
+  {word:'COURAGE',   hint:'Doing something even when you feel scared'},
+  {word:'TRIGGER',   hint:'The event that causes an emotional reaction'},
+  {word:'BALANCE',   hint:'Finding the middle point between two extremes'},
+  {word:'PROBLEM',   hint:'A difficulty that needs to be solved step by step'},
+  {word:'HOPEFUL',   hint:'Believing that things can get better'},
+  {word:'MISTAKE',   hint:'Something that went wrong — and a chance to learn!'},
+  {word:'KINDNESS',  hint:'Treating yourself and others with care and warmth'},
+  {word:'CONTROL',   hint:'What you can have over your own reactions (not others)'},
+  {word:'POSITIVE',  hint:'Focused on what is good, helpful or hopeful'},
+  {word:'REACTION',  hint:'What you do in response to something that happens'},
+  {word:'RELEASE',   hint:'Letting go of built-up tension or a strong emotion'},
+  {word:'EMPATHY',   hint:'Understanding and sharing how someone else feels'},
+  {word:'GROUNDED',  hint:'Feeling calm, stable and connected to the present'},
+  {word:'MINDFUL',   hint:'Paying attention to the present moment on purpose'},
+  {word:'ACTIVATE',  hint:'To start doing something, even without motivation'},
+  {word:'RUMINATE',  hint:'To replay a bad memory over and over in your mind'},
+  {word:'SUPPRESS',  hint:'To push a feeling down instead of dealing with it'},
+  {word:'AVOIDANCE', hint:'Escaping a problem instead of facing it (NOT helpful!)'},
+  {word:'RESILIENT', hint:'Able to bounce back after something difficult'},
+  {word:'STRATEGY',  hint:'A plan or method to deal with a problem'},
+  {word:'SOLUTION',  hint:'The answer or fix to a problem'},
+  {word:'HELPLESS',  hint:'Feeling like nothing you do will make a difference'},
+  {word:'DISTORT',   hint:'To twist or change the truth — as negative thoughts do'},
+  {word:'LABEL',     hint:'To name your emotion out loud to reduce its power'},
+  {word:'CORTISOL',  hint:'The stress hormone released by your body when afraid'},
+  {word:'AMYGDALA',  hint:'The part of the brain that triggers the alarm response'},
+  {word:'RESPONSE',  hint:'How you act or feel after something happens to you'},
+];
 
 /* ════════════════════════════════════════════
    INIT
@@ -592,20 +648,50 @@ function changeRounds(d){
   document.getElementById('rounds-display').textContent = roundsDisplay;
 }
 
-function startGame(){
+function startGame(mode){
+  useRandomOrder = (mode === 'random');
   teamName = document.getElementById('team-name-input').value.trim() || 'The Crew';
   totalRounds = roundsDisplay;
   totalScore = 0;
   roundScores = [];
   currentRound = 0;
-  // shuffle scenarios
-  roundOrder = [...SCENARIOS].sort(()=>Math.random()-.5).slice(0,totalRounds).map((_,i)=>i);
-  // actually just pick random indices
-  const idx = Array.from({length:SCENARIOS.length},(_,i)=>i).sort(()=>Math.random()-.5).slice(0,totalRounds);
-  roundOrder = idx;
+  if(useRandomOrder){
+    const idx = Array.from({length:SCENARIOS.length},(_,i)=>i).sort(()=>Math.random()-.5).slice(0,totalRounds);
+    roundOrder = idx;
+  } else {
+    roundOrder = buildFixedOrder(totalRounds);
+  }
   showScreen('s-game');
   document.getElementById('gh-team-name').textContent = teamName;
   loadRound();
+}
+
+// Fixed mini-game sequence: Fill the Gap → Crossword → Unscramble → Speed Click (cycling)
+// Scenario indices by mini-game type:
+//   fillGap    → 2 (Sam), 6 (Ruby)
+//   crossword  → 5 (Kai)
+//   anagram    → 0 (Alex), 4 (Zoe)
+//   speedClick → 3 (Leo)
+function buildFixedOrder(n){
+  const byType = {
+    fillGap:    [2, 6],
+    crossword:  [5],
+    anagram:    [0, 4],
+    speedClick: [3],
+  };
+  // Shuffle within each pool so the pair order is random
+  Object.values(byType).forEach(arr => arr.sort(() => Math.random() - .5));
+  const cycle = ['fillGap', 'crossword', 'anagram', 'speedClick'];
+  const usedCount = {};
+  const order = [];
+  for(let i = 0; i < n; i++){
+    const type = cycle[i % cycle.length];
+    if(!usedCount[type]) usedCount[type] = 0;
+    const pool = byType[type];
+    order.push(pool[usedCount[type] % pool.length]);
+    usedCount[type]++;
+  }
+  return order;
 }
 
 function showScreen(id){
@@ -644,20 +730,21 @@ function loadRound(){
     </div>`;
   body.appendChild(fc);
 
-  // Strategy options (shuffled)
+  // Strategy options (shuffled) — no labels shown until answered
   const grid = div('strategy-grid');
   const shuffledStrats = [...sc.strategies].sort(()=>Math.random()-.5);
   shuffledStrats.forEach(st => {
     const opt = document.createElement('div');
     opt.className = 'strategy-opt';
-    const badgeClass = st.type==='best'?'strat-badge-good':st.type==='ok'?'strat-badge-ok':'strat-badge-bad';
+    opt.dataset.type = st.type;
+    opt.dataset.badge = st.badge;
+    opt.dataset.pts = st.pts;
     opt.innerHTML = `
       <div class="strat-icon">${st.icon}</div>
       <div class="strat-text">
-        <div class="strat-label" style="color:${st.type==='best'?'#34d399':st.type==='ok'?'#fcd34d':'#fca5a5'}">${st.type==='best'?'CBT STRATEGY':st.type==='ok'?'COULD HELP':'AVOID THIS'}</div>
         <div class="strat-desc">${st.desc}</div>
       </div>
-      <div class="strat-badge ${badgeClass}">${st.badge}</div>`;
+      <div class="strat-badge strat-badge-hidden">?</div>`;
     opt.onclick = () => chooseStrategy(st, opt, grid, sc);
     grid.appendChild(opt);
   });
@@ -687,10 +774,24 @@ function chooseStrategy(st, clickedOpt, grid, sc){
   if(strategyChosen) return;
   strategyChosen = true;
 
-  // lock all options, style them
+  // Reveal ALL labels and badges now that the answer is in
   Array.from(grid.children).forEach(opt=>{
+    const t = opt.dataset.type;
+    const badgeClass = t==='best'?'strat-badge-good':t==='ok'?'strat-badge-ok':'strat-badge-bad';
+    const labelTxt = t==='best'?'✅ CBT STRATEGY':t==='ok'?'👍 COULD HELP':'❌ AVOID THIS';
+    const labelColor = t==='best'?'#34d399':t==='ok'?'#fcd34d':'#fca5a5';
+    // insert label
+    const textDiv = opt.querySelector('.strat-text');
+    const lbl = document.createElement('div');
+    lbl.className='strat-label';
+    lbl.style.cssText=`color:${labelColor};font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:2px`;
+    lbl.textContent=labelTxt;
+    textDiv.insertBefore(lbl, textDiv.firstChild);
+    // reveal badge
+    const badge = opt.querySelector('.strat-badge');
+    badge.className=`strat-badge ${badgeClass}`;
+    badge.textContent=opt.dataset.badge;
     opt.classList.add('locked');
-    // find which strategy this opt is by its content
   });
 
   if(st.type==='best'){
@@ -707,14 +808,16 @@ function chooseStrategy(st, clickedOpt, grid, sc){
   } else {
     clickedOpt.classList.remove('locked');
     clickedOpt.classList.add('wrong');
+    // highlight all best options so they can see what was correct
+    Array.from(grid.children).forEach(opt=>{
+      if(opt.dataset.type==='best') opt.classList.add('correct');
+    });
   }
 
   updateHeader();
-  // show CBT feedback
   const fb = document.getElementById('cbt-feedback-box');
   fb.classList.add('visible');
 
-  // show mini-game
   setTimeout(() => {
     const mgw = document.getElementById('mg-wrap');
     mgw.classList.add('visible');
@@ -787,78 +890,120 @@ function renderMiniGame(mg, container){
 
 /* ── ANAGRAM ── */
 function renderAnagram(mg, container){
-  const scrambled = mg.word.split('').sort(()=>Math.random()-.5).join('');
-  let attempts = 0;
-  const maxAttempts = 3;
+  // Build a pool of 5 words: the scenario's own word + 4 random from the pool
+  const poolCopy = ANAGRAM_POOL.filter(w=>w.word !== mg.word).sort(()=>Math.random()-.5);
+  const words = [
+    {word:mg.word, hint:mg.hint},
+    ...poolCopy.slice(0, 4)
+  ].sort(()=>Math.random()-.5);
 
-  const inst = div('mg-instruction',`🔀 Unscramble the word! Hint: ${mg.hint}`);
-  const wordEl = div('anagram-word', scrambled);
+  let wordIdx = 0;
+  let totalEarned = 0;
+  const ptsPerWord = Math.round(mg.points_max / words.length);
+
+  const progressRow = div('tf-progress');
+  words.forEach(()=>progressRow.appendChild(div('tf-dot')));
+
+  const counterEl = div('',`Word 1 / ${words.length}`);
+  counterEl.style.cssText='font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--muted);text-align:center;margin-bottom:8px';
+
+  const inst = div('mg-instruction','');
+  const wordEl = div('anagram-word','');
+  const hintEl = div('anagram-hint','');
+  const attRow = div('anagram-attempts');
+
   const input = document.createElement('input');
   input.className='anagram-input';
-  input.maxLength = mg.word.length;
-  input.placeholder = '?'.repeat(mg.word.length);
   input.autocomplete='off';
 
-  const hintEl = div('anagram-hint', `${mg.word.length} letters`);
-  const attRow = div('anagram-attempts');
-  for(let i=0;i<maxAttempts;i++){
-    const d = div('attempt-dot'); attRow.appendChild(d);
-  }
-
-  container.appendChild(inst);
-  container.appendChild(wordEl);
-  container.appendChild(input);
-  container.appendChild(hintEl);
-  container.appendChild(attRow);
-
-  input.addEventListener('keydown', e => {
-    if(e.key === 'Enter') checkAnagram();
-  });
-
-  // also add a check button
   const checkBtn = document.createElement('button');
   checkBtn.className='btn-cw-check';
   checkBtn.style.cssText='margin-top:12px;display:block;margin-left:auto;margin-right:auto';
   checkBtn.textContent='Check ✓';
-  checkBtn.onclick = checkAnagram;
+
+  container.appendChild(div('mg-instruction','🔀 Unscramble the words! You have 3 tries per word.'));
+  container.appendChild(counterEl);
+  container.appendChild(progressRow);
+  container.appendChild(wordEl);
+  container.appendChild(hintEl);
+  container.appendChild(input);
+  container.appendChild(attRow);
   container.appendChild(checkBtn);
 
-  function checkAnagram(){
-    const val = input.value.toUpperCase().trim();
-    attRow.children[attempts].classList.add('used');
-    attempts++;
-    if(val === mg.word){
-      input.classList.add('correct-anim');
-      attRow.children[attempts-1].classList.remove('used');
-      attRow.children[attempts-1].classList.add('correct');
-      hintEl.textContent = `✓ Correct! The word is ${mg.word}!`;
-      hintEl.style.color='#34d399';
-      const pts = Math.round(mg.points_max * (1 - (attempts-1) * 0.3));
-      const finalPts = Math.max(10, pts);
-      mgScore += finalPts;
-      totalScore += finalPts;
-      updateHeader();
-      showPointsPop(finalPts, container);
-      input.disabled=true;
-      checkBtn.disabled=true;
-      finishMiniGame(finalPts, mg.points_max, container);
-    } else {
-      input.classList.add('wrong-anim','shake');
-      setTimeout(()=>input.classList.remove('wrong-anim','shake'),350);
-      if(attempts >= maxAttempts){
-        hintEl.textContent = `The word was: ${mg.word}`;
-        hintEl.style.color='#fca5a5';
-        input.disabled=true;
-        checkBtn.disabled=true;
-        finishMiniGame(0, mg.points_max, container);
+  function loadWord(i){
+    const w = words[i];
+    let scrambled = w.word.split('').sort(()=>Math.random()-.5).join('');
+    // ensure it's actually scrambled
+    let tries = 0;
+    while(scrambled === w.word && tries++ < 10) scrambled = w.word.split('').sort(()=>Math.random()-.5).join('');
+
+    counterEl.textContent = `Word ${i+1} / ${words.length}`;
+    wordEl.textContent = scrambled;
+    hintEl.textContent = `💡 ${w.hint}`;
+    hintEl.style.color='';
+    input.value='';
+    input.maxLength = w.word.length;
+    input.placeholder = '?'.repeat(w.word.length);
+    input.disabled=false;
+    input.className='anagram-input';
+    checkBtn.disabled=false;
+
+    attRow.innerHTML='';
+    for(let j=0;j<3;j++) attRow.appendChild(div('attempt-dot'));
+
+    let attempts=0;
+    checkBtn.onclick=null;
+    input.onkeydown=null;
+
+    function check(){
+      const val = input.value.toUpperCase().trim();
+      if(!val) return;
+      attRow.children[attempts].classList.add('used');
+      attempts++;
+      if(val === w.word){
+        input.classList.add('correct-anim');
+        attRow.children[attempts-1].classList.remove('used');
+        attRow.children[attempts-1].classList.add('correct');
+        hintEl.textContent = `✓ Correct! "${w.word}"`;
+        hintEl.style.color='#34d399';
+        progressRow.children[i].classList.add('correct');
+        const pts = Math.max(Math.round(ptsPerWord * (1-(attempts-1)*0.28)), Math.round(ptsPerWord*0.15));
+        totalEarned += pts; mgScore += pts; totalScore += pts;
+        updateHeader();
+        showPointsPop(pts, container);
+        input.disabled=true; checkBtn.disabled=true;
+        setTimeout(()=>nextWord(), 900);
       } else {
-        hintEl.textContent = `Not quite! ${maxAttempts - attempts} attempt(s) left`;
+        input.classList.add('wrong-anim','shake');
+        setTimeout(()=>input.classList.remove('wrong-anim','shake'),350);
+        if(attempts >= 3){
+          hintEl.textContent = `The word was: ${w.word}`;
+          hintEl.style.color='#fca5a5';
+          progressRow.children[i].classList.add('wrong');
+          input.disabled=true; checkBtn.disabled=true;
+          setTimeout(()=>nextWord(), 1200);
+        } else {
+          hintEl.textContent = `Not quite! ${3-attempts} attempt(s) left — hint: starts with "${w.word[0]}"`;
+        }
+        input.value='';
       }
-      input.value='';
+    }
+
+    checkBtn.onclick = check;
+    input.onkeydown = e => { if(e.key==='Enter') check(); };
+    setTimeout(()=>input.focus(), 120);
+  }
+
+  function nextWord(){
+    wordIdx++;
+    if(wordIdx < words.length){
+      loadWord(wordIdx);
+    } else {
+      finishMiniGame(totalEarned, mg.points_max, container);
     }
   }
 
-  setTimeout(()=>input.focus(),200);
+  loadWord(0);
 }
 
 /* ── TRUE / FALSE ── */
@@ -997,52 +1142,82 @@ function renderSpeedClick(mg, container){
   let timeLeft = mg.time || 25;
   const ptsEach = Math.round(mg.points_max / mg.wordPool.filter(w=>w.ok).length);
 
+  // Phase 1: Show instructions + target + gray boxes + START button
   container.appendChild(div('mg-instruction', mg.instructions));
 
   const targetBox = div('speed-target');
   targetBox.innerHTML=`<div class="speed-target-word">${mg.target.word}</div><div class="speed-target-def">${mg.target.def}</div>`;
   container.appendChild(targetBox);
 
+  // Gray placeholder grid (9 boxes)
+  const grayGrid = div('speed-grid');
+  grayGrid.id = 'speed-gray-grid';
+  for(let i=0; i<9; i++){
+    const box = div('speed-word');
+    box.style.cssText = 'background:rgba(255,255,255,.08);border:2px dashed rgba(255,255,255,.15);cursor:default;pointer-events:none';
+    grayGrid.appendChild(box);
+  }
+  container.appendChild(grayGrid);
+
+  // START button
+  const startBtn = document.createElement('button');
+  startBtn.textContent = '▶️ START';
+  startBtn.style.cssText = 'margin-top:16px;padding:12px 32px;border-radius:40px;background:linear-gradient(135deg,#7c3aed,#a855f7);border:none;color:#fff;font-family:var(--font-b);font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 6px 24px rgba(124,58,237,.4);transition:all .2s';
+  startBtn.onmouseover = () => startBtn.style.transform = 'translateY(-3px)';
+  startBtn.onmouseout = () => startBtn.style.transform = 'translateY(0)';
+  container.appendChild(startBtn);
+
+  // Score el (hidden until game starts)
   const scoreEl = div('speed-score','Correct: 0');
+  scoreEl.style.display = 'none';
+  scoreEl.id = 'speed-score-el';
   container.appendChild(scoreEl);
 
   const timerEl = document.getElementById('mg-timer-el');
-  timerEl.textContent = timeLeft;
 
-  const words = [...mg.wordPool].sort(()=>Math.random()-.5);
-  const grid = div('speed-grid');
-  words.forEach(w=>{
-    const chip = div('speed-word', w.w);
-    chip.onclick = ()=>{
-      if(chip.classList.contains('sw-correct')||chip.classList.contains('sw-wrong')) return;
-      if(w.ok){
-        chip.classList.add('sw-correct');
-        speedCorrect++;
-        mgScore+=ptsEach; totalScore+=ptsEach;
-        updateHeader();
-        scoreEl.textContent = `Correct: ${speedCorrect}`;
-      } else {
-        chip.classList.add('sw-wrong');
-        // small penalty
-        mgScore = Math.max(0, mgScore-5);
-        totalScore = Math.max(0, totalScore-5);
-        updateHeader();
-      }
-    };
-    grid.appendChild(chip);
-  });
-  container.appendChild(grid);
-
-  mgTimer = setInterval(()=>{
-    timeLeft--;
+  // Phase 2: START button click handler
+  startBtn.onclick = ()=>{
+    startBtn.style.display = 'none';
+    grayGrid.style.display = 'none';
+    scoreEl.style.display = 'block';
     timerEl.textContent = timeLeft;
-    if(timeLeft <= 0){
-      clearInterval(mgTimer);
-      timerEl.textContent='⏰';
-      Array.from(grid.children).forEach(c=>c.style.pointerEvents='none');
-      finishMiniGame(speedCorrect*ptsEach, mg.points_max, container);
-    }
-  }, 1000);
+
+    // Create actual word grid
+    const words = [...mg.wordPool].sort(()=>Math.random()-.5);
+    const grid = div('speed-grid');
+    words.forEach(w=>{
+      const chip = div('speed-word', w.w);
+      chip.onclick = ()=>{
+        if(chip.classList.contains('sw-correct')||chip.classList.contains('sw-wrong')) return;
+        if(w.ok){
+          chip.classList.add('sw-correct');
+          speedCorrect++;
+          mgScore+=ptsEach; totalScore+=ptsEach;
+          updateHeader();
+          scoreEl.textContent = `Correct: ${speedCorrect}`;
+        } else {
+          chip.classList.add('sw-wrong');
+          mgScore = Math.max(0, mgScore-5);
+          totalScore = Math.max(0, totalScore-5);
+          updateHeader();
+        }
+      };
+      grid.appendChild(chip);
+    });
+    container.appendChild(grid);
+
+    // Start timer
+    mgTimer = setInterval(()=>{
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+      if(timeLeft <= 0){
+        clearInterval(mgTimer);
+        timerEl.textContent='⏰';
+        Array.from(grid.children).forEach(c=>c.style.pointerEvents='none');
+        finishMiniGame(speedCorrect*ptsEach, mg.points_max, container);
+      }
+    }, 1000);
+  };
 }
 
 /* ── CROSSWORD ── */
@@ -1125,6 +1300,11 @@ function renderCrossword(mg, container){
   clueArea.appendChild(checkBtnCW);
   container.appendChild(clueArea);
 
+  // Track wrong attempts and revealed letters per word
+  const wrongAttempts = new Array(mg.words.length).fill(0);
+  const revealedLetters = mg.words.map(w => new Set());
+  const penalty = 5;
+
   checkBtnCW.onclick=()=>{
     if(activeClueIdx<0) return;
     const w = mg.words[activeClueIdx];
@@ -1139,7 +1319,6 @@ function renderCrossword(mg, container){
         if(r2<size&&c2<size){
           const cel=cellEls[r2][c2];
           cel.classList.remove('active');cel.classList.add('correct');
-          // show letter (preserve number)
           const num=cel.querySelector('.cw-num');
           cel.innerHTML='';
           if(num)cel.appendChild(num);
@@ -1155,13 +1334,66 @@ function renderCrossword(mg, container){
       activeClueIdx=-1;
       if(cwSolved===cwTotal) finishMiniGame(cwSolved*ptsEach, mg.points_max, container);
     } else {
+      // Penalty
+      wrongAttempts[activeClueIdx]++;
+      const deduct = Math.min(penalty, mgScore);
+      mgScore = Math.max(0, mgScore - deduct);
+      totalScore = Math.max(0, totalScore - deduct);
+      updateHeader();
+
+      // Reveal one new unrevealed letter as a hint
+      const revSet = revealedLetters[activeClueIdx];
+      let revealIdx = -1;
+      for(let i=0;i<w.word.length;i++){
+        if(!revSet.has(i)){ revealIdx=i; break; }
+      }
+      if(revealIdx >= 0){
+        revSet.add(revealIdx);
+        const r2=w.dir==='h'?w.row:w.row+revealIdx;
+        const c2=w.dir==='h'?w.col+revealIdx:w.col+revealIdx;
+        const cel=cellEls[r2<size?r2:w.row][c2<size?c2:w.col];
+        // correct r/c for vertical
+        const rr=w.dir==='h'?w.row:w.row+revealIdx;
+        const cc=w.dir==='h'?w.col+revealIdx:w.col;
+        if(rr<size&&cc<size){
+          const celHint=cellEls[rr][cc];
+          if(!celHint.classList.contains('correct')){
+            celHint.classList.add('correct');
+            celHint.style.opacity='.65';
+            const num=celHint.querySelector('.cw-num');
+            celHint.innerHTML='';
+            if(num)celHint.appendChild(num);
+            const letterNode=document.createTextNode(w.word[revealIdx]);
+            celHint.appendChild(letterNode);
+          }
+        }
+        // Show penalty + hint feedback
+        const penaltyPop = document.createElement('div');
+        penaltyPop.className='pts-pop';
+        penaltyPop.style.color='#fca5a5';
+        penaltyPop.textContent=`-${deduct} pts`;
+        const rect=checkBtnCW.getBoundingClientRect();
+        penaltyPop.style.cssText+=`;left:${rect.left}px;top:${rect.top}px`;
+        document.body.appendChild(penaltyPop);
+        setTimeout(()=>penaltyPop.remove(),900);
+        // update clue hint
+        const clueEl=document.getElementById(`cw-clue-${activeClueIdx}`);
+        const hintSpan=document.createElement('span');
+        hintSpan.style.cssText='color:#fcd34d;font-size:11px;font-weight:800;margin-left:8px';
+        hintSpan.textContent=`💡 Letter ${revealIdx+1} = "${w.word[revealIdx]}" (-${deduct} pts)`;
+        // remove old hints first
+        clueEl.querySelectorAll('span.hint-reveal').forEach(s=>s.remove());
+        hintSpan.className='hint-reveal';
+        clueEl.appendChild(hintSpan);
+      }
+
+      // Flash wrong cells
       for(let i=0;i<w.word.length;i++){
         const r2=w.dir==='h'?w.row:w.row+i;
         const c2=w.dir==='h'?w.col+i:w.col;
-        if(r2<size&&c2<size){
-          const cel=cellEls[r2][c2];
-          cel.classList.add('wrong');
-          setTimeout(()=>cel.classList.remove('wrong'),600);
+        if(r2<size&&c2<size&&!cellEls[r2][c2].classList.contains('correct')){
+          cellEls[r2][c2].classList.add('wrong');
+          setTimeout(()=>cellEls[r2][c2].classList.remove('wrong'),600);
         }
       }
       inputEl.classList.add('wrong-anim','shake');
