@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://paolafatigato.github.io/emotions/sitemap.xml
