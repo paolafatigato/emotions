@@ -167,7 +167,8 @@ nav::-webkit-scrollbar{display:none}
 .hc-dice{border-top-color:#f9a825}.hc-dice::before{background:#f9a825}
 .hc-match{border-top-color:#00bfa5}.hc-match::before{background:#00bfa5}
 .hc-wheel{border-top-color:#e91e8c}.hc-wheel::before{background:#e91e8c}
-.hc-journal{border-top-color:#43a047}.hc-journal::before{background:#43a047}
+  .hc-journal{border-top-color:#43a047}.hc-journal::before{background:#43a047}
+  .hc-coping{border-top-color:#6c63ff}.hc-coping::before{background:#6c63ff}
 .home-card-icon{font-size:42px;margin-bottom:14px;display:block}
 .home-card-title{
   font-family:var(--font-head);
@@ -184,6 +185,7 @@ nav::-webkit-scrollbar{display:none}
 .tag-match{background:#00bfa5}
 .tag-wheel{background:#e91e8c}
 .tag-journal{background:#43a047}
+.tag-coping{background:#6c63ff}
 .home-coming-soon{
   margin-top:52px;
   background:rgba(255,255,255,.7);
@@ -1135,7 +1137,7 @@ canvas#wheel-canvas{width:100%;height:100%}
   <button class="nav-btn" data-page="dice" onclick="goTo('dice')">🎲 Sentence Dice</button>
   <button class="nav-btn" data-page="match" onclick="goTo('match')">🔗 Match It!</button>
   <button class="nav-btn" data-page="wheel" onclick="goTo('wheel')">🎡 Emotion Wheel</button>
-  <button class="nav-btn" data-page="journal" onclick="goTo('journal')">📔 My Journal</button>
+  <!-- <button class="nav-btn" data-page="journal" onclick="goTo('journal')">📔 My Journal</button> -->
   <button class="nav-btn" data-page="compare" onclick="goTo('compare')">🆚 Compare!</button>
   <a href="emotions.html" class="nav-btn" data-page="coping" style="text-decoration:none;display:flex;align-items:center;">🧠 Coping Crew</a>
 </nav>
@@ -1147,7 +1149,7 @@ canvas#wheel-canvas{width:100%;height:100%}
   <div class="home-blob hb3"></div>
   <div class="home-blob hb4"></div>
   <div class="home-inner">
-    <h1 class="home-title">Emotions games for ESL<br><span>Name It. Tame It.</span></h1>
+    <h1 class="home-title">Emotions games <br><span>for the classroom</span></h1>
     <div class="home-subtitle">Free printable and interactive games for classroom speaking practice</div>
     <div class="home-cards">
       <div class="home-card hc-tictactoe" onclick="goTo('tictactoe')">
@@ -1187,6 +1189,11 @@ canvas#wheel-canvas{width:100%;height:100%}
         <span class="home-card-tag tag-coping">wellbeing · strategies</span>
       </div>
     </div>
+    <!-- Admin-only: upcoming activities (hidden from public).
+         The list below is kept for editors; it is intentionally commented out
+         so site visitors (clients) cannot see it. Remove or restore as needed.
+    -->
+    <!--
     <div class="home-coming-soon">
       <div class="home-coming-label">💡 More activities to add</div>
       <div class="coming-list">
@@ -1198,6 +1205,7 @@ canvas#wheel-canvas{width:100%;height:100%}
         <div class="coming-item"><span>🎬</span> Emotion Cinema — describe film scenes</div>
       </div>
     </div>
+    -->
   </div>
 </div>
 
@@ -1361,7 +1369,7 @@ canvas#wheel-canvas{width:100%;height:100%}
   </div>
 </div>
 
-<!-- ═══ PAGE: JOURNAL ═════════════════════════ -->
+<!-- PAGE: JOURNAL (commented out) - removed from UI per request
 <div class="page" id="page-journal">
   <div class="journal-inner">
     <div class="journal-title">My Emotion Journal</div>
@@ -1395,6 +1403,7 @@ canvas#wheel-canvas{width:100%;height:100%}
     </div>
   </div>
 </div>
+--> 
 
 <script>
 /* ─────────────────────────────────────────────
