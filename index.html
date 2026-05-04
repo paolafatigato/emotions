@@ -2052,8 +2052,8 @@ function spinWheel(){
 function showWheelResult(){
   const n=WHEEL_SEGMENTS.length;
   const arc=(2*Math.PI)/n;
-  const normalised=(((-wheelAngle+Math.PI/2)%(2*Math.PI))+2*Math.PI)%(2*Math.PI);
-  const idx=Math.floor(normalised/arc)%n;
+  const normalised = (((-wheelAngle) % (2*Math.PI)) + 2*Math.PI) % (2*Math.PI);
+  const idx = Math.floor(normalised / arc) % n;
   const seg=WHEEL_SEGMENTS[idx];
   const task=WHEEL_TASKS[Math.floor(Math.random()*WHEEL_TASKS.length)](seg);
   const wr=document.getElementById('wheel-result');
