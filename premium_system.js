@@ -334,9 +334,24 @@ function updatePremiumUI() {
     document.querySelectorAll('.premium-overlay').forEach(el => el.remove());
     // Re-enable locked buttons
     document.querySelectorAll('.nav-btn[data-locked]').forEach(btn => btn.removeAttribute('data-locked'));
-    // Unlock synonym mode button
+    // Unlock synonym mode button — reset all visual restrictions
     const synBtn = document.getElementById('dm-syn');
-    if (synBtn) synBtn.removeAttribute('disabled');
+    if (synBtn) {
+      synBtn.removeAttribute('disabled');
+      synBtn.style.opacity = '';
+      synBtn.title = '';
+      synBtn.style.pointerEvents = '';
+    }
+    // Unlock superlatives button
+    const superBtn = document.getElementById('cmp-btn-super');
+    if (superBtn) {
+      superBtn.removeAttribute('disabled');
+      superBtn.style.opacity = '';
+      superBtn.title = '';
+      superBtn.style.pointerEvents = '';
+    }
+    // Remove all "Get Premium" banners shown to free users
+    document.querySelectorAll('.premium-banner').forEach(el => el.remove());
   } else if (_currentUser) {
     badge.textContent = '🔒 Go Premium';
     badge.classList.remove('is-premium');
