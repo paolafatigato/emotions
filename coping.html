@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coping Library 🧠</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+<!-- ===========================================
+     SCREEN STYLES
+=========================================== -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5ff;
+  --card:#ffffff;
+  --border:#e8e3ff;
+  --border2:#d4ccff;
+  --text:#1a1535;
+  --muted:#7b74a8;
+  --muted2:#a89fd8;
+  --accent:#6c2bd9;
+  --accent2:#06d6a0;
+  --accent3:#f9a825;
+  --accent4:#ff5c7a;
+  --accent5:#3b9eff;
+  --r:14px;
+  --r2:22px;
+  --sh:0 4px 20px rgba(108,43,217,.10);
+  --sh2:0 8px 32px rgba(108,43,217,.16);
+  --font-h:'Playfair Display',serif;
+  --font-b:'Nunito',sans-serif;
+}
+
+/* -- BASE -- */
+body{font-family:var(--font-b);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* -- TOP NAV -- */
+.top-bar{
+  background:#1a0533;
+  padding:0 24px;
+  display:flex;align-items:center;gap:8px;
+  height:52px;position:sticky;top:0;z-index:100;
+  border-bottom:2px solid rgba(124,58,237,.25);
+  overflow-x:auto;
+}
+.top-bar::-webkit-scrollbar{display:none}
+.tb-logo{
+  font-family:'Playfair Display',serif;
+  font-size:17px;font-weight:700;color:#c084fc;
+  white-space:nowrap;margin-right:8px;flex-shrink:0;
+}
+.tb-btn{
+  flex-shrink:0;padding:6px 14px;border-radius:30px;
+  border:1.5px solid rgba(255,255,255,.15);
+  background:transparent;color:rgba(255,255,255,.65);
+  font-family:var(--font-b);font-size:12px;font-weight:700;
+  cursor:pointer;transition:all .2s;white-space:nowrap;
+}
+.tb-btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.tb-btn.active{background:#6c2bd9;border-color:#6c2bd9;color:#fff}
+
+/* -- HERO -- */
+.hero{
+  background:linear-gradient(135deg,#1a0533 0%,#2d1060 50%,#0f1b3d 100%);
+  padding:52px 24px 44px;text-align:center;
+  border-bottom:3px solid rgba(108,43,217,.2);
+}
+.hero-title{
+  font-family:var(--font-h);
+  font-size:clamp(32px,6vw,58px);
+  color:#fff;line-height:1.1;margin-bottom:10px;
+}
+.hero-title span{color:#c084fc}
+.hero-sub{font-size:clamp(14px,2vw,17px);color:#a78bfa;font-weight:600;margin-bottom:28px;max-width:560px;margin-left:auto;margin-right:auto;line-height:1.6}
+.hero-controls{
+  display:flex;align-items:center;justify-content:center;
+  gap:10px;flex-wrap:wrap;
+}
+.filter-pill{
+  padding:8px 18px;border-radius:30px;
+  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);
+  color:rgba(255,255,255,.75);font-family:var(--font-b);font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.filter-pill:hover{background:rgba(255,255,255,.15);color:#fff}
+.filter-pill.active{background:#6c2bd9;border-color:#6c2bd9;color:#fff}
+.filter-pill.fp-green.active{background:#06d6a0;border-color:#06d6a0;color:#063}
+.filter-pill.fp-orange.active{background:#f9a825;border-color:#f9a825;color:#5a3000}
+.filter-pill.fp-pink.active{background:#ff5c7a;border-color:#ff5c7a;color:#fff}
+.filter-pill.fp-blue.active{background:#3b9eff;border-color:#3b9eff;color:#fff}
+
+/* -- CONTAINER -- */
+.container{max-width:900px;margin:0 auto;padding:32px 20px 80px}
+
+/* -- SECTION TITLE -- */
+.section-label{
+  font-size:11px;font-weight:900;letter-spacing:.12em;
+  color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* -- STRATEGY CARD -- */
+.strategy-card{
+  background:var(--card);border-radius:var(--r2);
+  border:2px solid var(--border);box-shadow:var(--sh);
+  margin-bottom:28px;overflow:hidden;
+  transition:box-shadow .25s;
+}
+.strategy-card:hover{box-shadow:var(--sh2)}
+.strategy-card.filtered-out{display:none}
+
+.card-header{
+  display:flex;align-items:center;gap:16px;
+  padding:20px 24px 16px;
+  border-bottom:1.5px solid var(--border);
+}
+.card-icon{
+  width:56px;height:56px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+}
+.card-title-wrap{flex:1}
+.card-title{
+  font-family:var(--font-h);font-size:clamp(18px,3vw,24px);
+  font-weight:700;color:var(--text);line-height:1.15;
+}
+.card-title-en{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-top:2px}
+.card-number{
+  font-family:var(--font-h);font-size:48px;font-weight:900;
+  color:var(--border2);line-height:1;flex-shrink:0;
+  user-select:none;
+}
+
+/* emotion + who tags */
+.tag-row{display:flex;flex-wrap:wrap;gap:6px;padding:14px 24px;border-bottom:1.5px solid var(--border)}
+.tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:20px;font-size:12px;font-weight:800;
+}
+.tag-emotion{background:#f3f0ff;color:#6c2bd9;border:1.5px solid #d4ccff}
+.tag-who{background:#f0fff9;color:#047857;border:1.5px solid #a7f3d0}
+.tag-situation{background:#fff7ed;color:#b45309;border:1.5px solid #fde68a}
+
+/* card body tabs */
+.card-tabs{display:flex;border-bottom:1.5px solid var(--border);padding:0 24px;gap:0}
+.card-tab{
+  padding:10px 16px;font-size:13px;font-weight:800;
+  color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;
+  transition:all .2s;margin-bottom:-1.5px;white-space:nowrap;
+}
+.card-tab:hover{color:var(--accent)}
+.card-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.tab-panel{display:none;padding:20px 24px}
+.tab-panel.active{display:block}
+
+/* -- INFO TAB -- */
+.info-section{margin-bottom:18px}
+.info-title{
+  font-size:11px;font-weight:900;letter-spacing:.1em;
+  color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.info-title::before{content:'';display:inline-block;width:3px;height:14px;border-radius:2px;background:var(--accent)}
+.info-text{font-size:14px;font-weight:600;color:#333;line-height:1.7}
+.steps-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.steps-list li{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:14px;font-weight:600;color:#333;line-height:1.5;
+}
+.step-num{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  font-size:12px;font-weight:900;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:1px;
+}
+.science-box{
+  background:linear-gradient(135deg,#f3f0ff,#f0fff9);
+  border:1.5px solid #d4ccff;border-radius:var(--r);
+  padding:14px 18px;margin-top:14px;
+}
+.science-box-title{font-size:11px;font-weight:900;letter-spacing:.08em;color:#6c2bd9;margin-bottom:6px}
+.science-box-text{font-size:13px;font-weight:600;color:#444;line-height:1.6}
+
+/* -- QUIZ TAB -- */
+.quiz-wrap{display:flex;flex-direction:column;gap:18px}
+.quiz-q{background:#f8f7ff;border-radius:var(--r);padding:16px;border:1.5px solid var(--border)}
+.quiz-q-text{font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;line-height:1.5}
+.quiz-options{display:flex;flex-direction:column;gap:7px}
+.quiz-opt{
+  padding:10px 14px;border-radius:var(--r);border:2px solid var(--border);
+  background:#fff;font-size:13px;font-weight:700;color:#444;
+  cursor:pointer;transition:all .2s;text-align:left;font-family:var(--font-b);
+}
+.quiz-opt:hover:not(.qo-locked){border-color:var(--accent);background:#f3f0ff;color:var(--accent)}
+.quiz-opt.qo-correct{background:#e8faf5;border-color:#06d6a0;color:#047857;cursor:default}
+.quiz-opt.qo-wrong{background:#fff0f3;border-color:#ff5c7a;color:#b91c1c;cursor:default;opacity:.75}
+.quiz-opt.qo-locked{cursor:default;opacity:.5}
+.quiz-explanation{
+  display:none;margin-top:10px;padding:10px 14px;
+  background:#f0fff9;border-radius:var(--r);
+  font-size:13px;font-weight:600;color:#047857;border-left:3px solid #06d6a0;
+}
+.quiz-explanation.visible{display:block}
+.quiz-score-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:#f3f0ff;border-radius:var(--r);
+  font-size:14px;font-weight:700;color:var(--accent);
+}
+.btn-reset-quiz{
+  padding:6px 14px;border-radius:20px;background:var(--accent);border:none;
+  color:#fff;font-family:var(--font-b);font-size:12px;font-weight:800;cursor:pointer;
+}
+
+/* -- RATING TAB -- */
+.rating-section{display:flex;flex-direction:column;gap:18px}
+.rating-row{background:#f8f7ff;border-radius:var(--r);padding:14px 16px;border:1.5px solid var(--border)}
+.rating-label{font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--muted);margin-bottom:10px}
+.stars{display:flex;gap:6px}
+.star-btn{
+  font-size:26px;cursor:pointer;transition:transform .15s;
+  background:none;border:none;line-height:1;padding:0;
+  filter:grayscale(1) opacity(.3);
+}
+.star-btn:hover,.star-btn.filled{filter:none;transform:scale(1.15)}
+.star-btn.filled{filter:none}
+.rating-val{font-size:13px;font-weight:700;color:var(--muted);margin-left:10px;align-self:center}
+
+.personality-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-top:8px}
+.pers-chip{
+  padding:10px 12px;border-radius:var(--r);border:2px solid var(--border);
+  background:#fff;font-size:13px;font-weight:700;color:#555;
+  cursor:pointer;transition:all .2s;text-align:center;
+}
+.pers-chip:hover{border-color:var(--accent);color:var(--accent)}
+.pers-chip.selected{background:#f3f0ff;border-color:var(--accent);color:var(--accent)}
+
+.comment-area{
+  width:100%;min-height:90px;border:2px solid var(--border);border-radius:var(--r);
+  padding:12px 14px;font-family:var(--font-b);font-size:14px;font-weight:600;
+  color:var(--text);resize:vertical;outline:none;transition:border-color .2s;background:#fff;
+}
+.comment-area:focus{border-color:var(--accent)}
+.comment-area::placeholder{color:var(--muted2)}
+.btn-save-comment{
+  margin-top:8px;padding:10px 24px;border-radius:30px;
+  background:var(--accent);border:none;color:#fff;
+  font-family:var(--font-b);font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.btn-save-comment:hover{background:#5b23b8;transform:translateY(-1px)}
+.saved-comments{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.comment-bubble{
+  background:#f3f0ff;border-radius:var(--r);padding:10px 14px;
+  font-size:13px;font-weight:600;color:#444;border-left:3px solid var(--accent);line-height:1.5;
+  display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
+}
+.comment-meta{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;white-space:nowrap}
+.btn-del-comment{background:none;border:none;cursor:pointer;color:var(--muted2);font-size:14px;flex-shrink:0}
+.btn-del-comment:hover{color:#ff5c7a}
+.save-flash{color:#06d6a0;font-size:12px;font-weight:800;opacity:0;transition:opacity .3s;margin-left:10px}
+.save-flash.show{opacity:1}
+
+/* -- PRINT TAB -- */
+.print-preview{
+  background:#fff;border:2px solid var(--border);border-radius:var(--r);
+  padding:20px;font-size:13px;color:#222;line-height:1.6;
+}
+.print-preview h3{font-family:var(--font-h);font-size:18px;margin-bottom:8px;color:var(--text)}
+.print-preview p{margin-bottom:10px;font-size:13px;color:#444}
+.print-preview ol{margin-left:20px;margin-bottom:10px}
+.print-preview li{margin-bottom:6px;font-size:13px}
+.print-preview .blank{display:inline-block;width:120px;border-bottom:2px solid #333;margin:0 4px}
+.print-preview .checkbox{display:inline-block;width:16px;height:16px;border:2px solid #333;vertical-align:middle;margin-right:6px;border-radius:3px}
+.print-preview hr{border:1px solid #eee;margin:14px 0}
+.btn-print{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 28px;border-radius:30px;
+  background:linear-gradient(135deg,#1a0533,#6c2bd9);border:none;color:#fff;
+  font-family:var(--font-b);font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;
+  margin-top:14px;
+}
+.btn-print:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(108,43,217,.3)}
+
+/* -- RANKING SIDEBAR -- */
+.my-ranking{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--r2);
+  padding:20px;margin-bottom:28px;box-shadow:var(--sh);
+}
+.ranking-title{font-family:var(--font-h);font-size:18px;color:var(--text);margin-bottom:4px}
+.ranking-sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+.ranking-list{display:flex;flex-direction:column;gap:6px}
+.ranking-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:#f8f7ff;border-radius:var(--r);
+  border:1.5px solid var(--border);cursor:grab;
+  transition:box-shadow .2s;
+}
+.ranking-item:active{cursor:grabbing;box-shadow:var(--sh2)}
+.rank-pos{
+  font-family:var(--font-h);font-size:20px;font-weight:700;
+  color:var(--muted2);min-width:28px;text-align:center;
+}
+.rank-icon{font-size:22px}
+.rank-name{flex:1;font-size:14px;font-weight:700;color:var(--text)}
+.rank-stars{font-size:12px;color:var(--accent3)}
+.ranking-empty{font-size:13px;color:var(--muted);font-style:italic;text-align:center;padding:10px}
+
+/* -- STATS BAR -- */
+.stats-bar{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;
+  margin-bottom:28px;
+}
+.stat-card{
+  background:var(--card);border:2px solid var(--border);border-radius:var(--r2);
+  padding:16px 18px;box-shadow:var(--sh);text-align:center;
+}
+.stat-num{font-family:var(--font-h);font-size:32px;font-weight:700;color:var(--accent);line-height:1}
+.stat-lbl{font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--muted);margin-top:4px}
+
+/* -- PRINT MEDIA -- */
+@media print{
+  body{background:#fff;color:#000;font-size:12px}
+  .top-bar,.hero,.hero-controls,.card-tabs,.tab-panel:not(.tab-panel-print),
+  .rating-section,.btn-print,.strategy-card .card-tabs,.my-ranking,.stats-bar,
+  .btn-save-comment,.saved-comments,.print-tab-controls{display:none!important}
+  .strategy-card{break-inside:avoid;border:1.5px solid #ccc;margin-bottom:20px;box-shadow:none}
+  .tab-panel-print{display:block!important}
+  .card-header{padding:12px 16px}
+  .card-number{display:none}
+  .print-header-only{display:block!important}
+  .no-print{display:none!important}
+  @page{margin:1.5cm}
+}
+
+/* -- ACTIVE ONLY IN PRINT VIEW -- */
+.print-header-only{display:none}
+
+/* -- MISC -- */
+.empty-state{text-align:center;padding:48px 24px;color:var(--muted)}
+.empty-state-icon{font-size:52px;margin-bottom:12px}
+.empty-state-text{font-size:16px;font-weight:700}
+.no-cards-msg{display:none;text-align:center;padding:40px 24px;
+  font-size:16px;font-weight:700;color:var(--muted)}
+.reveal-all-btn{
+  display:block;margin:0 auto 28px;padding:12px 32px;border-radius:30px;
+  background:#f3f0ff;border:2px solid var(--border2);color:var(--accent);
+  font-family:var(--font-b);font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.reveal-all-btn:hover{background:#e8e0ff}
+.print-all-btn{
+  display:block;margin:0 auto 28px;padding:12px 32px;border-radius:30px;
+  background:linear-gradient(135deg,#1a0533,#6c2bd9);border:none;color:#fff;
+  font-family:var(--font-b);font-size:15px;font-weight:800;cursor:pointer;
+  transition:all .2s;
+}
+.print-all-btn:hover{box-shadow:0 6px 20px rgba(108,43,217,.3);transform:translateY(-1px)}
+</style>
+</head>
+<body>
+
+<!-- === TOP NAV ============================ -->
+<nav class="top-bar">
+  <div class="tb-logo">🧠 Coping Library</div>
+  <button class="tb-btn active" data-filter="all" onclick="filterCards('all',this)">All strategies</button>
+  <button class="tb-btn" data-filter="anger" onclick="filterCards('anger',this)">😡 Anger</button>
+  <button class="tb-btn" data-filter="anxiety" onclick="filterCards('anxiety',this)">😰 Anxiety</button>
+  <button class="tb-btn" data-filter="sadness" onclick="filterCards('sadness',this)">😢 Sadness</button>
+  <button class="tb-btn" data-filter="shame" onclick="filterCards('shame',this)">😳 Shame</button>
+  <button class="tb-btn" data-filter="stress" onclick="filterCards('stress',this)">😩 Stress</button>
+  <button class="tb-btn" data-filter="numbness" onclick="filterCards('numbness',this)">😑 Numbness</button>
+</nav>
+
+<!-- === HERO ============================ -->
+<div class="hero">
+  <div class="hero-title">The Coping <span>Strategy Library</span></div>
+  <div class="hero-sub">12 evidence-based CBT strategies to help you handle big emotions. Read, reflect, rate — and find what works <em>for you</em>.</div>
+  <div class="hero-controls">
+    <button class="filter-pill active fp-purple" data-pf="all" onclick="filterPersonality('all',this)">👤 Everyone</button>
+    <button class="filter-pill fp-green" data-pf="active" onclick="filterPersonality('active',this)">🏃 Active person</button>
+    <button class="filter-pill fp-orange" data-pf="creative" onclick="filterPersonality('creative',this)">🎨 Creative person</button>
+    <button class="filter-pill fp-pink" data-pf="reflective" onclick="filterPersonality('reflective',this)">📖 Reflective person</button>
+    <button class="filter-pill fp-blue" data-pf="social" onclick="filterPersonality('social',this)">🤝 Social person</button>
+  </div>
+</div>
+
+<!-- === MAIN CONTAINER ================ -->
+<div class="container">
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-card"><div class="stat-num">12</div><div class="stat-lbl">STRATEGIES</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-rated">0</div><div class="stat-lbl">RATED BY YOU</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-commented">0</div><div class="stat-lbl">COMMENTED</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-quiz">0/0</div><div class="stat-lbl">QUIZ SCORE</div></div>
+  </div>
+
+  <!-- My Ranking -->
+  <div class="my-ranking" id="my-ranking">
+    <div class="ranking-title">⭐ My Personal Ranking</div>
+    <div class="ranking-sub">Rate strategies using stars — your top-rated ones appear here.</div>
+    <div class="ranking-list" id="ranking-list"><div class="ranking-empty">Rate strategies to build your personal ranking!</div></div>
+  </div>
+
+  <div class="no-print">
+    <button class="print-all-btn" onclick="printAll()">🖨️ Print all strategy cards</button>
+  </div>
+
+  <div class="no-cards-msg" id="no-cards-msg">No strategies match this filter. Try another one!</div>
+
+  <!-- ===================================
+       STRATEGY CARDS — generated by JS
+  =================================== -->
+  <div id="cards-container"></div>
+
+</div>
+
+<!-- ===========================================
+     DATA + LOGIC
+=========================================== -->
+<script charset="utf-8">
+/* ============================================
+   STRATEGY DATA
+============================================ */
+const STRATEGIES = [
+  {
+    id:'box-breathing',
+    icon:'🌬️',iconBg:'#e0f7f4',iconColor:'#047857',
+    title:'Box Breathing',titleIt:'Respirazione a quadrato',
+    number:'01',
+    emotions:['anger','anxiety','stress'],
+    emotionLabels:['😡 Anger','😰 Anxiety','😩 Stress'],
+    who:['active','reflective'],
+    whoLabels:['🏃 Active person','📖 Reflective person'],
+    situations:['Before a test','During an argument','When feeling overwhelmed'],
+    howTo:[
+      'Breathe IN slowly for 4 counts.',
+      'HOLD your breath for 4 counts.',
+      'Breathe OUT slowly for 4 counts.',
+      'HOLD again for 4 counts.',
+      'Repeat 3–5 times and notice the difference.',
+    ],
+    science:'When we feel angry or anxious, our amygdala activates and releases cortisol and adrenaline. Slow, controlled breathing activates the <strong>vagus nerve</strong>, which sends a "calm down" signal to the heart and brain — switching you from <em>fight-or-flight</em> to <em>rest-and-digest</em> mode.',
+    summary:'A controlled breathing technique that uses a 4-count rhythm to activate your nervous system\'s "calm" response. Works in under 2 minutes.',
+    quiz:[
+      {q:'What does box breathing activate in your body?',opts:['The amygdala','The vagus nerve','The hippocampus','The cerebellum'],ans:1,exp:'The vagus nerve connects the brain to the heart and digestive system. Stimulating it through slow breathing reduces heart rate and stress hormones.'},
+      {q:'How many counts should each phase of box breathing last?',opts:['2','8','4','10'],ans:2,exp:'4 counts in, hold 4, out 4, hold 4 — that\'s the "box" shape: four equal sides.'},
+      {q:'Box breathing helps you switch from _______ to _______ mode.',opts:['rest -> fight','fight-or-flight -> rest-and-digest','happy -> sad','asleep -> awake'],ans:1,exp:'Fight-or-flight (sympathetic nervous system) causes panic. Rest-and-digest (parasympathetic nervous system) brings calm.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Box breathing activates the _______ nerve, which sends a calm signal to the heart.',ans:'vagus'},
+      {type:'tf',q:'Box breathing takes at least 30 minutes to work.',ans:'FALSE — it works in under 2 minutes.'},
+      {type:'open',q:'Describe a situation in your life when you could use box breathing.'},
+    ]
+  },
+  {
+    id:'reframing',
+    icon:'🔄',iconBg:'#f3f0ff',iconColor:'#6c2bd9',
+    title:'Reframing',titleIt:'Ristrutturazione cognitiva',
+    number:'02',
+    emotions:['anxiety','sadness','shame'],
+    emotionLabels:['😰 Anxiety','😢 Sadness','😳 Shame'],
+    who:['reflective','creative'],
+    whoLabels:['📖 Reflective person','🎨 Creative person'],
+    situations:['After a failure','When you make a mistake','When you think negatively about yourself'],
+    howTo:[
+      'Notice the negative automatic thought (e.g. "I am stupid").',
+      'Ask: Is this thought 100% true? What is the evidence FOR and AGAINST it?',
+      'Ask: What would I say to a good friend in this situation?',
+      'Replace the thought with a more balanced, realistic one.',
+      'Write it down to make it concrete.',
+    ],
+    science:'CBT identifies <strong>cognitive distortions</strong> — unhelpful thinking patterns like catastrophising ("everything is ruined"), black-and-white thinking ("I\'m a total failure"), or mind-reading ("everyone thinks I\'m stupid"). Reframing trains the prefrontal cortex to override these automatic patterns by deliberately generating alternative interpretations.',
+    summary:'A core CBT technique: identify a negative automatic thought, challenge it with evidence, and replace it with a balanced, realistic alternative.',
+    quiz:[
+      {q:'What is a "cognitive distortion"?',opts:['A healthy thought','An unhelpful, exaggerated thinking pattern','A type of emotion','A breathing exercise'],ans:1,exp:'"I\'m a total failure" is a distortion. The balanced version might be: "I didn\'t do well this time. I can learn from this."'},
+      {q:'Which question is most useful when reframing a thought?',opts:['"Why am I so stupid?"','"What would I say to a good friend in this situation?"','"How can I avoid this feeling?"','"Who is to blame?'],ans:1,exp:'Self-compassion is key. We are often much kinder to friends than to ourselves. Using this perspective breaks the self-critical loop.'},
+      {q:'"I failed this test, so I am stupid and will never succeed." This is an example of:',opts:['A balanced thought','Positive thinking','Catastrophising','Grounding'],ans:2,exp:'Catastrophising means jumping to the worst possible interpretation. A reframe could be: "I found this test difficult. I can study more and improve."'},
+    ],
+    printExercise:[
+      {type:'gap',q:'CBT calls unhelpful thinking patterns "cognitive _______".',ans:'distortions'},
+      {type:'transform',q:'Reframe this thought: "I made a mistake. I am hopeless." -> Write a balanced version:'},
+      {type:'open',q:'Why is it important to question negative automatic thoughts instead of believing them immediately?'},
+    ]
+  },
+  {
+    id:'grounding',
+    icon:'🌿',iconBg:'#f0fff9',iconColor:'#047857',
+    title:'Grounding (5-4-3-2-1)',titleIt:'Radicamento sensoriale',
+    number:'03',
+    emotions:['anxiety','sadness','stress'],
+    emotionLabels:['😰 Anxiety','😢 Sadness','😩 Stress'],
+    who:['active','reflective'],
+    whoLabels:['🏃 Active person','📖 Reflective person'],
+    situations:['During a panic or anxiety attack','When your mind is racing','When you feel disconnected or "zoned out"'],
+    howTo:[
+      'Name 5 things you can SEE around you right now.',
+      'Name 4 things you can TOUCH — and actually touch them.',
+      'Name 3 things you can HEAR.',
+      'Name 2 things you can SMELL.',
+      'Name 1 thing you can TASTE.',
+    ],
+    science:'The 5-4-3-2-1 technique works through <strong>attentional redirection</strong>. Anxiety pulls attention into past regrets or future worries. By deliberately engaging all five senses, you force your brain to process <em>present-moment sensory information</em>, which interrupts the anxiety loop. Research on mindfulness confirms that present-moment awareness reduces the activity of the brain\'s default mode network — the source of rumination.',
+    summary:'Engage all five senses to anchor yourself in the present moment and interrupt the cycle of anxious or sad thoughts.',
+    quiz:[
+      {q:'The 5-4-3-2-1 technique helps by redirecting attention to:',opts:['The future','Past memories','The present moment through the senses','Logical problem-solving'],ans:2,exp:'Anxiety lives in the past ("I should have...") or future ("What if..."). Grounding pulls you into the NOW through your five senses.'},
+      {q:'What does "attentional redirection" mean?',opts:['Looking away from someone','Deliberately choosing what your brain focuses on','Forgetting your problems','Redirecting traffic'],ans:1,exp:'We can\'t stop all thoughts, but we can choose what to focus on. Grounding gives the brain something concrete to process instead of the anxiety spiral.'},
+      {q:'Which comes LAST in the 5-4-3-2-1 technique?',opts:['Touch','Sight','Taste','Smell'],ans:2,exp:'The order is: 5 things you SEE, 4 TOUCH, 3 HEAR, 2 SMELL, 1 TASTE.'},
+    ],
+    printExercise:[
+      {type:'order',q:'Number these senses in the correct order (5=most, 1=least): See ___ Touch ___ Hear ___ Smell ___ Taste ___'},
+      {type:'tf',q:'Grounding works because it focuses your brain on the future.',ans:'FALSE — it focuses your brain on the PRESENT moment.'},
+      {type:'open',q:'Try grounding right now! Name 5 things you can see in this classroom.'},
+    ]
+  },
+  {
+    id:'behavioural-activation',
+    icon:'⚡',iconBg:'#fff8e1',iconColor:'#b45309',
+    title:'Behavioural Activation',titleIt:'Attivazione comportamentale',
+    number:'04',
+    emotions:['sadness','numbness'],
+    emotionLabels:['😢 Sadness','😑 Numbness'],
+    who:['active','social','creative'],
+    whoLabels:['🏃 Active person','🤝 Social person','🎨 Creative person'],
+    situations:['When you feel numb or empty','When you have lost interest in things you used to love','When you feel "stuck" and unmotivated'],
+    howTo:[
+      'Write a list of small activities that you USED TO enjoy.',
+      'Pick just ONE activity — the smallest, easiest one.',
+      'Do it for 5 minutes ONLY, even if you don\'t feel like it.',
+      'Notice how you feel AFTER doing it (not before or during).',
+      'Gradually expand: do it for longer, or add a second activity.',
+    ],
+    science:'When we feel low, we naturally withdraw and stop doing things. This leads to fewer positive experiences -> lower mood -> even less motivation: a <strong>vicious cycle</strong>. Behavioural Activation breaks the cycle by introducing small pleasant activities. The brain\'s reward system (dopamine pathways) is gradually reactivated through <em>action before motivation</em> — not the other way around.',
+    summary:'Do one small enjoyable activity even without motivation. Action creates mood, not the other way round.',
+    quiz:[
+      {q:'Behavioural Activation is based on the idea that:',opts:['You need to feel happy before acting','Action can create better mood, not the other way around','Staying in bed is a helpful strategy','Emotions never change'],ans:1,exp:'"Action before motivation" is the key CBT principle. Waiting to "feel like it" keeps you stuck in the low-mood cycle.'},
+      {q:'What is the "vicious cycle" of low mood?',opts:['Feeling bad -> acting more -> feeling worse','Feeling bad -> stopping activities -> fewer positive feelings -> feeling worse','Feeling bad -> talking to friends -> feeling better','Feeling bad -> exercising -> feeling good'],ans:1,exp:'Low mood -> withdrawal -> fewer positive experiences -> worse mood -> more withdrawal. Behavioural Activation breaks this loop.'},
+      {q:'How long should you start with for the first activity?',opts:['3 hours','1 full day','5 minutes','1 hour'],ans:2,exp:'Starting tiny removes the barrier of "I can\'t do this." 5 minutes is manageable for anyone. It also lets you experience the mood boost before stopping.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Behavioural Activation works on the principle of _______ before motivation.',ans:'action'},
+      {type:'list',q:'Write 3 small activities you enjoy that you could use for Behavioural Activation:',n:3},
+      {type:'open',q:'Why do you think it is important to start with very small activities?'},
+    ]
+  },
+  {
+    id:'journaling',
+    icon:'📓',iconBg:'#f0fff9',iconColor:'#047857',
+    title:'Emotional Journaling',titleIt:'Diario emotivo',
+    number:'05',
+    emotions:['sadness','shame','stress','anxiety'],
+    emotionLabels:['😢 Sadness','😳 Shame','😩 Stress','😰 Anxiety'],
+    who:['reflective','creative'],
+    whoLabels:['📖 Reflective person','🎨 Creative person'],
+    situations:['After a difficult day','When emotions feel too big to talk about','Before bed to unload your mind'],
+    howTo:[
+      'Find a private notebook or use your phone\'s notes app.',
+      'Write the date and your current emotion.',
+      'Write: "I feel _______ because _______".',
+      'Write what happened without judging yourself.',
+      'Optional: write one small positive thing from today.',
+    ],
+    science:'<strong>Affect labelling</strong> — putting a word to an emotion — reduces the emotional intensity processed by the amygdala (Lieberman et al., 2007). Writing creates cognitive distance between you and the feeling: instead of <em>being</em> the emotion, you <em>observe</em> it. Journaling also activates the prefrontal cortex, improving emotional regulation over time.',
+    summary:'Writing about emotions reduces their intensity ("name it to tame it") and creates healthy distance between you and the feeling.',
+    quiz:[
+      {q:'"Name it to tame it" refers to:',opts:['Giving your diary a name','Labelling your emotion to reduce its intensity','Naming your friends','Taming wild animals'],ans:1,exp:'Research shows that finding the right word for an emotion reduces amygdala activation — your "alarm bell" — almost immediately.'},
+      {q:'Journaling helps you switch from "being" an emotion to:',opts:['Ignoring it','Suppressing it','Observing it from a distance','Feeling more of it'],ans:2,exp:'This is called "cognitive defusion" in ACT (Acceptance and Commitment Therapy) — seeing a thought or emotion as something you HAVE, not something you ARE.'},
+      {q:'Which is the best first sentence to write in an emotional journal?',opts:['"Everyone is against me."','"I feel overwhelmed because I have too much to do today."','"I never do anything right."','"I don\'t want to write."'],ans:1,exp:'"I feel _______ because _______" is perfect: it names the emotion and identifies the trigger, without judgment.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Putting a word to your emotion is called "affect _______" and it reduces amygdala activity.',ans:'labelling'},
+      {type:'write',q:'Write your first journal entry. Complete this: "Today I feel _______ because _______. One small thing that was OK today: _______."'},
+      {type:'open',q:'Do you think you would prefer a paper journal or a digital one? Why?'},
+    ]
+  },
+  {
+    id:'i-statements',
+    icon:'💬',iconBg:'#eff6ff',iconColor:'#1d4ed8',
+    title:'"I" Statements',titleIt:'Messaggi in prima persona',
+    number:'06',
+    emotions:['anger','stress'],
+    emotionLabels:['😡 Anger','😩 Stress'],
+    who:['social','reflective'],
+    whoLabels:['🤝 Social person','📖 Reflective person'],
+    situations:['During a conflict with a friend','When you need to tell someone how they hurt you','When you want to communicate without starting an argument'],
+    howTo:[
+      'INSTEAD OF: "You always ignore me! You\'re so selfish!"',
+      'SAY: "I feel _______ when _______ because _______. I need _______."',
+      'Start with "I feel" — never "You are".',
+      'Describe the BEHAVIOUR (what happened), not the person\'s character.',
+      'Say what you NEED, not what they did wrong.',
+    ],
+    science:'When we use "you" language ("You are so mean!"), the listener immediately becomes <strong>defensive</strong> and the conversation escalates. "I" statements communicate the same information — your feelings — without triggering the other person\'s threat response. This is called <strong>non-violent communication (NVC)</strong>, developed by Marshall Rosenberg, and is integrated into CBT as a key interpersonal skill.',
+    summary:'Replace "You are..." accusations with "I feel... when... because... I need..." — this opens dialogue instead of triggering defensiveness.',
+    quiz:[
+      {q:'Why do "you" statements ("You are so selfish!") make conflicts worse?',opts:['They are too short','They trigger defensiveness in the other person','They are not honest','They take too long to say'],ans:1,exp:'When someone feels attacked, their brain activates a threat response. "You are..." sounds like an attack; "I feel..." sounds like an invitation to understand.'},
+      {q:'The correct structure for an "I" statement is:',opts:['"You always make me feel bad."','"I feel _______ when _______ because _______ and I need _______."','"You need to change."','"I think you are wrong."'],ans:1,exp:'The four parts are: emotion -> behaviour -> reason -> need. This gives all the information without blame.'},
+      {q:'"You never listen to me!" — What is the better "I" statement version?',opts:['"You are terrible at listening."','"I feel ignored when you look at your phone while I\'m talking, because I feel like what I say isn\'t important."','"I hate you sometimes."','"You should try harder."'],ans:1,exp:'Note: it describes the SPECIFIC behaviour (looking at the phone), not the person\'s character.'},
+    ],
+    printExercise:[
+      {type:'transform',q:'Rewrite using an "I" statement: "You always forget about me! You\'re so thoughtless!" -> "I feel _______ when _______ because _______ . I need _______."'},
+      {type:'gap',q:'"I" statements come from a communication method called _______ Communication.',ans:'Non-Violent'},
+      {type:'open',q:'Think of a conflict you had recently. How could you use an "I" statement in that situation?'},
+    ]
+  },
+  {
+    id:'self-compassion',
+    icon:'🫶',iconBg:'#fdf4ff',iconColor:'#7e22ce',
+    title:'Self-Compassion',titleIt:'Autocompassione',
+    number:'07',
+    emotions:['shame','sadness','anxiety'],
+    emotionLabels:['😳 Shame','😢 Sadness','😰 Anxiety'],
+    who:['reflective','social','creative'],
+    whoLabels:['📖 Reflective person','🤝 Social person','🎨 Creative person'],
+    situations:['After making a mistake','When you feel ashamed or embarrassed','When your inner voice is very critical'],
+    howTo:[
+      'Notice your self-critical thought: "I am so stupid / pathetic / useless."',
+      'Ask: "Would I say this to a good friend in the same situation?"',
+      'Write or say: "This is a difficult moment. I am not alone — everyone struggles. I can be kind to myself."',
+      'Place a hand on your heart and say one kind thing to yourself.',
+      'Repeat: you are not your mistakes.',
+    ],
+    science:'Self-compassion, developed by psychologist <strong>Kristin Neff</strong>, has three components: <em>self-kindness</em> (vs. self-judgment), <em>common humanity</em> (recognising that suffering is universal), and <em>mindfulness</em> (observing pain without exaggerating it). Research shows self-compassion is more effective than self-esteem at promoting resilience, because it doesn\'t depend on success.',
+    summary:'Treat yourself with the same kindness you would give a good friend. Self-compassion builds more resilience than self-criticism.',
+    quiz:[
+      {q:'Self-compassion involves three things. Which is NOT one of them?',opts:['Self-kindness','Common humanity','Mindfulness','Self-punishment'],ans:3,exp:'The three components are: kindness to yourself, recognising that pain is universal, and observing your feelings without over-dramatising them.'},
+      {q:'The "good friend" technique asks you to:',opts:['Call a friend immediately','Ask how you would treat a friend in the same situation','Ignore your feelings','Compare yourself to your friends'],ans:1,exp:'We are usually far kinder to friends than to ourselves. Using this perspective shows us how irrational our self-criticism often is.'},
+      {q:'Why is self-compassion more effective than self-esteem?',opts:['It is faster','It doesn\'t depend on success or achievement','It makes you feel superior','It is easier to learn'],ans:1,exp:'Self-esteem says: "I feel good when I succeed." Self-compassion says: "I am worthy even when I fail." This makes it stable even during difficult times.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Self-compassion was developed by psychologist Kristin _______.',ans:'Neff'},
+      {type:'write',q:'Write a kind message to yourself as if you were writing to a friend who made the same mistake you once made.'},
+      {type:'open',q:'Why do you think we are often kinder to friends than to ourselves?'},
+    ]
+  },
+  {
+    id:'positive-self-talk',
+    icon:'🌟',iconBg:'#fffbeb',iconColor:'#b45309',
+    title:'Positive Self-Talk',titleIt:'Dialogo interiore positivo',
+    number:'08',
+    emotions:['anxiety','shame','sadness'],
+    emotionLabels:['😰 Anxiety','😳 Shame','😢 Sadness'],
+    who:['all'],
+    whoLabels:['👤 Everyone'],
+    situations:['Before a performance or test','When self-doubt takes over','When you need an inner boost of confidence'],
+    howTo:[
+      'Identify your negative inner voice: "I can\'t do this. I will fail."',
+      'Challenge it: "Is this definitely true?"',
+      'Replace it with a realistic affirmation: "I have prepared. I can do my best."',
+      'Say it out loud (in private) or write it on a sticky note.',
+      'Repeat before difficult situations until it becomes automatic.',
+    ],
+    science:'Our inner voice constantly comments on what we do. When it is consistently negative, it can create a <strong>self-fulfilling prophecy</strong>: we believe we will fail -> we perform worse. Positive self-talk does NOT mean pretending everything is perfect. It means replacing <em>distorted negative thoughts</em> with <em>realistic, encouraging ones</em>. Neuroscience research shows repeated affirmations build new neural pathways — literally changing the brain\'s default patterns.',
+    summary:'Replace distorted negative inner voice with realistic, encouraging thoughts. With practice, this literally rewires your brain.',
+    quiz:[
+      {q:'What is a "self-fulfilling prophecy" in the context of self-talk?',opts:['A dream that comes true','Believing you will fail -> performing worse -> confirming the belief','A strategy for success','A type of journal'],ans:1,exp:'"I can\'t do this" -> anxiety increases -> performance drops -> "See, I was right." The belief creates the outcome.'},
+      {q:'Positive self-talk means:',opts:['Pretending everything is perfect','Ignoring your real feelings','Replacing distorted thoughts with realistic, encouraging ones','Always saying "I am amazing!"'],ans:2,exp:'It\'s not about toxic positivity ("Everything is great!") but about accuracy: "I find this hard, AND I can do my best."'},
+      {q:'What does neuroscience tell us about repeated positive affirmations?',opts:['They are useless','They build new neural pathways in the brain','They make you arrogant','They only work for adults'],ans:1,exp:'The brain is neuroplastic — it changes based on repeated patterns of thought. Regular positive self-talk literally rewires default thought patterns.'},
+    ],
+    printExercise:[
+      {type:'transform',q:'Rewrite as positive self-talk: "I will definitely fail this presentation." -> Write a realistic, encouraging version:'},
+      {type:'gap',q:'Believing you will fail and then performing worse is called a "self-_______ prophecy".',ans:'fulfilling'},
+      {type:'open',q:'Write your personal "before a challenge" affirmation — something you can say to yourself before a test or performance.'},
+    ]
+  },
+  {
+    id:'problem-solving',
+    icon:'📋',iconBg:'#eff6ff',iconColor:'#1d4ed8',
+    title:'Problem-Solving',titleIt:'Problem solving',
+    number:'09',
+    emotions:['stress','anxiety'],
+    emotionLabels:['😩 Stress','😰 Anxiety'],
+    who:['reflective','active'],
+    whoLabels:['📖 Reflective person','🏃 Active person'],
+    situations:['When you feel overwhelmed by too many problems','When you don\'t know where to start','When a situation feels out of control'],
+    howTo:[
+      'WRITE DOWN all your problems/worries on paper. Get them out of your head.',
+      'Separate them: what can you CONTROL vs. what you can\'t.',
+      'Focus only on the controllable ones.',
+      'For each: brainstorm 3 possible solutions, however small.',
+      'Pick ONE action to do TODAY. Just one.',
+    ],
+    science:'Overwhelm is largely caused by the brain treating all problems as <strong>one giant, unsolvable block</strong>. Writing problems down (<em>externalisation</em>) reduces the mental load on working memory and makes the brain feel less threatened. The CBT <strong>problem-solving model</strong> (D\'Zurilla & Goldfried, 1971) has been shown to reduce depression, anxiety and stress by restoring the sense of personal agency — the belief that your actions matter.',
+    summary:'Break the overwhelm: write down all problems, separate controllable from uncontrollable, and choose ONE small action.',
+    quiz:[
+      {q:'What does "externalisation" mean in problem-solving?',opts:['Blaming others','Writing problems down to remove them from your head','Sharing on social media','Ignoring them'],ans:1,exp:'When worries stay in your head, they loop and feel bigger than they are. Writing them down gives your brain permission to stop repeating them.'},
+      {q:'In CBT problem-solving, which problems should you focus on first?',opts:['The biggest problems','The oldest problems','Problems you can control','Problems other people have'],ans:2,exp:'Trying to solve uncontrollable problems wastes energy and increases helplessness. Focus on what you CAN do.'},
+      {q:'Why is choosing just ONE action for today important?',opts:['Because one action is always enough','Because choosing many actions causes analysis paralysis and inaction','Because the other actions will solve themselves','Because you only have time for one'],ans:1,exp:'Too many choices -> overwhelm -> inaction. ONE concrete next step builds momentum and restores the sense of agency.'},
+    ],
+    printExercise:[
+      {type:'two-col',q:'Divide these worries into two columns: CONTROLLABLE | NOT CONTROLLABLE',items:['Getting a bad grade','Bad weather','My friend\'s mood','How much I study','Other people\'s opinions','My effort']},
+      {type:'gap',q:'Writing your worries down is called _______, and it reduces the load on working memory.',ans:'externalisation'},
+      {type:'open',q:'Think of one problem you have right now. Write THREE possible small actions you could take.'},
+    ]
+  },
+  {
+    id:'thought-stopping',
+    icon:'🛑',iconBg:'#fff0f3',iconColor:'#be123c',
+    title:'Thought Stopping',titleIt:'Stop al pensiero',
+    number:'10',
+    emotions:['shame','anxiety'],
+    emotionLabels:['😳 Shame','😰 Anxiety'],
+    who:['active','reflective'],
+    whoLabels:['🏃 Active person','📖 Reflective person'],
+    situations:['When you keep replaying an embarrassing moment','When an anxious thought loops repeatedly','When rumination won\'t stop at night'],
+    howTo:[
+      'When the unwanted thought appears, say "STOP" — out loud if possible.',
+      'Snap a rubber band on your wrist OR clap your hands once.',
+      'Immediately redirect to a chosen "replacement thought" (prepare one in advance).',
+      'OR use grounding (5-4-3-2-1) to shift attention to the present.',
+      'Write the thought down and then deliberately put the notebook away.',
+    ],
+    science:'<strong>Rumination</strong> — repetitively thinking about past events — is one of the strongest predictors of depression and anxiety. The brain\'s default mode network keeps "replaying" because it mistakenly believes it is solving a problem. Thought stopping interrupts this loop by introducing a <em>pattern interrupt</em>. Note: thought stopping works best when combined with cognitive restructuring — <em>replacing</em> the thought, not just stopping it.',
+    summary:'Interrupt the loop of rumination with a physical or verbal cue, then immediately redirect to a replacement thought.',
+    quiz:[
+      {q:'What is "rumination"?',opts:['A type of breathing','Chewing food slowly','Repetitively thinking about past events','Talking to yourself positively'],ans:2,exp:'Rumination = replaying. It\'s your brain stuck in a loop, thinking it\'s solving a problem — but actually just generating more anxiety.'},
+      {q:'Why is thought stopping more effective when combined with cognitive restructuring?',opts:['It isn\'t — stopping is enough','Because if you only stop, the thought often comes back. Replacing it gives the brain something better to think about.','Because cognitive restructuring is faster','Because stopping alone is too physical'],ans:1,exp:'The brain dislikes a void. If you stop a thought without replacing it, it returns. A prepared "replacement thought" gives the brain a new destination.'},
+      {q:'Rumination keeps happening because:',opts:['You are weak','The brain mistakenly thinks it is solving a problem','You enjoy thinking about the past','You have a bad memory'],ans:1,exp:'The default mode network is designed to process unresolved situations. It keeps "running the problem" hoping to find a solution — but some things can\'t be solved, only accepted.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Thinking repetitively about past events is called _______ and is a predictor of anxiety.',ans:'rumination'},
+      {type:'prepare',q:'Write YOUR personal "replacement thought" — something you will deliberately think after saying STOP:'},
+      {type:'open',q:'Do you think physically saying "STOP" aloud helps? Why or why not?'},
+    ]
+  },
+  {
+    id:'physical-activity',
+    icon:'🏃',iconBg:'#fefce8',iconColor:'#854d0e',
+    title:'Physical Activity',titleIt:'Attività fisica',
+    number:'11',
+    emotions:['anger','stress','numbness'],
+    emotionLabels:['😡 Anger','😩 Stress','😑 Numbness'],
+    who:['active'],
+    whoLabels:['🏃 Active person'],
+    situations:['When you feel a surge of anger','After a stressful day','When you feel flat and unmotivated'],
+    howTo:[
+      'Choose ANY movement: walking, running, dancing, jumping, stretching.',
+      'Even 10 minutes makes a difference.',
+      'If angry: move FAST to burn off adrenaline.',
+      'If flat/numb: start SLOW (a short walk is fine) to gently reactivate.',
+      'Notice how your body feels BEFORE and AFTER.',
+    ],
+    science:'During anger or stress, the body releases <strong>adrenaline and cortisol</strong> — hormones that prepare you to fight or run. Physical activity is literally the most efficient way to burn off these chemicals. Exercise also triggers the release of <strong>endorphins, serotonin and BDNF</strong> (Brain-Derived Neurotrophic Factor), which improve mood, reduce anxiety, and actually grow new brain cells. Regular exercise is as effective as medication for mild-to-moderate depression (NICE guidelines, 2022).',
+    summary:'Movement burns off stress hormones (adrenaline, cortisol) and releases endorphins — your brain\'s natural mood boosters.',
+    quiz:[
+      {q:'Which hormones are released when you feel angry or stressed?',opts:['Endorphins and serotonin','Adrenaline and cortisol','Oxytocin and dopamine','Melatonin and insulin'],ans:1,exp:'Adrenaline and cortisol prepare the body for "fight or flight." Physical activity metabolises them efficiently — like the body expected you to use them.'},
+      {q:'BDNF (Brain-Derived Neurotrophic Factor) is important because:',opts:['It makes you angry','It helps grow new brain cells','It causes stress','It releases cortisol'],ans:1,exp:'Exercise increases BDNF, sometimes called "Miracle-Gro for the brain." It supports neuroplasticity and the growth of new neural connections.'},
+      {q:'Research shows regular exercise is comparable to:',opts:['Surgery','Medication for mild-to-moderate depression','Sleeping all day','A strict diet'],ans:1,exp:'Multiple meta-analyses confirm that regular aerobic exercise has antidepressant effects comparable to medication, with no side effects and additional health benefits.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'Exercise releases _______, _______ and _______ which improve mood.',ans:'endorphins, serotonin, BDNF'},
+      {type:'tf',q:'10 minutes of physical activity is too short to make a difference.',ans:'FALSE — even 10 minutes produces measurable mood improvements.'},
+      {type:'open',q:'What type of physical activity do you enjoy most? How could you use it as a coping strategy?'},
+    ]
+  },
+  {
+    id:'talking',
+    icon:'🤝',iconBg:'#f0fff9',iconColor:'#047857',
+    title:'Talking to Someone',titleIt:'Parlare con qualcuno',
+    number:'12',
+    emotions:['sadness','anxiety','stress','shame'],
+    emotionLabels:['😢 Sadness','😰 Anxiety','😩 Stress','😳 Shame'],
+    who:['social'],
+    whoLabels:['🤝 Social person'],
+    situations:['When a problem feels too big to carry alone','When you feel isolated or disconnected','When you need a different perspective'],
+    howTo:[
+      'Identify ONE trusted person: a friend, family member, teacher or counsellor.',
+      'You don\'t need to explain everything. You can start with: "I\'m not feeling great — can I talk to you?"',
+      'Tell them what you need: "I just need someone to listen" OR "I need advice."',
+      'If talking feels too hard: text, write a letter, or use a support service.',
+      'Remember: asking for help is a sign of strength, not weakness.',
+    ],
+    science:'Humans are wired for <strong>social connection</strong>. The neuroscience of attachment shows that even brief social contact reduces cortisol and increases <strong>oxytocin</strong> — the bonding hormone that promotes feelings of safety and trust. Studies show that social isolation is as damaging to health as smoking 15 cigarettes a day (Holt-Lunstad, 2015). Sharing problems activates the left prefrontal cortex, which counterbalances the amygdala\'s fear response.',
+    summary:'Sharing problems with a trusted person reduces cortisol, increases oxytocin, and activates the brain\'s rational thinking areas.',
+    quiz:[
+      {q:'Oxytocin is important for coping because:',opts:['It increases stress','It promotes feelings of safety and social trust','It makes you feel isolated','It triggers the fight-or-flight response'],ans:1,exp:'Oxytocin is released through positive social contact — a conversation, a hug, or even a kind look. It directly reduces the stress response.'},
+      {q:'Research by Holt-Lunstad (2015) found that social isolation is:',opts:['Healthy for introverts','As damaging as smoking 15 cigarettes a day','Only dangerous for elderly people','Less harmful than stress'],ans:1,exp:'Social isolation is a serious health risk. Human beings evolved to live in groups — our nervous systems need social connection to regulate properly.'},
+      {q:'When asking for support, what is the most important thing to tell the other person?',opts:['Your full life history','Whether you want them to listen or give advice','What they did wrong','Your diagnosis'],ans:1,exp:'"I just need to vent" and "I need your advice" are very different requests. Clarifying this prevents misunderstandings and frustration on both sides.'},
+    ],
+    printExercise:[
+      {type:'gap',q:'The bonding hormone released during positive social contact is called _______.',ans:'oxytocin'},
+      {type:'write',q:'Write the name of one trusted person you could talk to when feeling overwhelmed: _______ . What would you say to start the conversation?'},
+      {type:'open',q:'Some people find it hard to ask for help. Why do you think this is? How can we change this?'},
+    ]
+  },
+];
+
+/* ============================================
+   STATE
+============================================ */
+let ratings = JSON.parse(localStorage.getItem('cl_ratings')||'{}');
+let comments = JSON.parse(localStorage.getItem('cl_comments')||'{}');
+let personalitySelections = JSON.parse(localStorage.getItem('cl_pers')||'{}');
+let quizScores = JSON.parse(localStorage.getItem('cl_quiz')||'{}');
+let activeEmotionFilter = 'all';
+let activePersonFilter = 'all';
+
+/* ============================================
+   BUILD ALL CARDS
+============================================ */
+function buildAllCards(){
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+  STRATEGIES.forEach(s => container.appendChild(buildCard(s)));
+  updateStats();
+  updateRanking();
+}
+
+function buildCard(s){
+  const card = el('div','strategy-card');
+  card.id = 'card-'+s.id;
+  card.dataset.emotions = s.emotions.join(',');
+  card.dataset.who = s.who.join(',');
+
+  // -- HEADER --
+  const hdr = el('div','card-header');
+  const icon = el('div','card-icon');
+  icon.style.cssText=`background:${s.iconBg};color:${s.iconColor}`;
+  icon.textContent=s.icon;
+  const tw = el('div','card-title-wrap');
+  const tt = el('div','card-title',s.title);
+  const te = el('div','card-title-en',s.titleIt);
+  tw.appendChild(tt); tw.appendChild(te);
+  const num = el('div','card-number',s.number);
+  hdr.appendChild(icon); hdr.appendChild(tw); hdr.appendChild(num);
+  card.appendChild(hdr);
+
+  // -- TAGS --
+  const tagRow = el('div','tag-row');
+  s.emotionLabels.forEach(l=>{ const t=el('span','tag tag-emotion',l); tagRow.appendChild(t); });
+  const whoLabels = s.who.includes('all') ? ['👤 Everyone'] : s.whoLabels;
+  whoLabels.forEach(l=>{ const t=el('span','tag tag-who',l); tagRow.appendChild(t); });
+  s.situations.forEach(l=>{ const t=el('span','tag tag-situation','📍 '+l); tagRow.appendChild(t); });
+  card.appendChild(tagRow);
+
+  // -- TABS --
+  const tabs = el('div','card-tabs');
+  const panels = el('div');
+  const tabDefs = [
+    {id:'info',label:'📖 Learn'},
+    {id:'quiz',label:'✅ Quiz'},
+    {id:'rate',label:'⭐ Rate & Comment'},
+    {id:'print',label:'🖨️ Print'},
+  ];
+  tabDefs.forEach((td,i)=>{
+    const tab = el('div','card-tab'+(i===0?' active':''), td.label);
+    tab.dataset.tab = td.id;
+    tab.onclick = ()=>{
+      tabs.querySelectorAll('.card-tab').forEach(t=>t.classList.remove('active'));
+      panels.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`tp-${s.id}-${td.id}`).classList.add('active');
+    };
+    tabs.appendChild(tab);
+  });
+  card.appendChild(tabs);
+
+  // -- PANEL: INFO --
+  const pInfo = el('div','tab-panel active');
+  pInfo.id=`tp-${s.id}-info`;
+
+  const sumBox = el('div','science-box');
+  const sumT = el('div','science-box-title','💡 IN A NUTSHELL');
+  const sumTx = el('div','science-box-text',s.summary);
+  sumBox.appendChild(sumT); sumBox.appendChild(sumTx);
+  pInfo.appendChild(sumBox);
+
+  const secHow = el('div','info-section');
+  secHow.style.marginTop='16px';
+  const htTitle = el('div','info-title','HOW TO DO IT');
+  const steps = el('ul','steps-list');
+  s.howTo.forEach((step,i)=>{
+    const li = document.createElement('li');
+    const sn = el('div','step-num',(i+1).toString()); sn.style.background=s.iconColor;
+    li.appendChild(sn);
+    li.appendChild(document.createTextNode(step));
+    steps.appendChild(li);
+  });
+  secHow.appendChild(htTitle); secHow.appendChild(steps);
+  pInfo.appendChild(secHow);
+
+  const secSci = el('div','info-section');
+  const sciTitle = el('div','info-title','THE SCIENCE');
+  const sciText = el('div','info-text'); sciText.innerHTML=s.science;
+  secSci.appendChild(sciTitle); secSci.appendChild(sciText);
+  pInfo.appendChild(secSci);
+
+  panels.appendChild(pInfo);
+
+  // -- PANEL: QUIZ --
+  const pQuiz = el('div','tab-panel');
+  pQuiz.id=`tp-${s.id}-quiz`;
+  const qw = el('div','quiz-wrap');
+  let correct=0, total=s.quiz.length, answered=0;
+  const scoreRow = el('div','quiz-score-row');
+  scoreRow.style.display='none';
+  const resetBtn = el('button','btn-reset-quiz','Try again');
+  resetBtn.onclick=()=>resetQuiz(s.id, qw, scoreRow);
+  scoreRow.appendChild(document.createTextNode('Score: '));
+  const scoreSpan = el('span',''); scoreSpan.id=`qscore-${s.id}`;
+  scoreRow.appendChild(scoreSpan);
+  scoreRow.appendChild(resetBtn);
+
+  s.quiz.forEach((q,qi)=>{
+    const qDiv = el('div','quiz-q'); qDiv.id=`qq-${s.id}-${qi}`;
+    const qText = el('div','quiz-q-text',`${qi+1}. ${q.q}`);
+    const opts = el('div','quiz-options');
+    const expEl = el('div','quiz-explanation'); expEl.textContent='💡 '+q.exp;
+
+    q.opts.forEach((opt,oi)=>{
+      const btn = el('button','quiz-opt',opt);
+      btn.onclick=()=>{
+        if(btn.classList.contains('qo-locked')) return;
+        Array.from(opts.children).forEach(b=>b.classList.add('qo-locked'));
+        if(oi===q.ans){
+          btn.classList.add('qo-correct'); correct++;
+        } else {
+          btn.classList.add('qo-wrong');
+          opts.children[q.ans].classList.add('qo-correct');
+        }
+        expEl.classList.add('visible');
+        answered++;
+        if(answered===total){
+          scoreRow.style.display='flex';
+          scoreSpan.textContent=` ${correct}/${total}`;
+          quizScores[s.id]={correct,total};
+          localStorage.setItem('cl_quiz',JSON.stringify(quizScores));
+          updateStats();
+        }
+      };
+      opts.appendChild(btn);
+    });
+    qDiv.appendChild(qText); qDiv.appendChild(opts); qDiv.appendChild(expEl);
+    qw.appendChild(qDiv);
+  });
+  qw.appendChild(scoreRow);
+  pQuiz.appendChild(qw);
+  panels.appendChild(pQuiz);
+
+  // -- PANEL: RATE & COMMENT --
+  const pRate = el('div','tab-panel');
+  pRate.id=`tp-${s.id}-rate`;
+  const rs = el('div','rating-section');
+
+  // Star rating
+  const rr1 = el('div','rating-row');
+  const rl1 = el('div','rating-label','⭐ HOW USEFUL IS THIS STRATEGY FOR YOU? (1–5 stars)');
+  const starsWrap = el('div','stars');
+  const rval = el('span','rating-val','');
+  const ratingLabels = ['','Not useful','A bit useful','Useful','Very useful','My favourite!'];
+  for(let i=1;i<=5;i++){
+    const sb = el('button','star-btn','⭐');
+    sb.dataset.val=i;
+    if((ratings[s.id]?.overall||0)>=i) sb.classList.add('filled');
+    sb.onclick=()=>{
+      const v = parseInt(sb.dataset.val);
+      ratings[s.id] = {...(ratings[s.id]||{}), overall:v};
+      localStorage.setItem('cl_ratings',JSON.stringify(ratings));
+      starsWrap.querySelectorAll('.star-btn').forEach((b,bi)=>{
+        b.classList.toggle('filled', bi<v);
+      });
+      rval.textContent=ratingLabels[v];
+      updateStats(); updateRanking();
+    };
+    starsWrap.appendChild(sb);
+  }
+  if(ratings[s.id]?.overall) rval.textContent=ratingLabels[ratings[s.id].overall];
+  rr1.appendChild(rl1); rr1.appendChild(starsWrap); rr1.appendChild(rval);
+  rs.appendChild(rr1);
+
+  // Personality suitability
+  const rr2 = el('div','rating-row');
+  const rl2 = el('div','rating-label','🧩 WHO IS THIS STRATEGY BEST FOR? (select all that apply)');
+  const pg = el('div','personality-grid');
+  const persOptions = [
+    {id:'introvert',label:'🧘 Introvert'},
+    {id:'extrovert',label:'🗣️ Extrovert'},
+    {id:'active',label:'🏃 Active person'},
+    {id:'reflective',label:'📖 Reflective / thinker'},
+    {id:'creative',label:'🎨 Creative person'},
+    {id:'social',label:'🤝 Social person'},
+    {id:'anxious',label:'😰 Often anxious'},
+    {id:'angry',label:'😡 Often angry'},
+  ];
+  const myPers = personalitySelections[s.id] || [];
+  persOptions.forEach(p=>{
+    const chip = el('div','pers-chip'+(myPers.includes(p.id)?' selected':''), p.label);
+    chip.onclick=()=>{
+      chip.classList.toggle('selected');
+      const sel = Array.from(pg.querySelectorAll('.pers-chip.selected')).map(c=>c.textContent);
+      personalitySelections[s.id] = persOptions.filter((_,i)=>pg.children[i].classList.contains('selected')).map(x=>x.id);
+      localStorage.setItem('cl_pers',JSON.stringify(personalitySelections));
+    };
+    pg.appendChild(chip);
+  });
+  rr2.appendChild(rl2); rr2.appendChild(pg);
+  rs.appendChild(rr2);
+
+  // Comment box
+  const rr3 = el('div','rating-row');
+  const rl3 = el('div','rating-label','💬 YOUR COMMENT OR PERSONAL EXPERIENCE');
+  const textarea = el('textarea','comment-area');
+  textarea.placeholder='Write your thoughts here — e.g. "I tried this when I felt angry and it helped because..." or "I think this works best for people who..."';
+  const savedC = el('div','saved-comments'); savedC.id=`saved-${s.id}`;
+  renderComments(s.id, savedC);
+  const saveBtn = el('button','btn-save-comment','Save comment 💾');
+  const flash = el('span','save-flash','✓ Saved!'); flash.id=`flash-${s.id}`;
+  saveBtn.onclick=()=>{
+    const val = textarea.value.trim();
+    if(!val) return;
+    if(!comments[s.id]) comments[s.id]=[];
+    comments[s.id].push({text:val, date:new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short'})});
+    localStorage.setItem('cl_comments',JSON.stringify(comments));
+    textarea.value='';
+    renderComments(s.id, savedC);
+    flash.classList.add('show');
+    setTimeout(()=>flash.classList.remove('show'),2500);
+    updateStats();
+  };
+  rr3.appendChild(rl3); rr3.appendChild(textarea);
+  rr3.appendChild(saveBtn); rr3.appendChild(flash);
+  rr3.appendChild(savedC);
+  rs.appendChild(rr3);
+  pRate.appendChild(rs);
+  panels.appendChild(pRate);
+
+  // -- PANEL: PRINT --
+  const pPrint = el('div','tab-panel');
+  pPrint.id=`tp-${s.id}-print`;
+  const prev = buildPrintPreview(s);
+  pPrint.appendChild(prev);
+  const printBtnEl = el('button','btn-print','🖨️ Print this strategy card');
+  printBtnEl.onclick=()=>printSingle(s.id);
+  pPrint.appendChild(printBtnEl);
+  panels.appendChild(pPrint);
+
+  card.appendChild(panels);
+  return card;
+}
+
+/* ============================================
+   PRINT PREVIEW BUILDER
+============================================ */
+function buildPrintPreview(s){
+  const wrap = el('div','print-preview');
+  wrap.innerHTML = `
+    <h3>${s.icon} ${s.number} — ${s.title}</h3>
+    <p><strong>Emotions it helps with:</strong> ${s.emotionLabels.join(' · ')}</p>
+    <p><strong>Best for:</strong> ${s.who.includes('all')?'Everyone':s.whoLabels.join(' · ')}</p>
+    <hr>
+    <p><strong>In a nutshell:</strong> ${s.summary}</p>
+    <hr>
+    <p><strong>How to do it:</strong></p>
+    <ol>${s.howTo.map(h=>`<li>${h}</li>`).join('')}</ol>
+    <hr>
+    <p><strong>The science:</strong> ${s.science.replace(/<[^>]+>/g,'')}</p>
+    <hr>
+    <p><strong>📝 Comprehension exercises</strong></p>
+    ${buildPrintExercises(s)}
+    <hr>
+    <p><strong>My rating:</strong> ${'⭐'.repeat(ratings[s.id]?.overall||0)||'(not rated yet)'}</p>
+    <p><strong>My comments:</strong> ${(comments[s.id]||[]).map(c=>c.text).join(' | ') || '(no comments yet)'}</p>
+  `;
+  return wrap;
+}
+
+function buildPrintExercises(s){
+  return s.printExercise.map((ex,i)=>{
+    const num=i+1;
+    if(ex.type==='gap') return `<p>${num}. Complete the gap: <em>${ex.q}</em><br><span class="blank"></span></p>`;
+    if(ex.type==='tf') return `<p>${num}. True or False: <em>${ex.q}</em><br><span class="checkbox"></span> TRUE &nbsp;&nbsp; <span class="checkbox"></span> FALSE</p>`;
+    if(ex.type==='open') return `<p>${num}. ${ex.q}<br><span class="blank" style="width:100%;display:block;margin-top:6px"></span><span class="blank" style="width:100%;display:block;margin-top:6px"></span></p>`;
+    if(ex.type==='write'||ex.type==='prepare') return `<p>${num}. ${ex.q}<br><span class="blank" style="width:100%;display:block;margin-top:6px"></span><span class="blank" style="width:100%;display:block;margin-top:6px"></span></p>`;
+    if(ex.type==='transform') return `<p>${num}. ${ex.q}<br><span class="blank" style="width:100%;display:block;margin-top:6px"></span></p>`;
+    if(ex.type==='order') return `<p>${num}. ${ex.q}</p>`;
+    if(ex.type==='list') return `<p>${num}. ${ex.q}<br>${Array(ex.n||3).fill(0).map((_,j)=>`${j+1}. <span class="blank"></span><br>`).join('')}</p>`;
+    if(ex.type==='two-col') return `<p>${num}. ${ex.q}<br><table style="width:100%;border-collapse:collapse;margin-top:6px"><tr><th style="border:1px solid #ccc;padding:6px">Controllable</th><th style="border:1px solid #ccc;padding:6px">Not controllable</th></tr><tr><td style="border:1px solid #ccc;padding:30px"></td><td style="border:1px solid #ccc;padding:30px"></td></tr></table></p>`;
+    return `<p>${num}. ${ex.q}</p>`;
+  }).join('');
+}
+
+/* ============================================
+   COMMENTS
+============================================ */
+function renderComments(id, container){
+  container.innerHTML='';
+  (comments[id]||[]).forEach((c,i)=>{
+    const b=el('div','comment-bubble');
+    const textWrap=el('div');
+    const meta=el('div','comment-meta',c.date);
+    const txt=document.createTextNode(c.text);
+    textWrap.appendChild(meta); textWrap.appendChild(txt);
+    const del=el('button','btn-del-comment','✕');
+    del.onclick=()=>{
+      comments[id].splice(i,1);
+      localStorage.setItem('cl_comments',JSON.stringify(comments));
+      renderComments(id, container);
+      updateStats();
+    };
+    b.appendChild(textWrap); b.appendChild(del);
+    container.appendChild(b);
+  });
+}
+
+/* ============================================
+   QUIZ RESET
+============================================ */
+function resetQuiz(sid, qw, scoreRow){
+  qw.querySelectorAll('.quiz-opt').forEach(b=>{
+    b.classList.remove('qo-correct','qo-wrong','qo-locked');
+  });
+  qw.querySelectorAll('.quiz-explanation').forEach(e=>e.classList.remove('visible'));
+  scoreRow.style.display='none';
+  delete quizScores[sid];
+  localStorage.setItem('cl_quiz',JSON.stringify(quizScores));
+  updateStats();
+}
+
+/* ============================================
+   FILTERS
+============================================ */
+function filterCards(emotion, btn){
+  activeEmotionFilter = emotion;
+  document.querySelectorAll('.tb-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function filterPersonality(pers, btn){
+  activePersonFilter = pers;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters(){
+  let visible=0;
+  STRATEGIES.forEach(s=>{
+    const card=document.getElementById('card-'+s.id);
+    const emotionMatch = activeEmotionFilter==='all' || s.emotions.includes(activeEmotionFilter);
+    const whoMatch = activePersonFilter==='all' || s.who.includes(activePersonFilter) || s.who.includes('all');
+    if(emotionMatch && whoMatch){card.classList.remove('filtered-out');visible++;}
+    else card.classList.add('filtered-out');
+  });
+  document.getElementById('no-cards-msg').style.display = visible===0?'block':'none';
+}
+
+/* ============================================
+   STATS + RANKING
+============================================ */
+function updateStats(){
+  const rated = Object.keys(ratings).filter(k=>ratings[k]?.overall).length;
+  const commented = Object.keys(comments).filter(k=>comments[k]?.length>0).length;
+  const qDone = Object.values(quizScores);
+  const qCorrect = qDone.reduce((a,q)=>a+q.correct,0);
+  const qTotal = qDone.reduce((a,q)=>a+q.total,0);
+  document.getElementById('stat-rated').textContent=rated;
+  document.getElementById('stat-commented').textContent=commented;
+  document.getElementById('stat-quiz').textContent=qTotal>0?`${qCorrect}/${qTotal}`:'0/0';
+}
+
+function updateRanking(){
+  const list = document.getElementById('ranking-list');
+  const ranked = STRATEGIES
+    .filter(s=>ratings[s.id]?.overall)
+    .sort((a,b)=>(ratings[b.id]?.overall||0)-(ratings[a.id]?.overall||0))
+    .slice(0,6);
+  if(ranked.length===0){
+    list.innerHTML='<div class="ranking-empty">Rate strategies to build your personal ranking!</div>';
+    return;
+  }
+  list.innerHTML='';
+  ranked.forEach((s,i)=>{
+    const item=el('div','ranking-item');
+    const pos=el('div','rank-pos',(i+1).toString());
+    const icon=el('div','rank-icon',s.icon);
+    const name=el('div','rank-name',s.title);
+    const stars=el('div','rank-stars','⭐'.repeat(ratings[s.id]?.overall||0));
+    item.appendChild(pos); item.appendChild(icon); item.appendChild(name); item.appendChild(stars);
+    item.onclick=()=>document.getElementById('card-'+s.id).scrollIntoView({behavior:'smooth',block:'start'});
+    list.appendChild(item);
+  });
+}
+
+/* ============================================
+   PRINT FUNCTIONS
+============================================ */
+function printSingle(id){
+  // open all tabs to print, save current states
+  const card = document.getElementById('card-'+id);
+  const printPanel = document.getElementById(`tp-${id}-print`);
+  // Use window.print with a print-specific approach
+  const prev = printPanel.querySelector('.print-preview');
+  const win = window.open('','_print','width=800,height=600');
+  win.document.write(`
+    <!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>Coping Strategy — ${STRATEGIES.find(s=>s.id===id)?.title||id}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:'Nunito',sans-serif;font-size:12px;color:#111;padding:24px;max-width:720px;margin:0 auto}
+      h3{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:8px}
+      p{margin-bottom:8px;line-height:1.6}
+      ol{margin-left:20px;margin-bottom:10px}
+      li{margin-bottom:4px}
+      hr{border:1px solid #ddd;margin:12px 0}
+      .blank{display:inline-block;min-width:100px;border-bottom:2px solid #333;margin:0 4px}
+      .checkbox{display:inline-block;width:14px;height:14px;border:2px solid #333;vertical-align:middle;margin-right:4px;border-radius:2px}
+      table{width:100%;border-collapse:collapse}
+      td,th{border:1px solid #ccc;padding:6px;font-size:11px}
+      @page{margin:1.5cm}
+    </style>
+    </head><body>
+    ${prev.innerHTML}
+    </body></html>
+  `);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{win.print();},600);
+}
+
+function printAll(){
+  const allContent = STRATEGIES.map(s=>{
+    const prev = document.getElementById(`tp-${s.id}-print`)?.querySelector('.print-preview');
+    return prev ? `<div style="break-inside:avoid;page-break-after:always">${prev.innerHTML}</div>` : '';
+  }).join('');
+  const win = window.open('','_print_all','width=800,height=700');
+  win.document.write(`
+    <!DOCTYPE html><html><head>
+    <meta charset="UTF-8"><title>Coping Strategy Library — All Cards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:'Nunito',sans-serif;font-size:11px;color:#111;padding:20px}
+      h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:6px}
+      p{margin-bottom:6px;line-height:1.5}
+      ol{margin-left:18px;margin-bottom:8px}
+      li{margin-bottom:3px}
+      hr{border:1px solid #ddd;margin:10px 0}
+      .blank{display:inline-block;min-width:90px;border-bottom:2px solid #333;margin:0 4px}
+      .checkbox{display:inline-block;width:13px;height:13px;border:2px solid #333;vertical-align:middle;margin-right:3px;border-radius:2px}
+      table{width:100%;border-collapse:collapse}
+      td,th{border:1px solid #ccc;padding:5px;font-size:10px}
+      @page{margin:1.2cm}
+    </style>
+    </head><body>${allContent}</body></html>
+  `);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{win.print();},800);
+}
+
+/* ============================================
+   UTILS
+============================================ */
+function el(tag, cls, txt){
+  const e=document.createElement(tag);
+  if(cls) e.className=cls;
+  if(txt!==undefined) e.textContent=txt;
+  return e;
+}
+
+/* ============================================
+   INIT
+============================================ */
+buildAllCards();
+</script>
+</body>
+</html>

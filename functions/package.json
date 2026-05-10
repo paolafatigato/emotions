@@ -1,0 +1,13 @@
+{
+  "name": "emotions-premium-functions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": { "node": "24.x" },
+  "dependencies": {
+    "firebase-admin": "^11.0.0",
+    "stripe": "^11.0.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  }
+}
