@@ -33,6 +33,36 @@ app.use(cors({
 }));
 // Handle preflight for all routes
 app.options('*', cors({ origin: true, allowedHeaders: ['Content-Type', 'Authorization'] }));
+
+// ── WEBHOOK must be registered BEFORE bodyParser.json() so body stays as raw Buffer
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+  } catch (err) {
+    console.error('Webhook signature verification failed.', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    const uid = session.metadata && session.metadata.firebaseUid;
+    if (uid) {
+      db.collection('users').doc(uid).set({ premium: true }, { merge: true })
+        .then(() => console.log('Premium flag set for', uid))
+        .catch(e => console.error('Error writing premium flag', e));
+    } else if (session.customer_email) {
+      admin.auth().getUserByEmail(session.customer_email).then(user => {
+        db.collection('users').doc(user.uid).set({ premium: true }, { merge: true });
+      }).catch(e => console.error('Cannot map email to user', e));
+    }
+  }
+
+  res.json({ received: true });
+});
+
 app.use(bodyParser.json());
 
 // Helper: verify Firebase ID token from Authorization header
@@ -70,35 +100,7 @@ app.post('/createCheckoutSession', async (req, res) => {
   }
 });
 
-// Stripe webhook endpoint: set STRIPE_WEBHOOK_SECRET in env
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-  } catch (err) {
-    console.error('Webhook signature verification failed.', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const uid = session.metadata && session.metadata.firebaseUid;
-    if (uid) {
-      db.collection('users').doc(uid).set({ premium: true }, { merge: true })
-        .then(() => console.log('Premium flag set for', uid))
-        .catch(e => console.error('Error writing premium flag', e));
-    } else if (session.customer_email) {
-      // Optionally: find user by email, set premium
-      admin.auth().getUserByEmail(session.customer_email).then(user => {
-        db.collection('users').doc(user.uid).set({ premium: true }, { merge: true });
-      }).catch(e=>console.error('Cannot map email to user', e));
-    }
-  }
-
-  res.json({ received: true });
-});
+// (webhook handler moved above bodyParser.json — see above)
 
 // Export for Vercel serverless (module.exports = app)
 // or run standalone locally (node index.js)
