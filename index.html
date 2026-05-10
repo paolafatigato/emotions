@@ -1638,6 +1638,10 @@ function tttDecide(accepted){
     }
     tttTurn=tttTurn==='A'?'B':'A';
     tttUpdateUI();
+  } else {
+    // On rejection, pass the turn to the other player
+    tttTurn = tttTurn==='A' ? 'B' : 'A';
+    tttUpdateUI();
   }
   tttSelected=null;
   tttRenderGrid();
@@ -1653,13 +1657,17 @@ function tttCheckWin(){
 }
 
 function tttChangeBoard(){
-  // Require Premium: if user isn't premium, open auth/premium modal and stop
-  if (typeof _isPremium !== 'undefined') {
-    if (!_isPremium) { openAuthModal('premium'); return; }
-  } else if (typeof openAuthModal === 'function') {
-    // premium system may not be loaded yet — conservatively open modal
-    openAuthModal('premium'); return;
-  }
+  // Require Premium: prefer window._isPremium (set by premium_system.js). Fallback to local _isPremium, otherwise open modal.
+  try {
+    if (typeof window._isPremium !== 'undefined') {
+      if (!window._isPremium) { openAuthModal('premium'); return; }
+    } else if (typeof _isPremium !== 'undefined') {
+      if (!_isPremium) { openAuthModal('premium'); return; }
+    } else if (typeof openAuthModal === 'function') {
+      // premium system may not be loaded yet — conservatively open modal
+      openAuthModal('premium'); return;
+    }
+  } catch (e) { console.warn('premium check failed', e); if (typeof openAuthModal === 'function') { openAuthModal('premium'); return; } }
 
   const shuffle=[...TTT_POOL].sort(()=>Math.random()-.5).slice(0,9);
   tttBoard=shuffle.map(e=>({...e,owner:null}));
@@ -2286,8 +2294,16 @@ function renderComp(){
   document.getElementById('sit-a-txt').textContent=ch.a.t;
   document.getElementById('sit-b-emo').textContent=ch.b.e;
   document.getElementById('sit-b-txt').textContent=ch.b.t;
-  document.getElementById('frame-a-ref').textContent=ch.a.t;
-  document.getElementById('frame-b-ref').textContent=ch.b.t;
+  const frameA = document.getElementById('frame-a-ref');
+  const frameB = document.getElementById('frame-b-ref');
+  // default order: A then B
+  frameA.textContent = ch.a.t;
+  frameB.textContent = ch.b.t;
+  // clicking either situation puts that situation first in the sentence frame
+  const sitA = document.getElementById('sit-a');
+  const sitB = document.getElementById('sit-b');
+  sitA.onclick = () => { frameA.textContent = ch.a.t; frameB.textContent = ch.b.t; };
+  sitB.onclick = () => { frameA.textContent = ch.b.t; frameB.textContent = ch.a.t; };
   document.getElementById('frame-blank').textContent='happier / more ___';
   buildVocab(true);
 }

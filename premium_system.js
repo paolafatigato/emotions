@@ -281,6 +281,8 @@ function injectPremiumUI() {
 // FIREBASE INIT & AUTH LOGIC
 // ══════════════════════════════════════════════════════════════════
 let _firebaseApp, _auth, _db, _currentUser = null, _isPremium = false;
+// Expose a stable global reference so other scripts can reliably read premium status
+window._isPremium = _isPremium;
 
 async function initFirebase() {
   // Dynamic import (CDN)
@@ -305,17 +307,26 @@ async function initFirebase() {
   window._fbDb = { getFirestore, doc, getDoc, setDoc, _db };
 
   onAuthStateChanged(_auth, async (user) => {
+    console.log('[premium] onAuthStateChanged', user ? user.uid : null);
     _currentUser = user;
     if (user) {
       // Real-time listener: update premium status immediately when Firestore changes
       if (window.__userUnsub) window.__userUnsub();
       const userRef = doc(_db, 'users', user.uid);
       window.__userUnsub = onSnapshot(userRef, (snap) => {
+        try {
+          console.log('[premium] onSnapshot for', user.uid, 'exists=', snap.exists());
+          console.log('[premium] snapshot data=', snap.exists()?snap.data():null);
+        } catch(e){console.warn('[premium] snapshot log failed', e)}
         _isPremium = snap.exists() && snap.data().premium === true;
+        // Mirror to window for other scripts
+        window._isPremium = _isPremium;
         updatePremiumUI();
       });
     } else {
+      console.log('[premium] user signed out or null');
       _isPremium = false;
+      window._isPremium = false;
       if (window.__userUnsub) { window.__userUnsub(); window.__userUnsub = null; }
       updatePremiumUI();
     }
@@ -369,6 +380,8 @@ function updatePremiumUI() {
     badge.classList.remove('is-premium');
     badge.onclick = () => openAuthModal('login');
   }
+  // Ensure window mirror is always up-to-date
+  window._isPremium = _isPremium;
   applyFreeRestrictions();
 }
 
