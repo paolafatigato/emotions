@@ -1268,7 +1268,7 @@ canvas#wheel-canvas{width:100%;height:100%}
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;flex-wrap:wrap">
       <button class="btn-secondary" onclick="tttNewGame()">Reset board</button>
-      <button class="btn-secondary" onclick="tttChangeBoard()" style="border-color:rgba(168,85,247,.55);color:#c084fc">🔀 Change emotions</button>
+      <button id="ttt-change-btn" class="btn-secondary" onclick="tttChangeBoard()" style="border-color:rgba(168,85,247,.55);color:#c084fc">🔀 Change emotions</button>
       <button class="btn-print" onclick="window.open('https://www.etsy.com/it/listing/4498730345/emotions-tic-tac-toe-printable-game-esl','_blank')">🖨️ Print boards</button>
     </div>
   </div>
@@ -1507,6 +1507,23 @@ function tttInit(){
       c.appendChild(s);
     }
   }
+  // If a saved board exists (from previous session or premium change), load it so reloads don't randomize
+  try {
+    const saved = localStorage.getItem('ttt_saved_board');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length===9) {
+        tttBoard = parsed.map(e => ({...e, owner: null}));
+        tttTurn = 'A'; tttSelected = null; tttOver = false;
+        document.getElementById('ttt-win-banner').classList.remove('visible');
+        tttRenderGrid();
+        tttUpdateUI();
+        tttShowIdle();
+        return;
+      }
+    }
+  } catch (e) { console.warn('Could not load saved TTT board:', e); }
+
   if(!tttBoard) tttNewGame();
 }
 
@@ -1520,6 +1537,11 @@ function tttNewGame(){
   tttRenderGrid();
   tttUpdateUI();
   tttShowIdle();
+  // Persist the new board so page reload doesn't revert it
+  try {
+    const toSave = tttBoard.map(({emoji,name,frame,example})=>({emoji,name,frame,example}));
+    localStorage.setItem('ttt_saved_board', JSON.stringify(toSave));
+  } catch (e) { console.warn('Could not save TTT board:', e); }
 }
 
 function tttUpdateNames(){
@@ -1631,6 +1653,14 @@ function tttCheckWin(){
 }
 
 function tttChangeBoard(){
+  // Require Premium: if user isn't premium, open auth/premium modal and stop
+  if (typeof _isPremium !== 'undefined') {
+    if (!_isPremium) { openAuthModal('premium'); return; }
+  } else if (typeof openAuthModal === 'function') {
+    // premium system may not be loaded yet — conservatively open modal
+    openAuthModal('premium'); return;
+  }
+
   const shuffle=[...TTT_POOL].sort(()=>Math.random()-.5).slice(0,9);
   tttBoard=shuffle.map(e=>({...e,owner:null}));
   tttTurn='A'; tttSelected=null; tttOver=false;
@@ -1638,6 +1668,11 @@ function tttChangeBoard(){
   tttRenderGrid();
   tttUpdateUI();
   tttShowIdle();
+  // Persist the changed board so reload keeps it (prevents reload bypass)
+  try {
+    const toSave = tttBoard.map(({emoji,name,frame,example})=>({emoji,name,frame,example}));
+    localStorage.setItem('ttt_saved_board', JSON.stringify(toSave));
+  } catch (e) { console.warn('Could not save TTT board:', e); }
 }
 
 function tttPrintBoards(){

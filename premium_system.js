@@ -350,6 +350,14 @@ function updatePremiumUI() {
       superBtn.title = '';
       superBtn.style.pointerEvents = '';
     }
+    // Unlock Tic-Tac-Toe "Change emotions" button
+    const tttBtn = document.getElementById('ttt-change-btn');
+    if (tttBtn) {
+      tttBtn.removeAttribute('disabled');
+      tttBtn.style.opacity = '';
+      tttBtn.title = '';
+      tttBtn.style.pointerEvents = '';
+    }
     // Remove all "Get Premium" banners shown to free users
     document.querySelectorAll('.premium-banner').forEach(el => el.remove());
   } else if (_currentUser) {
@@ -388,6 +396,15 @@ function applyFreeRestrictions() {
     superBtn.removeAttribute('disabled');
     superBtn.style.opacity = '0.5';
     addPremiumBanner('cmp-btn-super', PREMIUM_CONFIG.compare.freePreview.message, 'after');
+  }
+
+  // ── TICTACTOE: dim Change emotions button for free users ───────
+  const tttBtn = document.getElementById('ttt-change-btn');
+  if (tttBtn) {
+    // keep clickable so the function itself can intercept and open modal
+    tttBtn.removeAttribute('disabled');
+    tttBtn.title = '🔒 Premium feature';
+    tttBtn.style.opacity = '0.45';
   }
 }
 
@@ -497,6 +514,12 @@ function premiumSystemInit() {
     const superBtn = document.getElementById('cmp-btn-super');
     if (superBtn) {
       superBtn.addEventListener('click', (e)=>{
+        if (!_isPremium) { e.preventDefault(); openAuthModal('premium'); }
+      });
+    }
+    const tttBtn = document.getElementById('ttt-change-btn');
+    if (tttBtn) {
+      tttBtn.addEventListener('click', (e)=>{
         if (!_isPremium) { e.preventDefault(); openAuthModal('premium'); }
       });
     }
