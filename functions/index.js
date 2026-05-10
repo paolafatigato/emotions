@@ -59,8 +59,8 @@ app.post('/createCheckoutSession', async (req, res) => {
       line_items: [{ price: priceId, quantity: 1 }],
       customer_email: req.body.email || undefined,
       metadata: { firebaseUid: uid },
-      success_url: (origin ? origin : 'https://your-site.example') + '?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url: (origin ? origin : 'https://your-site.example') + '?canceled=true'
+      success_url: 'https://emotions-website.vercel.app/?premium=success',
+      cancel_url: 'https://emotions-website.vercel.app/?premium=canceled'
     });
 
     res.json({ url: session.url, sessionId: session.id });

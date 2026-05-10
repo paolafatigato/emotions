@@ -1,9 +1,17 @@
 {
   "version": 2,
   "builds": [
-    { "src": "functions/index.js", "use": "@vercel/node" }
+    { "src": "functions/index.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "*.js", "use": "@vercel/static" },
+    { "src": "*.json", "use": "@vercel/static" },
+    { "src": "*.xml", "use": "@vercel/static" },
+    { "src": "*.txt", "use": "@vercel/static" },
+    { "src": "*.png", "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "functions/index.js" }
+    { "src": "/createCheckoutSession", "dest": "functions/index.js" },
+    { "src": "/webhook", "dest": "functions/index.js" },
+    { "src": "/(.*)", "dest": "/$1" }
   ]
 }
